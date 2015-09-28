@@ -2,7 +2,6 @@ package Models;
 
 import java.util.Date;
 
-import com.fasterxml.jackson.annotation.*;
 import com.google.gson.annotations.SerializedName;
 
 public class LoginToken {
@@ -46,18 +45,14 @@ public class LoginToken {
 	}
 
 	@SerializedName("userName")
-	public String UserName;
+	private String UserName;
 
 	public String getUserName() {
 		return UserName;
 	}
 
-	private void setUserName(String username) {
-		this.UserName = username;
-	}
-
 	@SerializedName("token_type")
-	public String TokenType;
+	private String TokenType;
 
 	public String getTokenType() {
 		return TokenType;

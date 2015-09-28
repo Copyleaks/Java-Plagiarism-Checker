@@ -4,50 +4,33 @@ import com.google.gson.annotations.SerializedName;
 
 public class ResultRecord {
 	@SerializedName("Domain")
-	public String Domain;
+	private String Domain;
 
-	String getDomain() {
+	public String getDomain() {
 		return Domain;
-	}
-
-	private void setDomain(String domain) {
-		Domain = domain;
 	}
 
 	@SerializedName("URL")
 
-	public String URL;
+	private String URL;
 
-	String getURL() {
+	public String getURL() {
 		return URL;
-	}
-
-	private void setURL(String url) {
-		URL = url;
 	}
 
 	@SerializedName("Precents")
 
-	public int Precents;
+	private int Precents;
 
-	int getPrecents() {
+	public int getPrecents() {
 		return Precents;
-	}
-
-	private void setPrecents(int precents) {
-		Precents = precents;
 	}
 
 	@SerializedName("NumberOfCopiedWords")
 
-	public int NumberOfCopiedWords;
+	private int NumberOfCopiedWords;
 
 	public int getNumberOfCopiedWords() {
 		return NumberOfCopiedWords;
 	}
-
-	private void setNumberOfCopiedWords(int numberOfCopiedWords) {
-		NumberOfCopiedWords = numberOfCopiedWords;
-	}
-
 }

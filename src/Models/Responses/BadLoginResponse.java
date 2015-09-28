@@ -1,13 +1,9 @@
 package Models.Responses;
 
 public class BadLoginResponse {
-	public String Message;
+	private String Message;
 
-	String getMessage() {
+	public String getMessage() {
 		return Message;
-	}
-
-	private void setMessage(String message) {
-		Message = message;
 	}
 }

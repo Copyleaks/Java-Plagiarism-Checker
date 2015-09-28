@@ -1,6 +1,4 @@
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,7 +80,7 @@ public class UserAuthentication{
 			if (response == null)
 				throw new JSONException("Unable to process server response.");
 			else
-				throw new CommandFailedException(response.Message, msg);
+				throw new CommandFailedException(response.getMessage(), msg);
 		}
 
 		HttpEntity entity = msg.getEntity();

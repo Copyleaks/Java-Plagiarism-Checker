@@ -75,7 +75,7 @@ public class ScannerProcess {
 		HttpEntity entity = msg.getEntity();
 		String json = EntityUtils.toString(entity, "UTF-8");
 		CheckStatusResponse response = gson.fromJson(json, CheckStatusResponse.class);
-		return new String(response.Status).equals("Finished") ;
+		return new String(response.getStatus()).equals("Finished") ;
 	}
 	/// <summary>
 	/// Get the scanning resutls from server.

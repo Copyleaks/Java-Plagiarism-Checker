@@ -4,21 +4,16 @@ import Models.Requests.CreateCommandRequest;
 import Models.Responses.BadResponse;
 
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.*;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 import com.google.gson.Gson;
@@ -68,7 +63,7 @@ public class Detector {
 		HttpEntity entity = msg.getEntity();
 		String json = EntityUtils.toString(entity, "UTF-8");
 		CreateResourceResponse response = gson.fromJson(json, CreateResourceResponse.class);
-		return new ScannerProcess(this.Token, response.ProcessId);
+		return new ScannerProcess(this.Token, response.getProcessId());
 	}
 
 	public ScannerProcess CreateByFile(FileBody localfile) throws Exception {
@@ -108,7 +103,7 @@ public class Detector {
 
 		String json = EntityUtils.toString(msgEntity, "UTF-8");
 		CreateResourceResponse response = gson.fromJson(json, CreateResourceResponse.class);
-		return new ScannerProcess(this.Token, response.ProcessId);
+		return new ScannerProcess(this.Token, response.getProcessId());
 	}
 
 	public ScannerProcess CreateByOCR(FileBody localfile) throws Exception {
@@ -149,6 +144,6 @@ public class Detector {
 
 		String json = EntityUtils.toString(msgEntity, "UTF-8");
 		CreateResourceResponse response = gson.fromJson(json, CreateResourceResponse.class);
-		return new ScannerProcess(this.Token, response.ProcessId);
+		return new ScannerProcess(this.Token, response.getProcessId());
 	}
 }

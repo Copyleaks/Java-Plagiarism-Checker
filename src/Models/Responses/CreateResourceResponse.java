@@ -3,12 +3,8 @@ package Models.Responses;
 import java.util.UUID;
 
 public class CreateResourceResponse {
-	public UUID ProcessId;
-	UUID ProcessId() {
+	private UUID ProcessId;
+	public UUID getProcessId() {
 		return ProcessId;
-	}
-
-	private void setProcessId(UUID processId) {
-		ProcessId = processId;
 	}
 }

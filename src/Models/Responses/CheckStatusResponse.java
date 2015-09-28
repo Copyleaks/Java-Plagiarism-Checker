@@ -1,12 +1,9 @@
 package Models.Responses;
 
 public class CheckStatusResponse {
-	public String Status;
+	private String Status;
 
 	public String getStatus() {
 		return Status;
-	}
-	private void setStatus(String status) {
-		Status = status;
 	}
 }

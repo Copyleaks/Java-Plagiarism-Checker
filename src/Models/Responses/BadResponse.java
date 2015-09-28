@@ -4,14 +4,13 @@ public class BadResponse {
 
 	public String Message;
 
-	String getMessage() {
+	public String getMessage() {
 		return Message;
 	}
-	private void setMessage(String message) {
-		Message = message;
+	
+	@Override
+	public String toString()
+	{
+		return this.getMessage();
 	}
-	// public override string ToString()
-	// {
-	// return this.Message;
-	// }
 }
