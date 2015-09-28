@@ -44,8 +44,8 @@ public class Detector {
 		HttpPost post = new HttpPost(
 				Resources.ServiceEntryPoint + Resources.ServiceVersion + "/detector/create-by-url");
 		post.setEntity(new StringEntity(gson.toJson(model)));
-		post.setHeader("Content-Type", Content_Type.Json);
-		post.setHeader("Accept", Content_Type.Json);
+		post.setHeader("Content-Type", HttpContentTypes.Json);
+		post.setHeader("Accept", HttpContentTypes.Json);
 		post.setHeader("User-Agent", Resources.USER_AGENT);
 		post.addHeader("Authorization", String.format("%1$s %2$s", "Bearer", this.Token.getToken()));
 		// Response from the server
@@ -84,7 +84,7 @@ public class Detector {
 				Resources.ServiceEntryPoint + Resources.ServiceVersion + "/detector/create-by-file");
 		builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 		builder.addPart(localfile.getFilename(), localfile);
-		post.addHeader("Accept", Content_Type.Json);
+		post.addHeader("Accept", HttpContentTypes.Json);
 		post.setHeader("User-Agent", Resources.USER_AGENT);
 		post.addHeader("Authorization", String.format("%1$s %2$s", "Bearer", this.Token.getToken()));
 		HttpEntity entity = builder.build();

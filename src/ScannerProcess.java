@@ -57,8 +57,8 @@ public class ScannerProcess {
 
 		HttpClient client = HttpClientBuilder.create().build();
 		HttpGet request = new HttpGet(String.format(Resources.ServiceEntryPoint + "%1$s/detector/%2$s/status", Resources.ServiceVersion, getPID()));
-		request.setHeader("Accept", Content_Type.Json);
-		request.setHeader("Content-Type", Content_Type.Json);
+		request.setHeader("Accept", HttpContentTypes.Json);
+		request.setHeader("Content-Type", HttpContentTypes.Json);
 		request.setHeader("User-Agent", Resources.USER_AGENT);
 		request.addHeader("Authorization", String.format("%1$s %2$s", "Bearer", this.SecurityToken.getToken()));
 		Gson gson = new GsonBuilder().create();
@@ -91,8 +91,8 @@ public class ScannerProcess {
 
 		HttpGet request = new HttpGet(String.format(Resources.ServiceEntryPoint + "%1$s/detector/%2$s/result", Resources.ServiceVersion,
 				getPID()));
-		request.setHeader("Accept", Content_Type.Json);
-		request.setHeader("Content-Type", Content_Type.Json);
+		request.setHeader("Accept", HttpContentTypes.Json);
+		request.setHeader("Content-Type", HttpContentTypes.Json);
 		request.setHeader("User-Agent", Resources.USER_AGENT);
 		request.addHeader("Authorization", String.format("%1$s %2$s", "Bearer", this.SecurityToken.getToken()));
 		HttpResponse msg = client.execute(request);
@@ -118,7 +118,7 @@ public class ScannerProcess {
 										// UnauthorizedAccessException.
 		HttpClient client = HttpClientBuilder.create().build();
 		HttpPost request = new HttpPost(String.format("detector/%1$s/delete", this.PID));
-		request.setHeader("Accept", Content_Type.Json);
+		request.setHeader("Accept", HttpContentTypes.Json);
 		request.setHeader("User-Agent", Resources.USER_AGENT);
 		HttpResponse msg = client.execute(request);
 		if (msg.getStatusLine().getStatusCode() != 200)

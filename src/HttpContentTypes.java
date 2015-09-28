@@ -1,5 +1,5 @@
 
-class Content_Type {
+class HttpContentTypes {
 	public static final String Json="application/json";
 	public static final String Xml="application/xml";
 	public static final String UrlEncoded="application/x-www-form-urlencoded";

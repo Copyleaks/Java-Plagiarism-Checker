@@ -36,7 +36,7 @@ public class UserAuthentication{
 		HttpClient client = HttpClientBuilder.create().build();
 		Gson gson = new GsonBuilder().create();
 		HttpPost request = new HttpPost(Resources.SERVICE_URI + Resources.LOGIN_PAGE);
-		request.setHeader("Accept", Content_Type.UrlEncoded);
+		request.setHeader("Accept", HttpContentTypes.UrlEncoded);
 		request.setHeader("User-Agent", Resources.USER_AGENT);
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 		urlParameters.add(new BasicNameValuePair("username", username));
@@ -71,7 +71,7 @@ public class UserAuthentication{
 
 		HttpClient client = HttpClientBuilder.create().build();
 		HttpPost request = new HttpPost(String.format("%1$s/account/count-credits", Resources.ServiceVersion));
-		request.setHeader("Accept", Content_Type.Json);
+		request.setHeader("Accept", HttpContentTypes.Json);
 		request.setHeader("User-Agent", Resources.USER_AGENT);
 		HttpResponse msg = client.execute(request);
 		if (msg.getStatusLine().getStatusCode() != 200) {
