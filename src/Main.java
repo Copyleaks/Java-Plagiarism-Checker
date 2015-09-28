@@ -9,7 +9,7 @@ import org.json.JSONException;
 import Exceptions.CommandFailedException;
 import Models.ResultRecord;
 
-public class SampleCode {
+public class Main {
 
 	public static void main(String[] args)
 			throws ClientProtocolException, IOException, JSONException, CommandFailedException, URISyntaxException {
@@ -19,14 +19,12 @@ public class SampleCode {
 		// Creating Copyleaks account: https://copyleaks.com/Account/Signup
 		// Use your account information:
 		String username = "<Your-Username>";
-		String APIKey = "<Your-Key>"; // Generate your
-																// API Key:
-																// https://copyleaks.com/Account/Manage
+		String APIKey = "<Your-Key>"; // Generate your API Key: https://copyleaks.com/Account/Manage
+		
 		Scanner scanner = new Scanner(username, APIKey);
-		URI url_to_scan = new URI("<Path-To-File>");
 
 		try {
-			ResultRecord[] results = scanner.Scan(url_to_scan);
+			ResultRecord[] results = scanner.Scan(new URI("<Path-To-File>"));
 			if (results.length == 0) {
 				System.out.println("\tNo results.");
 			} else {
@@ -39,10 +37,6 @@ public class SampleCode {
 					System.out.println(String.format("CopiedWords: %1$s", results[i].getNumberOfCopiedWords()));
 				}
 			}
-			// } catch (CommandFailedException theError) {
-			// System.out.println("\tFailed!");
-			// System.out.println("+Error Description:");
-			// System.out.println(String.format("%1$s", theError.getMessage()));
 		} catch (Exception ex) {
 			System.out.println("\tFailed!");
 			System.out.println("Unhandled Exception");
