@@ -4,6 +4,7 @@ import Models.Requests.CreateCommandRequest;
 import Models.Responses.BadResponse;
 
 import java.io.FileNotFoundException;
+import java.net.URI;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -29,7 +30,7 @@ public class Detector {
 		this.Token = token;
 	}
 
-	public ScannerProcess CreateByUrl(String url) throws Exception {
+	public ScannerProcess CreateByUrl(URI url) throws Exception {
 		// Token Validation
 		if (this.Token == null)
 			throw new Exception("Empty token!");
@@ -39,7 +40,7 @@ public class Detector {
 		HttpClient client = HttpClientBuilder.create().build();
 		Gson gson = new GsonBuilder().create();
 		CreateCommandRequest model = new CreateCommandRequest();
-		model.setURL(url);
+		model.setURL(url.toString());
 		// Post to the server
 		HttpPost post = new HttpPost(
 				Resources.ServiceEntryPoint + Resources.ServiceVersion + "/detector/create-by-url");
@@ -72,7 +73,7 @@ public class Detector {
 			throw new Exception("Empty token!");
 		else
 			this.Token.Validate();
-		// File Validation
+		
 		if (localfile == null)
 			throw new FileNotFoundException();
 
