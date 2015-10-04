@@ -1,9 +1,6 @@
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
-
-import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 
 import copyleaks.sdk.api.Scanner;
@@ -14,7 +11,7 @@ public class Main
 {
 
 	public static void main(String[] args)
-			throws ClientProtocolException, IOException, JSONException, CommandFailedException, URISyntaxException
+			throws IOException, JSONException, CommandFailedException
 	{
 		// For more information, visit Copyleaks How-To page:
 		// https://api.copyleaks.com/Guides/HowToUse
