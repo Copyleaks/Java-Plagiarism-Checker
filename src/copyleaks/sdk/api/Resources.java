@@ -1,3 +1,4 @@
+package copyleaks.sdk.api;
 import java.net.URI;
 import java.net.URISyntaxException;
 

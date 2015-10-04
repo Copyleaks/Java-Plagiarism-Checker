@@ -1,4 +1,4 @@
-package Models;
+package copyleaks.sdk.api.models;
 
 import com.google.gson.annotations.SerializedName;
 

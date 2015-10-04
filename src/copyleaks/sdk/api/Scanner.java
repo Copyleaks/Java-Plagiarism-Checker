@@ -1,3 +1,4 @@
+package copyleaks.sdk.api;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -7,9 +8,9 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.entity.mime.content.FileBody;
 import org.json.JSONException;
 
-import Exceptions.CommandFailedException;
-import Models.LoginToken;
-import Models.ResultRecord;
+import copyleaks.sdk.api.exceptions.CommandFailedException;
+import copyleaks.sdk.api.models.LoginToken;
+import copyleaks.sdk.api.models.ResultRecord;
 
 public class Scanner
 {

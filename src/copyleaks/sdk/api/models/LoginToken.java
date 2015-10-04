@@ -1,4 +1,4 @@
-package Models;
+package copyleaks.sdk.api.models;
 
 import java.util.Date;
 
@@ -6,20 +6,20 @@ import com.google.gson.annotations.SerializedName;
 
 public class LoginToken {
 	public LoginToken(String token, Date issued, Date expire) {
-		setToken(token);
+		setTemporarySecurityCode(token);
 		setIssued(issued);
 		setExpire(expire);
 	}
 
 	@SerializedName("access_token")
-	private String Token;
+	private String TemporarySecurityCode;
 
-	public String getToken() {
-		return Token;
+	public String getTemporarySecurityCode() {
+		return TemporarySecurityCode;
 	}
 
-	private void setToken(String token) {
-		this.Token = token;
+	private void setTemporarySecurityCode(String token) {
+		this.TemporarySecurityCode = token;
 	}
 
 	@SerializedName(".issued")
@@ -77,6 +77,6 @@ public class LoginToken {
 
 	@Override
 	public String toString() {
-		return this.getToken();
+		return this.getTemporarySecurityCode();
 	}
 }

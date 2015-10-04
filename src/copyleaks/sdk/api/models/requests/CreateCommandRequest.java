@@ -1,4 +1,4 @@
-package Models.Requests;
+package copyleaks.sdk.api.models.requests;
 
 public class CreateCommandRequest {
 	public String URL;

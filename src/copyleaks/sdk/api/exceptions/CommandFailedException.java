@@ -1,4 +1,4 @@
-package Exceptions;
+package copyleaks.sdk.api.exceptions;
 
 import org.apache.http.HttpResponse;
 

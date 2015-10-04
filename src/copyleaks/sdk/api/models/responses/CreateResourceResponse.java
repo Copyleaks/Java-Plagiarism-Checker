@@ -1,4 +1,4 @@
-package Models.Responses;
+package copyleaks.sdk.api.models.responses;
 
 import java.util.UUID;
 

@@ -6,8 +6,9 @@ import java.net.URISyntaxException;
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 
-import Exceptions.CommandFailedException;
-import Models.ResultRecord;
+import copyleaks.sdk.api.Scanner;
+import copyleaks.sdk.api.exceptions.CommandFailedException;
+import copyleaks.sdk.api.models.ResultRecord;
 
 public class Main
 {
@@ -21,8 +22,9 @@ public class Main
 		// Creating Copyleaks account: https://copyleaks.com/Account/Signup
 		// Use your account information:
 		String username = "<Your-Username>";
-		String APIKey = "<Your-Key>"; // Generate your API Key:
-										// https://copyleaks.com/Account/Manage
+
+		// Generate your API Key --> https://copyleaks.com/Account/Manage
+		String APIKey = "<Your-Key>"; 
 
 		Scanner scanner = new Scanner(username, APIKey);
 

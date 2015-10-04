@@ -1,3 +1,4 @@
+package copyleaks.sdk.api;
 
 import java.util.UUID;
 
@@ -13,11 +14,11 @@ import org.json.JSONException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import Exceptions.CommandFailedException;
-import Models.LoginToken;
-import Models.ResultRecord;
-import Models.Responses.BadResponse;
-import Models.Responses.CheckStatusResponse;
+import copyleaks.sdk.api.exceptions.CommandFailedException;
+import copyleaks.sdk.api.models.LoginToken;
+import copyleaks.sdk.api.models.ResultRecord;
+import copyleaks.sdk.api.models.responses.BadResponse;
+import copyleaks.sdk.api.models.responses.CheckStatusResponse;
 
 public class ScannerProcess {
 	public UUID PID;
@@ -60,7 +61,7 @@ public class ScannerProcess {
 		request.setHeader("Accept", HttpContentTypes.Json);
 		request.setHeader("Content-Type", HttpContentTypes.Json);
 		request.setHeader("User-Agent", Resources.USER_AGENT);
-		request.addHeader("Authorization", String.format("%1$s %2$s", "Bearer", this.SecurityToken.getToken()));
+		request.addHeader("Authorization", String.format("%1$s %2$s", "Bearer", this.SecurityToken.getTemporarySecurityCode()));
 		Gson gson = new GsonBuilder().create();
 		HttpResponse msg = client.execute(request);
 		if (msg.getStatusLine().getStatusCode() != 200)
@@ -94,7 +95,7 @@ public class ScannerProcess {
 		request.setHeader("Accept", HttpContentTypes.Json);
 		request.setHeader("Content-Type", HttpContentTypes.Json);
 		request.setHeader("User-Agent", Resources.USER_AGENT);
-		request.addHeader("Authorization", String.format("%1$s %2$s", "Bearer", this.SecurityToken.getToken()));
+		request.addHeader("Authorization", String.format("%1$s %2$s", "Bearer", this.SecurityToken.getTemporarySecurityCode()));
 		HttpResponse msg = client.execute(request);
 		if (msg.getStatusLine().getStatusCode() != 200) {
 			String errorResponse = msg.toString();

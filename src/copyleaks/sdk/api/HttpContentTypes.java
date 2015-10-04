@@ -1,3 +1,4 @@
+package copyleaks.sdk.api;
 
 final class HttpContentTypes {
 	public static final String Json="application/json";

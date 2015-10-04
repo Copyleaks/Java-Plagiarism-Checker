@@ -1,3 +1,5 @@
+package copyleaks.sdk.api;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,20 +19,25 @@ import org.json.JSONException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import Exceptions.CommandFailedException;
-import Models.*;
-import Models.Responses.*;
+import copyleaks.sdk.api.exceptions.CommandFailedException;
+import copyleaks.sdk.api.models.*;
+import copyleaks.sdk.api.models.responses.*;
 
+/**
+ * Handle user operations (such as: authentication and retrieve user account information). 
+ *
+ */
 public class UserAuthentication{
-	/// <summary>
-	/// Log-in into copyleaks authentication system.
-	/// </summary>
-	/// <param name="username">User name</param>
-	/// <param name="apiKey">Password</param>
-	/// <returns>Login Token to use while accessing resources.</returns>
-	/// <exception cref="ArgumentException">Occur when the username and\or
-	/// password is empty</exception>
-	/// <exception cref="JsonException">ALON</exception>
+	/**
+	 * Log-in into Copyleaks authentication system.
+	 * @param username User-name to login with.
+	 * @param apiKey User secret information.
+	 * @return A token to be used for accessing Copyleaks services.
+	 * @throws ClientProtocolException
+	 * @throws IOException
+	 * @throws JSONException
+	 * @throws CommandFailedException
+	 */
 	public static LoginToken Login(String username, String apiKey) throws ClientProtocolException, IOException, JSONException, CommandFailedException {
 		LoginToken loginToken;
 		HttpClient client = HttpClientBuilder.create().build();
@@ -56,8 +63,9 @@ public class UserAuthentication{
 		HttpEntity entity = msg.getEntity();
 		String json = EntityUtils.toString(entity, "UTF-8");
 
-		if (StringIsNullOrEmpty(json))
+		if (json == null || json.isEmpty())
 			throw new JSONException("This request could not be processed.");
+		
 		loginToken = gson.fromJson(json, LoginToken.class);
 		if (loginToken == null)
 			throw new JSONException("Unable to process server response.");
@@ -65,7 +73,13 @@ public class UserAuthentication{
 		return loginToken;
 	}
 
-	public static int CountCredits(LoginToken token) throws Exception {
+	/**
+	 * Get the user credits balance
+	 * @param token Token for the server to identify the caller. 
+	 * @return The current credit balance.
+	 * @throws Exception
+	 */
+	public static int getCreditBalance(LoginToken token) throws Exception {
 		token.Validate();
 		Gson gson = new GsonBuilder().create();
 
@@ -85,19 +99,11 @@ public class UserAuthentication{
 
 		HttpEntity entity = msg.getEntity();
 		String json = EntityUtils.toString(entity, "UTF-8");
-		if (StringIsNullOrEmpty(json))
+		if (json == null || json.isEmpty())
 			throw new JSONException("Unable to process server response.");
 
 		CountCreditsResponse res = gson.fromJson(json, CountCreditsResponse.class);
 
 		return res.getAmount();
-	}
-
-	public static boolean StringIsNullOrEmpty(String string) {
-		if (string == null || string == "") {
-			return true;
-		} else {
-			return false;
-		}
 	}
 }

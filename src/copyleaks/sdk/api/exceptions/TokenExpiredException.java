@@ -1,8 +1,8 @@
-package Exceptions;
+package copyleaks.sdk.api.exceptions;
 
 import java.security.AccessControlException;
 
-import Models.LoginToken;
+import copyleaks.sdk.api.models.LoginToken;
 
 public class TokenExpiredException extends AccessControlException
 {
