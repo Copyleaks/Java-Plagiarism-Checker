@@ -51,7 +51,7 @@ public class Scanner
 	}
 
 	public Scanner(String username, String APIKey)
-			throws ClientProtocolException, IOException, JSONException, CommandFailedException
+			throws IOException, JSONException, CommandFailedException
 	{
 
 		setToken(UserAuthentication.Login(username, APIKey));

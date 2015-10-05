@@ -38,7 +38,8 @@ public class UserAuthentication{
 	 * @throws JSONException
 	 * @throws CommandFailedException
 	 */
-	public static LoginToken Login(String username, String apiKey) throws ClientProtocolException, IOException, JSONException, CommandFailedException {
+	public static LoginToken Login(String username, String apiKey) 
+			throws IOException, JSONException, CommandFailedException {
 		LoginToken loginToken;
 		HttpClient client = HttpClientBuilder.create().build();
 		Gson gson = new GsonBuilder().create();
