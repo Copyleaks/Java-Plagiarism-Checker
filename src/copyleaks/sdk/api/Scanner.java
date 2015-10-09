@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.entity.mime.content.FileBody;
 import org.json.JSONException;
 
@@ -53,7 +52,6 @@ public class Scanner
 	public Scanner(String username, String APIKey)
 			throws IOException, JSONException, CommandFailedException
 	{
-
 		setToken(UserAuthentication.Login(username, APIKey));
 		// This security token can be use multiple times, until it will be
 		// expired (48 hours).

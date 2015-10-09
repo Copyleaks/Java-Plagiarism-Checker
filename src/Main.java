@@ -1,6 +1,7 @@
 
 import java.io.IOException;
 import java.net.URI;
+
 import org.json.JSONException;
 
 import copyleaks.sdk.api.Scanner;
@@ -13,21 +14,33 @@ public class Main
 	public static void main(String[] args)
 			throws IOException, JSONException, CommandFailedException
 	{
+		// Usage:
+		// ------
+		// ./AppName "YOUR-USERNAME" "YOUR-API-KEY"
+		
+		if (args.length != 2)
+		{
+			System.out.println("Bad input!");
+			System.out.println();
+			System.out.println("Usage:");
+			System.out.println(String.format("./AppName %2$s %3$s", "YOUR-USERNAME", "YOUR-PASSWORD"));
+		}
+		
 		// For more information, visit Copyleaks How-To page:
 		// https://api.copyleaks.com/Guides/HowToUse
 
 		// Creating Copyleaks account: https://copyleaks.com/Account/Signup
 		// Use your account information:
-		String username = "<Your-Username>";
+		String username = args[0];
 
 		// Generate your API Key --> https://copyleaks.com/Account/Manage
-		String APIKey = "<Your-Key>"; 
+		String APIKey = args[1]; 
 
 		Scanner scanner = new Scanner(username, APIKey);
 
 		try
 		{
-			ResultRecord[] results = scanner.ScanUrl(new URI("<Path-To-File>"));
+			ResultRecord[] results = scanner.ScanUrl(new URI("<URL>"));
 			// Another scanning option --> scanner.ScanLocalTextualFile(file)
 
 			if (results.length == 0)
