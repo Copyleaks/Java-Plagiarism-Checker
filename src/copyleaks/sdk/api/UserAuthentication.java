@@ -14,7 +14,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONException;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -44,7 +43,7 @@ public class UserAuthentication
 	 * @throws CommandFailedException
 	 */
 	public static LoginToken Login(String username, String apiKey)
-			throws IOException, JSONException, CommandFailedException
+			throws IOException, CommandFailedException
 	{
 		LoginToken loginToken;
 		HttpClient client = HttpClientBuilder.create().build();
@@ -80,7 +79,7 @@ public class UserAuthentication
 			}
 
 			if (response == null)
-				throw new JSONException("Unable to process server response.");
+				throw new RuntimeException("Unable to process server response.");
 			else
 				throw new CommandFailedException(msg.getStatusLine().toString(), msg);
 		}
@@ -88,11 +87,11 @@ public class UserAuthentication
 		String json = EntityUtils.toString(entity, "UTF-8");
 
 		if (json == null || json.isEmpty())
-			throw new JSONException("This request could not be processed.");
+			throw new RuntimeException("This request could not be processed.");
 
 		loginToken = gson.fromJson(json, LoginToken.class);
 		if (loginToken == null)
-			throw new JSONException("Unable to process server response.");
+			throw new RuntimeException("Unable to process server response.");
 
 		return loginToken;
 	}
@@ -120,7 +119,7 @@ public class UserAuthentication
 			String errorResponse = msg.getStatusLine().toString();
 			BadLoginResponse response = gson.fromJson(errorResponse, BadLoginResponse.class);
 			if (response == null)
-				throw new JSONException("Unable to process server response.");
+				throw new RuntimeException("Unable to process server response.");
 			else
 				throw new CommandFailedException(response.getMessage(), msg);
 		}
@@ -128,7 +127,7 @@ public class UserAuthentication
 		HttpEntity entity = msg.getEntity();
 		String json = EntityUtils.toString(entity, "UTF-8");
 		if (json == null || json.isEmpty())
-			throw new JSONException("Unable to process server response.");
+			throw new RuntimeException("Unable to process server response.");
 
 		CountCreditsResponse res = gson.fromJson(json, CountCreditsResponse.class);
 

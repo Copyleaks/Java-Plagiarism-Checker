@@ -9,7 +9,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONException;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -69,7 +68,7 @@ public class ScannerProcess {
 				String errorResponse = msg.toString();
 				BadResponse error = gson.fromJson(errorResponse, BadResponse.class);
 				if (error == null)
-					throw new JSONException("Unable to process server response.");
+					throw new RuntimeException("Unable to process server response.");
 				else
 					throw new CommandFailedException(error.Message, msg);
 			}
@@ -101,7 +100,7 @@ public class ScannerProcess {
 			String errorResponse = msg.toString();
 			BadResponse error = gson.fromJson(errorResponse, BadResponse.class);
 			if (error == null)
-				throw new JSONException("Unable to process server response.");
+				throw new RuntimeException("Unable to process server response.");
 			else
 				throw new CommandFailedException(error.Message, msg);
 		}

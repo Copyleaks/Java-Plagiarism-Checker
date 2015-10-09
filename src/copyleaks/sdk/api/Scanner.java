@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.net.URI;
 
 import org.apache.http.entity.mime.content.FileBody;
-import org.json.JSONException;
 
 import copyleaks.sdk.api.exceptions.CommandFailedException;
 import copyleaks.sdk.api.models.LoginToken;
@@ -50,7 +49,7 @@ public class Scanner
 	}
 
 	public Scanner(String username, String APIKey)
-			throws IOException, JSONException, CommandFailedException
+			throws IOException, CommandFailedException
 	{
 		setToken(UserAuthentication.Login(username, APIKey));
 		// This security token can be use multiple times, until it will be

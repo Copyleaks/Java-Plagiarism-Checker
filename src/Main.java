@@ -2,8 +2,6 @@
 import java.io.IOException;
 import java.net.URI;
 
-import org.json.JSONException;
-
 import copyleaks.sdk.api.Scanner;
 import copyleaks.sdk.api.exceptions.CommandFailedException;
 import copyleaks.sdk.api.models.ResultRecord;
@@ -12,7 +10,7 @@ public class Main
 {
 
 	public static void main(String[] args)
-			throws IOException, JSONException, CommandFailedException
+			throws IOException, CommandFailedException
 	{
 		// Usage:
 		// ------
@@ -36,11 +34,11 @@ public class Main
 		// Generate your API Key --> https://copyleaks.com/Account/Manage
 		String APIKey = args[1]; 
 
-		Scanner scanner = new Scanner(username, APIKey);
-
 		try
 		{
-			ResultRecord[] results = scanner.ScanUrl(new URI("<URL>"));
+			Scanner scanner = new Scanner(username, APIKey);
+			
+			ResultRecord[] results = scanner.ScanUrl(new URI("http://discus.co.il"));
 			// Another scanning option --> scanner.ScanLocalTextualFile(file)
 
 			if (results.length == 0)
