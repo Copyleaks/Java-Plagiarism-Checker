@@ -38,7 +38,7 @@ public class Main
 		{
 			Scanner scanner = new Scanner(username, APIKey);
 			
-			ResultRecord[] results = scanner.ScanUrl(new URI("http://discus.co.il"));
+			ResultRecord[] results = scanner.ScanUrl(new URI("YOUR-URL"));
 			// Another scanning option --> scanner.ScanLocalTextualFile(file)
 
 			if (results.length == 0)
