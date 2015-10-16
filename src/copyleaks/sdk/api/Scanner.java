@@ -88,9 +88,10 @@ public class Scanner
 		return process.GetResults();
 	}
 
-	public ResultRecord[] ScanLocalTextualFile(File file)
+	public ResultRecord[] ScanLocalTextualFile(String filePath)
 			throws SecurityTokenException, CommandFailedException, FileNotFoundException
 	{
+		File file = new File(filePath);
 		if (!file.exists())
 			throw new FileNotFoundException();
 
