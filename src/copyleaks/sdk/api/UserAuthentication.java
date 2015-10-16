@@ -5,13 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-
-import org.apache.http.message.BasicNameValuePair;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -59,10 +54,10 @@ public class UserAuthentication
 			conn = CopyleaksClient.getClient(url, RequestMethod.POST, HttpContentTypes.UrlEncoded, HttpContentTypes.Json);
 			
 			// Add parameters
-			List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-			urlParameters.add(new BasicNameValuePair("username", username));
-			urlParameters.add(new BasicNameValuePair("apiKey", apiKey));
-			CopyleaksClient.HandleString.attach(conn, HttpURLConnectionHelper.getQuery(urlParameters));
+			Map<String, String> dic = new HashMap<String, String>();
+			dic.put("username", username);
+			dic.put("apiKey", apiKey);
+			CopyleaksClient.HandleString.attach(conn, HttpURLConnectionHelper.getQuery(dic));
 			// Get return message
 			if (conn.getResponseCode() != 200)
 			{

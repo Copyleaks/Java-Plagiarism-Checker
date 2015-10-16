@@ -18,8 +18,6 @@ import copyleaks.sdk.api.models.LoginToken;
 
 public class CopyleaksClient
 {
-	private static final String Encoding = "UTF-8";
-
 	public static HttpURLConnection getClient(URL url, RequestMethod methodType, String requestFormat, String responseFormat)
 			throws SecurityTokenException, IOException
 	{
@@ -31,7 +29,7 @@ public class CopyleaksClient
 					throws IOException, SecurityTokenException
 	{
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		conn.addRequestProperty("Accept-Charset", Encoding);
+		conn.addRequestProperty("Accept-Charset", Resources.Encoding);
 		conn.addRequestProperty("Content-Type", requestFormat);
 		conn.addRequestProperty("Accept", responseFormat);
 		conn.addRequestProperty("User-Agent", Resources.USER_AGENT);
@@ -55,7 +53,7 @@ public class CopyleaksClient
 		{
 			try (
 					DataOutputStream os = new DataOutputStream(conn.getOutputStream());
-					BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, Encoding));
+					BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, Resources.Encoding));
 				)
 			{
 				if (content != null)
@@ -79,7 +77,7 @@ public class CopyleaksClient
 			
 			try (
 					DataOutputStream os = new DataOutputStream(conn.getOutputStream());
-					BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, Encoding));
+					BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, Resources.Encoding));
 					FileInputStream inputFile = new FileInputStream(file);
 				)
 			{

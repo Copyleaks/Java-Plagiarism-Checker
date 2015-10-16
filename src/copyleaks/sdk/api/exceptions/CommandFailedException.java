@@ -1,7 +1,5 @@
 package copyleaks.sdk.api.exceptions;
 
-import org.apache.http.HttpResponse;
-
 public class CommandFailedException extends Exception
 {
 	private static final long serialVersionUID = 1L;
@@ -23,19 +21,10 @@ public class CommandFailedException extends Exception
 		Description = description;
 	}
 
-	public CommandFailedException(HttpResponse msg)
-	{
-		super(String.format("HTTP Error code: %1$s", msg.getStatusLine().getStatusCode()));
-		this.setErrorCode(msg.getStatusLine().getStatusCode());
-	}
 	public CommandFailedException(String message, int statusCode)
 	{
 		super(String.format("Execution failed with the code %1$s:\n%2$s", statusCode, message));
-		this.ErrorCode = statusCode;
+		this.setErrorCode(statusCode);
 		this.setDescription(message);
-	}
-	public CommandFailedException(String message, HttpResponse statusCode)
-	{
-		throw new RuntimeException("not implemented");
 	}
 }

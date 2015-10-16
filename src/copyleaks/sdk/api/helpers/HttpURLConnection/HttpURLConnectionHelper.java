@@ -2,28 +2,28 @@ package copyleaks.sdk.api.helpers.HttpURLConnection;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
-import org.apache.http.NameValuePair;
+import copyleaks.sdk.api.Resources;
 
 public final class HttpURLConnectionHelper
 {
-	public static String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException
+	public static String getQuery(Map<String, String> dic) throws UnsupportedEncodingException
 	{
 		StringBuilder result = new StringBuilder();
 		boolean first = true;
 
-		for (NameValuePair pair : params)
+		for (Map.Entry<String,String> entry : dic.entrySet())
 		{
 			if (first)
 				first = false;
 			else
 				result.append("&");
 
-			result.append(URLEncoder.encode(pair.getName(), "UTF-8"));
+			result.append(URLEncoder.encode(entry.getKey(), Resources.Encoding));
 			result.append("=");
-			result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
+			result.append(URLEncoder.encode(entry.getValue(), Resources.Encoding));
 		}
 
 		return result.toString();
