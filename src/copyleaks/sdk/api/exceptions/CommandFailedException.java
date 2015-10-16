@@ -28,10 +28,14 @@ public class CommandFailedException extends Exception
 		super(String.format("HTTP Error code: %1$s", msg.getStatusLine().getStatusCode()));
 		this.setErrorCode(msg.getStatusLine().getStatusCode());
 	}
-	public CommandFailedException(String message, HttpResponse msg)
+	public CommandFailedException(String message, int statusCode)
 	{
-		super(String.format("Execution failed with the code %1$s:\n%2$s", msg.getStatusLine().getStatusCode(), message));
-		this.ErrorCode = msg.getStatusLine().getStatusCode();
+		super(String.format("Execution failed with the code %1$s:\n%2$s", statusCode, message));
+		this.ErrorCode = statusCode;
 		this.setDescription(message);
+	}
+	public CommandFailedException(String message, HttpResponse statusCode)
+	{
+		throw new RuntimeException("not implemented");
 	}
 }

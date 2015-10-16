@@ -4,8 +4,12 @@ import java.util.Date;
 
 import com.google.gson.annotations.SerializedName;
 
-public class LoginToken {
-	public LoginToken(String token, Date issued, Date expire) {
+import copyleaks.sdk.api.exceptions.SecurityTokenException;
+
+public class LoginToken
+{
+	public LoginToken(String token, Date issued, Date expire)
+	{
 		setTemporarySecurityCode(token);
 		setIssued(issued);
 		setExpire(expire);
@@ -14,51 +18,60 @@ public class LoginToken {
 	@SerializedName("access_token")
 	private String TemporarySecurityCode;
 
-	public String getTemporarySecurityCode() {
+	public String getTemporarySecurityCode()
+	{
 		return TemporarySecurityCode;
 	}
 
-	private void setTemporarySecurityCode(String token) {
+	private void setTemporarySecurityCode(String token)
+	{
 		this.TemporarySecurityCode = token;
 	}
 
 	@SerializedName(".issued")
 	private Date Issued;
 
-	Date getIssued() {
+	Date getIssued()
+	{
 		return Issued;
 	}
 
-	private void setIssued(Date issued) {
+	private void setIssued(Date issued)
+	{
 		this.Issued = issued;
 	}
 
 	@SerializedName(".expires")
 	private Date Expire;
 
-	public Date getExpire() {
+	public Date getExpire()
+	{
 		return Expire;
 	}
 
-	private void setExpire(Date expire) {
+	private void setExpire(Date expire)
+	{
 		this.Expire = expire;
 	}
 
 	@SerializedName("userName")
 	private String UserName;
 
-	public String getUserName() {
+	public String getUserName()
+	{
 		return UserName;
 	}
 
 	@SerializedName("token_type")
 	private String TokenType;
 
-	public String getTokenType() {
+	public String getTokenType()
+	{
 		return TokenType;
 	}
 
-	void setUsername(String tokenType) {
+	void setUsername(String tokenType)
+	{
 		this.TokenType = tokenType;
 	}
 
@@ -68,15 +81,25 @@ public class LoginToken {
 	/// </summary>
 	/// <exception cref="UnauthorizedAccessException">This token is
 	/// expired</exception>
-	public void Validate() throws Exception {
+	private void Validate() 
+		throws SecurityTokenException
+	{
 		Date currentDate = new Date();
 		if (currentDate.after(this.Expire))
-			throw new Exception(String.format("This token expired on %1$s", this.Expire));
-
+			throw new SecurityTokenException(this);
+	}
+	
+	public static void ValidateToken(LoginToken token)
+	{
+		if (token == null)
+			throw new SecurityTokenException();
+		else
+			token.Validate();
 	}
 
 	@Override
-	public String toString() {
+	public String toString()
+	{
 		return this.getTemporarySecurityCode();
 	}
 }

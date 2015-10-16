@@ -4,10 +4,16 @@ import java.security.AccessControlException;
 
 import copyleaks.sdk.api.models.LoginToken;
 
-public class TokenExpiredException extends AccessControlException
+public class SecurityTokenException 
+	extends AccessControlException
 {
 	private static final long serialVersionUID = 1L;
-	public TokenExpiredException(LoginToken token)
+	public SecurityTokenException()
+	{
+		super("Security token is missing!");
+		this.setToken(null);
+	}
+	public SecurityTokenException(LoginToken token)
 	{
 		super(String.format("This token expired on '%1$s'!", token.getExpire()));
 		this.setToken(token);
