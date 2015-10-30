@@ -74,7 +74,11 @@ public class ScannerProcess
 					HttpContentTypes.Json, HttpContentTypes.TextPlain);
 			if (conn.getResponseCode() != 200)
 			{
-				String errorResponse = Integer.toString(conn.getResponseCode());
+				String errorResponse;
+				try (InputStream inputStream = new BufferedInputStream(conn.getErrorStream()))
+				{
+					errorResponse = HttpURLConnectionHelper.convertStreamToString(inputStream);
+				}
 				BadLoginResponse response = gson.fromJson(errorResponse, BadLoginResponse.class);
 				if (response == null)
 					throw new RuntimeException("Unable to process server response.");
