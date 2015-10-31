@@ -141,7 +141,6 @@ public class Main
 				{
 					System.out.println();
 					System.out.println(String.format("Result %1$s:", i + 1));
-					System.out.println(String.format("Domain: %1$s", results[i].getDomain()));
 					System.out.println(String.format("Url: %1$s", results[i].getURL()));
 					System.out.println(String.format("Precents: %1$s", results[i].getPrecents()));
 					System.out.println(String.format("CopiedWords: %1$s", results[i].getNumberOfCopiedWords()));

@@ -3,7 +3,6 @@ package copyleaks.sdk.api;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.UUID;
 
@@ -117,7 +116,7 @@ public class ScannerProcess
 
 		String json;
 		URL url;
-		HttpURLConnection conn = null;
+		HttpsURLConnection conn = null;
 		Gson gson = new GsonBuilder().create();
 		try
 		{
@@ -185,7 +184,7 @@ public class ScannerProcess
 		LoginToken.ValidateToken(this.getSecurityToken());
 
 		URL url;
-		HttpURLConnection conn = null;
+		HttpsURLConnection conn = null;
 		Gson gson = new GsonBuilder().create();
 		try
 		{
