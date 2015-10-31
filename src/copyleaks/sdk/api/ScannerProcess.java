@@ -7,6 +7,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.UUID;
 
+import javax.net.ssl.HttpsURLConnection;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -63,7 +65,7 @@ public class ScannerProcess
 		LoginToken.ValidateToken(this.getSecurityToken());
 
 		URL url;
-		HttpURLConnection conn = null;
+		HttpsURLConnection conn = null;
 		Gson gson = new GsonBuilder().create();
 		String json;
 		try

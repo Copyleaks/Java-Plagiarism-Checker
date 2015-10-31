@@ -8,6 +8,8 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.net.ssl.HttpsURLConnection;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -47,7 +49,7 @@ public class UserAuthentication
 
 		// Open connection to Copyleaks and set properties
 		URL url = new URL(Resources.SERVICE_URI + Resources.LOGIN_PAGE);
-		HttpURLConnection conn = null;
+		HttpsURLConnection conn = null;
 		
 		try
 		{

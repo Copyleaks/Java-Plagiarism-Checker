@@ -7,8 +7,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.URL;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import copyleaks.sdk.api.RequestMethod;
 import copyleaks.sdk.api.Resources;
@@ -18,17 +19,17 @@ import copyleaks.sdk.api.models.LoginToken;
 
 public class CopyleaksClient
 {
-	public static HttpURLConnection getClient(URL url, RequestMethod methodType, String requestFormat, String responseFormat)
+	public static HttpsURLConnection getClient(URL url, RequestMethod methodType, String requestFormat, String responseFormat)
 			throws SecurityTokenException, IOException
 	{
 		return getClient(url, null, methodType, requestFormat, responseFormat);
 	}
 
-	public static HttpURLConnection getClient(URL url, LoginToken securityToken, RequestMethod methodType,
+	public static HttpsURLConnection getClient(URL url, LoginToken securityToken, RequestMethod methodType,
 			String requestFormat, String responseFormat) 
 					throws IOException, SecurityTokenException
 	{
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
 		conn.addRequestProperty("Accept-Charset", Resources.Encoding);
 		conn.addRequestProperty("Content-Type", requestFormat);
 		conn.addRequestProperty("Accept", responseFormat);
@@ -48,7 +49,7 @@ public class CopyleaksClient
 
 	public static class HandleString
 	{
-		public static void attach(HttpURLConnection conn, String content)
+		public static void attach(HttpsURLConnection conn, String content)
 				throws IOException, UnsupportedEncodingException
 		{
 			try (
@@ -68,7 +69,7 @@ public class CopyleaksClient
 		final static String crlf = "\r\n";
 		final static String twoHyphens = "--";
 		
-		public static void attach(HttpURLConnection conn, File file) 
+		public static void attach(HttpsURLConnection conn, File file) 
 				throws IOException, UnsupportedEncodingException
 		{
 			final String boundary =  "file." + FileHelpers.getFileExtension(file);

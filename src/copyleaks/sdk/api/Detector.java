@@ -4,9 +4,10 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -70,7 +71,7 @@ public class Detector
 		CreateCommandRequest model = new CreateCommandRequest();
 		model.setURL(url.toString());
 		URL reqUrl;
-		HttpURLConnection conn = null;
+		HttpsURLConnection conn = null;
 		try
 		{
 			reqUrl = new URL(Resources.ServiceEntryPoint + Resources.ServiceVersion + "/detector/create-by-url");
@@ -134,7 +135,7 @@ public class Detector
 		String json;
 		Gson gson = new GsonBuilder().create();
 		URL reqUrl;
-		HttpURLConnection conn = null;
+		HttpsURLConnection conn = null;
 		try
 		{
 			reqUrl = new URL(Resources.ServiceEntryPoint + Resources.ServiceVersion + "/detector/create-by-file");
@@ -199,7 +200,7 @@ public class Detector
 		String json;
 		Gson gson = new GsonBuilder().create();
 		URL reqUrl;
-		HttpURLConnection conn = null;
+		HttpsURLConnection conn = null;
 		try
 		{
 			reqUrl = new URL(Resources.ServiceEntryPoint + Resources.ServiceVersion + "/detector/create-by-file-ocr");

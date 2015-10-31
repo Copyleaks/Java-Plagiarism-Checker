@@ -127,7 +127,8 @@ public class Main
 			else // commandLine.hasOption(ARG_LOCALDOCUMENT_KEY)
 			{
 				String val = commandLine.getOptionValue(ARG_LOCALDOCUMENT_KEY);
-				results = scanner.ScanLocalTextualFile(val);
+				//results = scanner.ScanLocalTextualFile(val);
+				results = scanner.ScanLocalOcrFile(val);
 			}
 
 			if (results.length == 0)
