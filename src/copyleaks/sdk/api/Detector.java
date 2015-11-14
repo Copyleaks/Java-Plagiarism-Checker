@@ -62,7 +62,7 @@ public class Detector
 	 * @throws CommandFailedException
 	 * @throws Exception
 	 */
-	public ScannerProcess CreateByUrl(URI url) throws SecurityTokenException, CommandFailedException
+	public CopyleaksProcess CreateByUrl(URI url) throws SecurityTokenException, CommandFailedException
 	{
 		LoginToken.ValidateToken(this.getToken()); // Token Validation
 
@@ -112,7 +112,7 @@ public class Detector
 			throw new RuntimeException("Unable to process server response.");
 
 		CreateResourceResponse response = gson.fromJson(json, CreateResourceResponse.class);
-		return new ScannerProcess(this.getToken(), response.getProcessId());
+		return new CopyleaksProcess(this.getToken(), response);
 	}
 
 	/**
@@ -128,7 +128,7 @@ public class Detector
 	 * @throws CommandFailedException
 	 * @throws Exception
 	 */
-	public ScannerProcess CreateByFile(File localfile) throws SecurityTokenException, CommandFailedException
+	public CopyleaksProcess CreateByFile(File localfile) throws SecurityTokenException, CommandFailedException
 	{
 		LoginToken.ValidateToken(this.getToken()); // Token Validation
 
@@ -177,7 +177,7 @@ public class Detector
 			throw new RuntimeException("Unable to process server response.");
 
 		CreateResourceResponse response = gson.fromJson(json, CreateResourceResponse.class);
-		return new ScannerProcess(this.getToken(), response.getProcessId());
+		return new CopyleaksProcess(this.getToken(), response);
 	}
 
 	/**
@@ -192,7 +192,7 @@ public class Detector
 	 * @throws CommandFailedException 
 	 * @throws Exception
 	 */
-	public ScannerProcess CreateByOCR(File localfile) 
+	public CopyleaksProcess CreateByOCR(File localfile) 
 			throws CommandFailedException 
 	{
 		LoginToken.ValidateToken(this.getToken()); // Token Validation
@@ -242,47 +242,6 @@ public class Detector
 			throw new RuntimeException("Unable to process server response.");
 
 		CreateResourceResponse response = gson.fromJson(json, CreateResourceResponse.class);
-		return new ScannerProcess(this.getToken(), response.getProcessId());
-		// // Token Validation
-		// if (this.getToken() == null)
-		// throw new Exception("Empty token!");
-		// else
-		// this.getToken().Validate();
-		// // File Validation
-		// if (localfile == null)
-		// throw new FileNotFoundException();
-		//
-		// CreateCommandRequest req = new CreateCommandRequest();
-		// req.setURL(localfile.getFile().getPath());
-		// HttpClient client = HttpClientBuilder.create().build();
-		// Gson gson = new GsonBuilder().create();
-		// MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-		// // Post to the server
-		// HttpPost post = new HttpPost(Resources.ServiceEntryPoint +
-		// Resources.ServiceVersion + "/detector/create-by-file-ocr");
-		// builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-		// builder.addPart("document", localfile);
-		// //post.addHeader("Accept", Content_Type.Json);
-		// post.setHeader("User-Agent", Resources.USER_AGENT);
-		// post.addHeader("Authorization", String.format("Bearer %1$s",
-		// this.getToken().getTemporarySecurityCode()));
-		// HttpEntity entity = builder.build();
-		// post.setEntity(entity);
-		// // Response from the server
-		// HttpResponse msg = client.execute(post);
-		// HttpEntity msgEntity = msg.getEntity();
-		// if (msg.getStatusLine().getStatusCode() != 200) {
-		// String json_error = EntityUtils.toString(entity, "UTF-8");
-		// BadResponse error = gson.fromJson(json_error, BadResponse.class);
-		// if (json_error == null)
-		// throw new CommandFailedException(msg);
-		// else
-		// throw new CommandFailedException(error.Message, msg);
-		// }
-		//
-		// String json = EntityUtils.toString(msgEntity, "UTF-8");
-		// CreateResourceResponse response = gson.fromJson(json,
-		// CreateResourceResponse.class);
-		// return new ScannerProcess(this.getToken(), response.getProcessId());
+		return new CopyleaksProcess(this.getToken(), response);
 	}
 }

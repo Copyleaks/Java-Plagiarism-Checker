@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Date;
 import java.util.UUID;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -20,8 +21,10 @@ import copyleaks.sdk.api.models.LoginToken;
 import copyleaks.sdk.api.models.ResultRecord;
 import copyleaks.sdk.api.models.responses.BadLoginResponse;
 import copyleaks.sdk.api.models.responses.CheckStatusResponse;
+import copyleaks.sdk.api.models.responses.CreateResourceResponse;
+import copyleaks.sdk.api.models.responses.ProcessInList;
 
-public class ScannerProcess
+public class CopyleaksProcess
 {
 	public UUID PID;
 
@@ -35,6 +38,18 @@ public class ScannerProcess
 		PID = processId;
 	}
 
+	private Date CreationTimeUTC;
+	
+	public Date getCreationTimeUTC()
+	{
+		return CreationTimeUTC;
+	}
+
+	private void setCreationTimeUTC(Date creationTimeUTC)
+	{
+		CreationTimeUTC = creationTimeUTC;
+	}
+	
 	private LoginToken SecurityToken;
 
 	LoginToken getSecurityToken()
@@ -47,10 +62,18 @@ public class ScannerProcess
 		SecurityToken = securityToken;
 	}
 
-	public ScannerProcess(LoginToken authorizationToken, UUID processId)
+	CopyleaksProcess(LoginToken authorizationToken, ProcessInList process)
 	{
-		setPID(processId);
-		setSecurityToken(authorizationToken);
+		this.setPID(process.getProcessId());
+		this.setCreationTimeUTC(process.getCreationTimeUTC());
+		this.setSecurityToken(authorizationToken);
+	}
+	
+	CopyleaksProcess(LoginToken authorizationToken, CreateResourceResponse response)
+	{
+		this.setPID(response.getProcessId());
+		this.setCreationTimeUTC(response.getCreationTimeUTC());
+		this.setSecurityToken(authorizationToken);
 	}
 
 	/// <summary>
@@ -59,7 +82,8 @@ public class ScannerProcess
 	/// <returns>Return True in case that the operation on is finished by the
 	/// server</returns>
 	/// <exception cref="UnauthorizedAccessException"></exception>
-	public Boolean IsCompleted() throws SecurityTokenException, CommandFailedException
+	public Boolean IsCompleted() 
+			throws SecurityTokenException, CommandFailedException
 	{
 		LoginToken.ValidateToken(this.getSecurityToken());
 
@@ -110,7 +134,8 @@ public class ScannerProcess
 	/// </summary>
 	/// <returns>Scanning results</returns>
 	/// <exception cref="UnauthorizedAccessException"></exception>
-	public ResultRecord[] GetResults() throws SecurityTokenException, CommandFailedException
+	public ResultRecord[] GetResults() 
+			throws SecurityTokenException, CommandFailedException
 	{
 		LoginToken.ValidateToken(this.getSecurityToken());
 
@@ -151,35 +176,13 @@ public class ScannerProcess
 			if (conn != null)
 				conn.disconnect();
 		}
-		// HttpClient client = HttpClientBuilder.create().build();
-		// Gson gson = new GsonBuilder().create();
-		//
-		// HttpGet request = new
-		// HttpGet(String.format(Resources.ServiceEntryPoint +
-		// "%1$s/detector/%2$s/result", Resources.ServiceVersion,
-		// getPID()));
-		// request.setHeader("Accept", HttpContentTypes.Json);
-		// request.setHeader("Content-Type", HttpContentTypes.Json);
-		// request.setHeader("User-Agent", Resources.USER_AGENT);
-		// request.addHeader("Authorization", String.format("%1$s %2$s",
-		// "Bearer", this.SecurityToken.getTemporarySecurityCode()));
-		// HttpResponse msg = client.execute(request);
-		// if (msg.getStatusLine().getStatusCode() != 200) {
-		// String errorResponse = msg.toString();
-		// BadResponse error = gson.fromJson(errorResponse, BadResponse.class);
-		// if (error == null)
-		// throw new RuntimeException("Unable to process server response.");
-		// else
-		// throw new CommandFailedException(error.Message, msg);
-		// }
-		//
-		// HttpEntity entity = msg.getEntity();
-		// String json = EntityUtils.toString(entity, "UTF-8");
+		
 		return gson.fromJson(json, ResultRecord[].class);
 	}
 
 	/// Delete finished process
-	public void Delete() throws SecurityTokenException, CommandFailedException
+	public void Delete() 
+			throws SecurityTokenException, CommandFailedException
 	{
 		LoginToken.ValidateToken(this.getSecurityToken());
 
@@ -209,14 +212,11 @@ public class ScannerProcess
 			if (conn != null)
 				conn.disconnect();
 		}
-		// HttpClient client = HttpClientBuilder.create().build();
-		// HttpPost request = new HttpPost(String.format("detector/%1$s/delete",
-		// this.PID));
-		// request.setHeader("Accept", HttpContentTypes.Json);
-		// request.setHeader("User-Agent", Resources.USER_AGENT);
-		// HttpResponse msg = client.execute(request);
-		// if (msg.getStatusLine().getStatusCode() != 200)
-		// throw new CommandFailedException(msg.getStatusLine().toString(),
-		// msg);
+	}
+	
+	@Override 
+	public String toString()
+	{
+		return this.getPID().toString();
 	}
 }

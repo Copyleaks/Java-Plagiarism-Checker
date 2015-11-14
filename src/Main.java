@@ -10,7 +10,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import copyleaks.sdk.api.Scanner;
+import copyleaks.sdk.api.CopyleaksAccount;
 import copyleaks.sdk.api.models.ResultRecord;
 
 public class Main
@@ -100,8 +100,10 @@ public class Main
 
 		try
 		{
-			Scanner scanner = new Scanner(commandLine.getOptionValue(ARG_USERNAME_KEY),
-					commandLine.getOptionValue(ARG_APIKEY_KEY));
+			CopyleaksAccount scanner = new CopyleaksAccount(
+					commandLine.getOptionValue(ARG_USERNAME_KEY),
+					commandLine.getOptionValue(ARG_APIKEY_KEY)
+				);
 			
 			int creditsBalance = scanner.getCredits();
 			if (creditsBalance == 0)
@@ -127,13 +129,12 @@ public class Main
 			else // commandLine.hasOption(ARG_LOCALDOCUMENT_KEY)
 			{
 				String val = commandLine.getOptionValue(ARG_LOCALDOCUMENT_KEY);
-				//results = scanner.ScanLocalTextualFile(val);
-				results = scanner.ScanLocalOcrFile(val);
+				results = scanner.ScanLocalTextualFile(val);
 			}
 
 			if (results.length == 0)
 			{
-				System.out.println("\tNo results.");
+				System.out.println("No results.");
 			}
 			else
 			{
@@ -142,7 +143,7 @@ public class Main
 					System.out.println();
 					System.out.println(String.format("Result %1$s:", i + 1));
 					System.out.println(String.format("Url: %1$s", results[i].getURL()));
-					System.out.println(String.format("Precents: %1$s", results[i].getPrecents()));
+					System.out.println(String.format("Percents: %1$s", results[i].getPercents()));
 					System.out.println(String.format("CopiedWords: %1$s", results[i].getNumberOfCopiedWords()));
 				}
 			}

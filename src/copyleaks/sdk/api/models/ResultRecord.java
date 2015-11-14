@@ -12,12 +12,12 @@ public class ResultRecord {
 		return URL;
 	}
 
-	@SerializedName("Precents")
+	@SerializedName("Percents")
 
-	private int Precents;
+	private int Percents;
 
-	public int getPrecents() {
-		return Precents;
+	public int getPercents() {
+		return Percents;
 	}
 
 	@SerializedName("NumberOfCopiedWords")
