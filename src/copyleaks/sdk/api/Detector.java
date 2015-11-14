@@ -67,7 +67,7 @@ public class Detector
 		LoginToken.ValidateToken(this.getToken()); // Token Validation
 
 		String json;
-		Gson gson = new GsonBuilder().create();
+		Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy HH:mm:ss").create();
 		CreateCommandRequest model = new CreateCommandRequest();
 		model.setURL(url.toString());
 		URL reqUrl;
@@ -133,7 +133,7 @@ public class Detector
 		LoginToken.ValidateToken(this.getToken()); // Token Validation
 
 		String json;
-		Gson gson = new GsonBuilder().create();
+		Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy HH:mm:ss").create();
 		URL reqUrl;
 		HttpsURLConnection conn = null;
 		try
@@ -198,7 +198,7 @@ public class Detector
 		LoginToken.ValidateToken(this.getToken()); // Token Validation
 
 		String json;
-		Gson gson = new GsonBuilder().create();
+		Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy HH:mm:ss").create();
 		URL reqUrl;
 		HttpsURLConnection conn = null;
 		try
