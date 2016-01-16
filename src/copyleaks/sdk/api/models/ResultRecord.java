@@ -2,13 +2,14 @@ package copyleaks.sdk.api.models;
 
 import com.google.gson.annotations.SerializedName;
 
-public class ResultRecord {
-
+public class ResultRecord implements Comparable<ResultRecord>
+{
 	@SerializedName("URL")
 
 	private String URL;
 
-	public String getURL() {
+	public String getURL()
+	{
 		return URL;
 	}
 
@@ -16,7 +17,8 @@ public class ResultRecord {
 
 	private int Percents;
 
-	public int getPercents() {
+	public int getPercents()
+	{
 		return Percents;
 	}
 
@@ -24,7 +26,13 @@ public class ResultRecord {
 
 	private int NumberOfCopiedWords;
 
-	public int getNumberOfCopiedWords() {
+	public int getNumberOfCopiedWords()
+	{
 		return NumberOfCopiedWords;
 	}
+	
+	@Override
+	public int compareTo(ResultRecord o) {
+		return Integer.compare(this.getPercents(), o.getPercents());
+    }
 }

@@ -5,7 +5,7 @@ import java.net.URLEncoder;
 import java.util.Map;
 import java.util.Scanner;
 
-import copyleaks.sdk.api.Resources;
+import copyleaks.sdk.api.Settings;
 
 public final class HttpURLConnectionHelper
 {
@@ -21,9 +21,9 @@ public final class HttpURLConnectionHelper
 			else
 				result.append("&");
 
-			result.append(URLEncoder.encode(entry.getKey(), Resources.Encoding));
+			result.append(URLEncoder.encode(entry.getKey(), Settings.Encoding));
 			result.append("=");
-			result.append(URLEncoder.encode(entry.getValue(), Resources.Encoding));
+			result.append(URLEncoder.encode(entry.getValue(), Settings.Encoding));
 		}
 
 		return result.toString();

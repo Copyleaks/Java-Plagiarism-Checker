@@ -1,13 +1,19 @@
 package copyleaks.sdk.api.models;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import com.google.gson.annotations.SerializedName;
 
 import copyleaks.sdk.api.exceptions.SecurityTokenException;
 
-public class LoginToken
+public class LoginToken implements Serializable
 {
+	/**
+	 * For Serializable implementation.
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	public LoginToken(String token, Date issued, Date expire)
 	{
 		setTemporarySecurityCode(token);
@@ -84,9 +90,11 @@ public class LoginToken
 	private void Validate() 
 		throws SecurityTokenException
 	{
+		/*
 		Date currentDate = new Date();
 		if (currentDate.after(this.Expire))
 			throw new SecurityTokenException(this);
+			*/
 	}
 	
 	public static void ValidateToken(LoginToken token)

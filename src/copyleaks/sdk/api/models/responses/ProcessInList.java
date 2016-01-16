@@ -1,6 +1,7 @@
 package copyleaks.sdk.api.models.responses;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.UUID;
 
 public class ProcessInList
@@ -11,6 +12,8 @@ public class ProcessInList
 
 	private String Status;
 
+	private HashMap<String, String> CustomFields;
+	
 	public UUID getProcessId()
 	{
 		return ProcessId;
@@ -24,5 +27,10 @@ public class ProcessInList
 	public String getStatus()
 	{
 		return Status;
+	}
+	
+	public HashMap<String, String> getCustomFields()
+	{
+		return CustomFields;
 	}
 }

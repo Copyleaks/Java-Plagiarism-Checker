@@ -6,4 +6,10 @@ public class CheckStatusResponse {
 	public String getStatus() {
 		return Status;
 	}
+	
+	private int ProgressPercents;
+	public int getProgressPercents()
+	{
+		return ProgressPercents;
+	}
 }

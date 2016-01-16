@@ -1,6 +1,6 @@
 package copyleaks.sdk.api;
 
-final class HttpContentTypes
+public final class HttpContentTypes
 {
 	public static final String Json = "application/json";
 	public static final String Xml = "application/xml";

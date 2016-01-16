@@ -8,8 +8,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.net.ssl.HttpsURLConnection;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -21,73 +19,47 @@ import copyleaks.sdk.api.exceptions.SecurityTokenException;
 import copyleaks.sdk.api.models.*;
 import copyleaks.sdk.api.models.responses.*;
 
-/**
- * Handle user operations (such as: authentication and retrieve user account
- * information).
- *
- */
 public class UserAuthentication
 {
 	/**
-	 * Log-in into Copyleaks authentication system.
+	 * Login to Copyleaks authentication server.
 	 * 
-	 * @param username
-	 *            User-name to login with.
+	 * @param email
+	 *            Account email
 	 * @param apiKey
-	 *            User secret information.
-	 * @return A token to be used for accessing Copyleaks services.
-	 * @throws ClientProtocolException
-	 * @throws IOException
-	 * @throws JSONException
+	 *            Copyleaks API key
+	 * @return Login Token to use while accessing the API services
 	 * @throws CommandFailedException
+	 *             This exception is thrown if an exception situation occurred
+	 *             during the processing of a command
+	 * @throws IOException
+	 *             This exception is thrown if an exception situation occurred
+	 *             during the processing of an I/O operation.
 	 */
-	public static LoginToken Login(String username, String apiKey) throws IOException, CommandFailedException
+	public static LoginToken Login(String email, String apiKey) throws IOException, CommandFailedException
 	{
 		LoginToken loginToken;
 		String json;
 		Gson gson = new GsonBuilder().create();
 
 		// Open connection to Copyleaks and set properties
-		URL url = new URL(Resources.SERVICE_URI + Resources.LOGIN_PAGE);
-		HttpsURLConnection conn = null;
-		
+		URL url = new URL(String.format("%1$s/%2$s/account/login-api", Settings.ServiceEntryPoint, Settings.ServiceVersion));
+		HttpURLConnection conn = null;
+
 		try
 		{
-			conn = CopyleaksClient.getClient(url, RequestMethod.POST, HttpContentTypes.UrlEncoded, HttpContentTypes.Json);
-			
+			conn = CopyleaksClient.getClient(url, RequestMethod.POST, HttpContentTypes.UrlEncoded,
+					HttpContentTypes.Json);
+
 			// Add parameters
 			Map<String, String> dic = new HashMap<String, String>();
-			dic.put("username", username);
+			dic.put("email", email);
 			dic.put("apiKey", apiKey);
 			CopyleaksClient.HandleString.attach(conn, HttpURLConnectionHelper.getQuery(dic));
-			// Get return message
+
 			if (conn.getResponseCode() != 200)
-			{
-				String errorResponse = conn.getResponseMessage();
-				BadLoginResponse response;
-				switch (conn.getResponseCode())
-				{
-					case 401: // Unauthorized
-						response = new BadLoginResponse(errorResponse);
-						break;
-					default:
-						try
-						{
-							response = gson.fromJson(errorResponse, BadLoginResponse.class);
-						}
-						catch (Exception e)
-						{
-							response = null;
-						}
-						break;
-				}
-
-				if (response == null)
-					throw new RuntimeException("Unable to process server response.");
-				else
-					throw new CommandFailedException(conn.getResponseMessage(), conn.getResponseCode());
-			}
-
+				throw new CommandFailedException(conn);
+			
 			try (InputStream inputStream = new BufferedInputStream(conn.getInputStream());)
 			{
 				json = HttpURLConnectionHelper.convertStreamToString(inputStream);
@@ -109,38 +81,33 @@ public class UserAuthentication
 	}
 
 	/**
-	 * Get the user credits balance
+	 * Get your current credit balance
 	 * 
+	 * @return Login Token to use while accessing the API services
 	 * @param token
-	 *            Token for the server to identify the caller.
-	 * @return The current credit balance. 
-	 * @throws CommandFailedException 
-	 * @throws Exception
+	 * @throws CommandFailedException
+	 *             This exception is thrown if an exception situation occured
+	 *             during the processing of a command
+	 * @throws SecurityTokenException
+	 *             The login-token is undefined or expired
 	 */
-	public static int getCreditBalance(LoginToken token) 
-		throws SecurityTokenException, CommandFailedException
+	public static int getCreditBalance(LoginToken token) throws SecurityTokenException, CommandFailedException
 	{
 		LoginToken.ValidateToken(token);
-		
+
 		Gson gson = new GsonBuilder().create();
 		String json;
 		URL url;
 		HttpURLConnection conn = null;
 		try
 		{
-			url = new URL(
-					String.format("%1$s%2$s/account/count-credits", Resources.SERVICE_URI, Resources.ServiceVersion));
-			conn = CopyleaksClient.getClient(url, token, RequestMethod.GET, HttpContentTypes.Json, HttpContentTypes.Json);
+			url = new URL(String.format("%1$s/%2$s/account/count-credits", Settings.ServiceEntryPoint,
+					Settings.ServiceVersion));
+			conn = CopyleaksClient.getClient(url, token, RequestMethod.GET, HttpContentTypes.Json,
+					HttpContentTypes.Json);
 			if (conn.getResponseCode() != 200)
-			{
-				String errorResponse = Integer.toString(conn.getResponseCode());
-				BadLoginResponse response = gson.fromJson(errorResponse, BadLoginResponse.class);
-				if (response == null)
-					throw new RuntimeException("Unable to process server response.");
-				else
-					throw new CommandFailedException(response.getMessage(), conn.getResponseCode());
-			}
-			
+				throw new CommandFailedException(conn);
+
 			try (InputStream inputStream = new BufferedInputStream(conn.getInputStream()))
 			{
 				json = HttpURLConnectionHelper.convertStreamToString(inputStream);

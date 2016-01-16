@@ -1,7 +1,8 @@
 
+import java.io.File;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.net.URISyntaxException;
+import java.net.URI;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -10,12 +11,14 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import copyleaks.sdk.api.CopyleaksAccount;
+import copyleaks.sdk.api.*;
+import copyleaks.sdk.api.exceptions.CommandFailedException;
+import copyleaks.sdk.api.models.ProcessOptions;
 import copyleaks.sdk.api.models.ResultRecord;
 
 public class Main
 {
-	private final static String ARG_USERNAME_KEY = "u", ARG_USERNAME_VALUE = "username";
+	private final static String ARG_EMAIL_KEY = "e", ARG_EMAIL_VALUE = "email";
 	private final static String ARG_APIKEY_KEY = "k", ARG_APIKEY_VALUE = "key";
 	private final static String ARG_URL_KEY = "l", ARG_URL_VALUE = "url";
 	private final static String ARG_LOCALDOCUMENT_KEY = "f", ARG_LOCALDOCUMENT_VALUE = "local_document";
@@ -23,7 +26,7 @@ public class Main
 
 	private static void SetupOptions(Options options)
 	{
-		options.addOption(ARG_USERNAME_KEY, ARG_USERNAME_VALUE, true, "Required. Copyleaks account username");
+		options.addOption(ARG_EMAIL_KEY, ARG_EMAIL_VALUE, true, "Required. Copyleaks account email address");
 		options.addOption(ARG_APIKEY_KEY, ARG_APIKEY_VALUE, true, "Required. Copyleaks account API key");
 		options.addOption(ARG_URL_KEY, ARG_URL_VALUE, true, "Optional*. URL for scanning");
 		options.addOption(ARG_LOCALDOCUMENT_KEY, ARG_LOCALDOCUMENT_VALUE, true,
@@ -45,18 +48,31 @@ public class Main
 	{
 		final PrintWriter writer = new PrintWriter(out);
 		String header = "\nInput Parameters:\n\n";
-		String footer = "\n* Using one of those optionals is REQUIRED: '" + ARG_URL_VALUE + "', '" + ARG_LOCALDOCUMENT_KEY + "'.\n\n" +
-				"Please report issues at https://Copyleaks.com/Support/ContactUs";
+		String footer = "\n* Using one of those optionals is REQUIRED: '" + ARG_URL_VALUE + "', '"
+				+ ARG_LOCALDOCUMENT_KEY + "'.\n\n" + "Please report issues at https://Copyleaks.com/Support/ContactUs";
 		HelpFormatter formatter = new HelpFormatter();
 		formatter.printHelp("CopyleaksAPI.exe", header, options, footer, true);
 		writer.close();
+	}
+
+	static String DisplayBar(int i)
+	{
+		StringBuilder sb = new StringBuilder();
+
+		int x = i / 2;
+		sb.append("|");
+		for (int k = 0; k < 50; k++)
+			sb.append(((x <= k) ? " " : "="));
+		sb.append("|");
+
+		return sb.toString();
 	}
 
 	public static void main(String[] args)
 	{
 		// For more information, visit Copyleaks How-To page:
 		// https://api.copyleaks.com/Guides/HowToUse
-
+		
 		final CommandLineParser cmdLineGnuParser = new DefaultParser();
 		final Options options = new Options();
 		SetupOptions(options);
@@ -69,9 +85,9 @@ public class Main
 				printUsage("SampleCode.exe", options, System.out);
 				return;
 			}
-			if (!commandLine.hasOption(ARG_USERNAME_KEY))
+			if (!commandLine.hasOption(ARG_EMAIL_KEY))
 			{
-				System.err.println("Missing argument: \"username\".");
+				System.err.println("Missing argument: \"email\".");
 				return;
 			}
 			else if (!commandLine.hasOption(ARG_APIKEY_KEY))
@@ -100,37 +116,52 @@ public class Main
 
 		try
 		{
-			CopyleaksAccount scanner = new CopyleaksAccount(
-					commandLine.getOptionValue(ARG_USERNAME_KEY),
-					commandLine.getOptionValue(ARG_APIKEY_KEY)
-				);
+			CopyleaksCloud copyleaks = new CopyleaksCloud();
+			System.out.print("Login to Copyleaks cloud...");
+			copyleaks.Login(commandLine.getOptionValue(ARG_EMAIL_KEY), commandLine.getOptionValue(ARG_APIKEY_KEY));
+			System.out.println("Done!");
 			
-			int creditsBalance = scanner.getCredits();
+			System.out.print("Checking account balance...");
+			int creditsBalance = copyleaks.getCredits();
+			System.out.println("Done (" + creditsBalance + " credits)!");
 			if (creditsBalance == 0)
 			{
-				System.out.println("ERROR: You have insufficient credits for scanning content! (current credits balance = " + creditsBalance + ")");
+				System.out.println(
+						"ERROR: You have insufficient credits for scanning content! (current credits balance = "
+								+ creditsBalance + ")");
 				return;
 			}
 
+			ProcessOptions scanOptions = new ProcessOptions();
+			// scanOptions.setSandboxMode(true); // <--------------- Read more @ https://api.copyleaks.com/Documentation/RequestHeaders#sandbox-mode
+
 			ResultRecord[] results;
+			CopyleaksProcess createdProcess;
+
 			if (commandLine.hasOption(ARG_URL_KEY))
 			{
 				String val = commandLine.getOptionValue(ARG_URL_KEY);
-				try
-				{
-					results = scanner.ScanUrl(val);
-				}
-				catch (URISyntaxException e)
-				{
-					System.err.println("Bad input: " + ARG_URL_KEY + " ('" + val + "')");
-					return;
-				}
+				createdProcess = copyleaks.CreateByUrl(new URI(val), scanOptions);
 			}
 			else // commandLine.hasOption(ARG_LOCALDOCUMENT_KEY)
 			{
 				String val = commandLine.getOptionValue(ARG_LOCALDOCUMENT_KEY);
-				results = scanner.ScanLocalTextualFile(val);
+				createdProcess = copyleaks.CreateByFile(new File(val), scanOptions);
 			}
+
+			// Waiting for process completion...
+			System.out.println("Scanning...");
+			int percents = 0;
+			while (percents != 100 && (percents = createdProcess.getCurrentProgress()) <= 100)
+			{
+				System.out.print("\r" + DisplayBar(percents) + " " + percents + "%");
+
+				if (percents != 100)
+					Thread.sleep(5000);
+			}
+			System.out.println();
+
+			results = createdProcess.GetResults();
 
 			if (results.length == 0)
 			{
@@ -148,9 +179,15 @@ public class Main
 				}
 			}
 		}
+		catch (CommandFailedException copyleaksException)
+		{
+			System.out.println("Failed!");
+			System.out.format("*** Error (%d):\n", copyleaksException.getCopyleaksErrorCode());
+			System.out.println(copyleaksException.getMessage());
+		}
 		catch (Exception ex)
 		{
-			System.out.println("\tFailed!");
+			System.out.println("Failed!");
 			System.out.println("Unhandled Exception");
 			System.out.println(ex);
 		}

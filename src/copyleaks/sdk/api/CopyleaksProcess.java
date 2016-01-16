@@ -3,11 +3,14 @@ package copyleaks.sdk.api;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.UUID;
-
-import javax.net.ssl.HttpsURLConnection;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -19,15 +22,24 @@ import copyleaks.sdk.api.exceptions.CommandFailedException;
 import copyleaks.sdk.api.exceptions.SecurityTokenException;
 import copyleaks.sdk.api.models.LoginToken;
 import copyleaks.sdk.api.models.ResultRecord;
-import copyleaks.sdk.api.models.responses.BadLoginResponse;
 import copyleaks.sdk.api.models.responses.CheckStatusResponse;
 import copyleaks.sdk.api.models.responses.CreateResourceResponse;
 import copyleaks.sdk.api.models.responses.ProcessInList;
 
-public class CopyleaksProcess
+public class CopyleaksProcess implements Comparable<CopyleaksProcess>, Serializable
 {
+	/**
+	 * For 'Serializable' implementation.
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public UUID PID;
 
+	/**
+	 * Get process ID
+	 * 
+	 * @return The process ID
+	 */
 	public UUID getPID()
 	{
 		return PID;
@@ -39,7 +51,12 @@ public class CopyleaksProcess
 	}
 
 	private Date CreationTimeUTC;
-	
+
+	/**
+	 * Get the process creation time
+	 * 
+	 * @return Process creation time
+	 */
 	public Date getCreationTimeUTC()
 	{
 		return CreationTimeUTC;
@@ -49,10 +66,24 @@ public class CopyleaksProcess
 	{
 		CreationTimeUTC = creationTimeUTC;
 	}
+
+	private boolean ListProcesses_IsCompleted = false;
 	
+	private HashMap<String, String> CustomFields;
+
+	public HashMap<String, String> getCustomFields()
+	{
+		return CustomFields;
+	}
+
+	private void setCustomFields(HashMap<String, String> value)
+	{
+		this.CustomFields = value;
+	}
+
 	private LoginToken SecurityToken;
 
-	LoginToken getSecurityToken()
+	private LoginToken getSecurityToken()
 	{
 		return SecurityToken;
 	}
@@ -67,49 +98,51 @@ public class CopyleaksProcess
 		this.setPID(process.getProcessId());
 		this.setCreationTimeUTC(process.getCreationTimeUTC());
 		this.setSecurityToken(authorizationToken);
+		this.setCustomFields(process.getCustomFields());
+		this.ListProcesses_IsCompleted = process.getStatus().equalsIgnoreCase("finished");
 	}
-	
-	CopyleaksProcess(LoginToken authorizationToken, CreateResourceResponse response)
+
+	CopyleaksProcess(LoginToken authorizationToken, CreateResourceResponse response,
+			HashMap<String, String> customFields)
 	{
 		this.setPID(response.getProcessId());
 		this.setCreationTimeUTC(response.getCreationTimeUTC());
 		this.setSecurityToken(authorizationToken);
+		this.setCustomFields(customFields);
 	}
 
-	/// <summary>
-	/// Checks if the operation is completed.
-	/// </summary>
-	/// <returns>Return True in case that the operation on is finished by the
-	/// server</returns>
-	/// <exception cref="UnauthorizedAccessException"></exception>
-	public Boolean IsCompleted() 
-			throws SecurityTokenException, CommandFailedException
+	/**
+	 * Get process progress information
+	 * 
+	 * @return process progress (out of 100).
+	 * @throws CommandFailedException
+	 *             This exception is thrown if an exception situation occured
+	 *             during the processing of a command
+	 * @throws SecurityTokenException
+	 *             The login-token is undefined or expired
+	 */
+	public int getCurrentProgress() throws SecurityTokenException, CommandFailedException
 	{
+		if (this.ListProcesses_IsCompleted)
+		{
+			return 100;
+		}
+		
 		LoginToken.ValidateToken(this.getSecurityToken());
 
 		URL url;
-		HttpsURLConnection conn = null;
+		HttpURLConnection conn = null;
 		Gson gson = new GsonBuilder().create();
 		String json;
 		try
 		{
-			url = new URL(String.format(Resources.ServiceEntryPoint + "%1$s/detector/%2$s/status",
-					Resources.ServiceVersion, getPID()));
-			conn = CopyleaksClient.getClient(url, this.getSecurityToken(), RequestMethod.GET, 
-					HttpContentTypes.Json, HttpContentTypes.TextPlain);
+			url = new URL(String.format("%1$s/%2$s/%3$s/%4$s/status", Settings.ServiceEntryPoint,
+					Settings.ServiceVersion, Settings.ServicePage, getPID()));
+			conn = CopyleaksClient.getClient(url, this.getSecurityToken(), RequestMethod.GET, HttpContentTypes.Json,
+					HttpContentTypes.TextPlain);
+			
 			if (conn.getResponseCode() != 200)
-			{
-				String errorResponse;
-				try (InputStream inputStream = new BufferedInputStream(conn.getErrorStream()))
-				{
-					errorResponse = HttpURLConnectionHelper.convertStreamToString(inputStream);
-				}
-				BadLoginResponse response = gson.fromJson(errorResponse, BadLoginResponse.class);
-				if (response == null)
-					throw new RuntimeException("Unable to process server response.");
-				else
-					throw new CommandFailedException(response.getMessage(), conn.getResponseCode());
-			}
+				throw new CommandFailedException(conn);
 
 			try (InputStream inputStream = new BufferedInputStream(conn.getInputStream()))
 			{
@@ -126,41 +159,36 @@ public class CopyleaksProcess
 				conn.disconnect();
 		}
 		CheckStatusResponse response = gson.fromJson(json, CheckStatusResponse.class);
-		return new String(response.getStatus()).equals("Finished");
+		return response.getProgressPercents();
 	}
 
-	/// <summary>
-	/// Get the scanning resutls from server.
-	/// </summary>
-	/// <returns>Scanning results</returns>
-	/// <exception cref="UnauthorizedAccessException"></exception>
-	public ResultRecord[] GetResults() 
-			throws SecurityTokenException, CommandFailedException
+	/**
+	 * Get the scan results from the server
+	 * 
+	 * @return Scan results
+	 * @throws CommandFailedException
+	 *             This exception is thrown if an exception situation occured
+	 *             during the processing of a command
+	 * @throws SecurityTokenException
+	 *             The login-token is undefined or expired
+	 */
+	public ResultRecord[] GetResults() throws SecurityTokenException, CommandFailedException
 	{
 		LoginToken.ValidateToken(this.getSecurityToken());
 
 		String json;
 		URL url;
-		HttpsURLConnection conn = null;
+		HttpURLConnection conn = null;
 		Gson gson = new GsonBuilder().create();
 		try
 		{
-			url = new URL(String.format(Resources.ServiceEntryPoint + "%1$s/detector/%2$s/result",
-					Resources.ServiceVersion, getPID()));
-			conn = CopyleaksClient.getClient(url, this.getSecurityToken(), RequestMethod.GET, HttpContentTypes.Json, HttpContentTypes.Json);
+			url = new URL(String.format("%1$s/%2$s/%3$s/%4$s/result", Settings.ServiceEntryPoint,
+					Settings.ServiceVersion, Settings.ServicePage, getPID()));
+			conn = CopyleaksClient.getClient(url, this.getSecurityToken(), RequestMethod.GET, HttpContentTypes.Json,
+					HttpContentTypes.Json);
+			
 			if (conn.getResponseCode() != 200)
-			{
-				String errorResponse;
-				try (InputStream inputStream = new BufferedInputStream(conn.getErrorStream()))
-				{
-					errorResponse = HttpURLConnectionHelper.convertStreamToString(inputStream);
-				}
-				BadLoginResponse response = gson.fromJson(errorResponse, BadLoginResponse.class);
-				if (response == null)
-					throw new RuntimeException("Unable to process server response.");
-				else
-					throw new CommandFailedException(response.getMessage(), conn.getResponseCode());
-			}
+				throw new CommandFailedException(conn);
 
 			try (InputStream inputStream = new BufferedInputStream(conn.getInputStream()))
 			{
@@ -176,32 +204,35 @@ public class CopyleaksProcess
 			if (conn != null)
 				conn.disconnect();
 		}
-		
-		return gson.fromJson(json, ResultRecord[].class);
+
+		ResultRecord[] results = gson.fromJson(json, ResultRecord[].class);
+		Arrays.sort(results, Collections.reverseOrder());
+		return results;
 	}
 
-	/// Delete finished process
-	public void Delete() 
-			throws SecurityTokenException, CommandFailedException
+	/**
+	 * Deletes the process once it has finished running
+	 * 
+	 * @throws CommandFailedException
+	 *             This exception is thrown if an exception situation occured
+	 *             during the processing of a command
+	 * @throws SecurityTokenException
+	 *             The login-token is undefined or expired
+	 */
+	public void Delete() throws SecurityTokenException, CommandFailedException
 	{
 		LoginToken.ValidateToken(this.getSecurityToken());
 
 		URL url;
-		HttpsURLConnection conn = null;
-		Gson gson = new GsonBuilder().create();
+		HttpURLConnection conn = null;
 		try
 		{
-			url = new URL(String.format("detector/%1$s/delete", this.PID));
-			conn = CopyleaksClient.getClient(url, this.getSecurityToken(), RequestMethod.POST, HttpContentTypes.Json, HttpContentTypes.Json);
+			url = new URL(String.format("%1$s/%2$s/%3$s/%4$s/delete", Settings.ServiceEntryPoint,
+					Settings.ServiceVersion, Settings.ServicePage, this.PID));
+			conn = CopyleaksClient.getClient(url, this.getSecurityToken(), RequestMethod.DELETE, HttpContentTypes.Json,
+					HttpContentTypes.Json);
 			if (conn.getResponseCode() != 200)
-			{
-				String errorResponse = Integer.toString(conn.getResponseCode());
-				BadLoginResponse response = gson.fromJson(errorResponse, BadLoginResponse.class);
-				if (response == null)
-					throw new RuntimeException("Unable to process server response.");
-				else
-					throw new CommandFailedException(response.getMessage(), conn.getResponseCode());
-			}
+				throw new CommandFailedException(conn);
 		}
 		catch (IOException e)
 		{
@@ -213,10 +244,16 @@ public class CopyleaksProcess
 				conn.disconnect();
 		}
 	}
-	
-	@Override 
+
+	@Override
 	public String toString()
 	{
 		return this.getPID().toString();
+	}
+
+	@Override
+	public int compareTo(CopyleaksProcess process)
+	{
+		return this.getCreationTimeUTC().compareTo(process.CreationTimeUTC);
 	}
 }

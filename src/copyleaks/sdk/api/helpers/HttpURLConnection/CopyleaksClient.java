@@ -7,34 +7,46 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 
-import javax.net.ssl.HttpsURLConnection;
-
 import copyleaks.sdk.api.RequestMethod;
-import copyleaks.sdk.api.Resources;
+import copyleaks.sdk.api.Settings;
 import copyleaks.sdk.api.exceptions.SecurityTokenException;
 import copyleaks.sdk.api.helpers.FileHelpers;
 import copyleaks.sdk.api.models.LoginToken;
 
 public class CopyleaksClient
 {
-	public static HttpsURLConnection getClient(URL url, RequestMethod methodType, String requestFormat, String responseFormat)
-			throws SecurityTokenException, IOException
+	private static String AcceptLanguage = "en-US"; // Default language
+
+	public static String getLanguage()
+	{
+		return AcceptLanguage;
+	}
+
+	public static void setLanguage(String value)
+	{
+		AcceptLanguage = value;
+	}
+
+	public static HttpURLConnection getClient(URL url, RequestMethod methodType, String requestFormat,
+			String responseFormat) throws SecurityTokenException, IOException
 	{
 		return getClient(url, null, methodType, requestFormat, responseFormat);
 	}
 
-	public static HttpsURLConnection getClient(URL url, LoginToken securityToken, RequestMethod methodType,
-			String requestFormat, String responseFormat) 
-					throws IOException, SecurityTokenException
+	public static HttpURLConnection getClient(URL url, LoginToken securityToken, RequestMethod methodType,
+			String requestFormat, String responseFormat) throws IOException, SecurityTokenException
 	{
-		HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-		conn.addRequestProperty("Accept-Charset", Resources.Encoding);
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.addRequestProperty("Accept-Charset", Settings.Encoding);
 		conn.addRequestProperty("Content-Type", requestFormat);
 		conn.addRequestProperty("Accept", responseFormat);
-		conn.addRequestProperty("User-Agent", Resources.USER_AGENT);
+		conn.addRequestProperty("User-Agent", Settings.USER_AGENT);
 		conn.setRequestProperty("Cache-Control", "no-cache");
+		conn.setRequestProperty("Accept-Language", getLanguage());
+
 		if (securityToken != null)
 		{
 			LoginToken.ValidateToken(securityToken);
@@ -43,22 +55,20 @@ public class CopyleaksClient
 		}
 		conn.setRequestMethod(methodType.toString());
 		conn.setUseCaches(false);
-		
-		if(methodType.toString() == "POST")
+
+		if (methodType.toString() == "POST")
 			conn.setDoOutput(true);
-		
+
 		return conn;
 	}
 
 	public static class HandleString
 	{
-		public static void attach(HttpsURLConnection conn, String content)
+		public static void attach(HttpURLConnection conn, String content)
 				throws IOException, UnsupportedEncodingException
 		{
-			try (
-					DataOutputStream os = new DataOutputStream(conn.getOutputStream());
-					BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, Resources.Encoding));
-				)
+			try (DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+					BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, Settings.Encoding));)
 			{
 				if (content != null)
 					writer.write(content);
@@ -71,38 +81,34 @@ public class CopyleaksClient
 	{
 		final static String crlf = "\r\n";
 		final static String twoHyphens = "--";
-		
-		public static void attach(HttpsURLConnection conn, File file) 
-				throws IOException, UnsupportedEncodingException
+
+		public static void attach(HttpURLConnection conn, File file) throws IOException, UnsupportedEncodingException
 		{
-			final String boundary =  "file." + FileHelpers.getFileExtension(file);
+			final String boundary = "file." + FileHelpers.getFileExtension(file);
 			final String attachmentName = FileHelpers.getFileName(file);
 			final String attachmentFileName = file.getName();
-			
-			try (
-					DataOutputStream os = new DataOutputStream(conn.getOutputStream());
-					BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, Resources.Encoding));
-					FileInputStream inputFile = new FileInputStream(file);
-				)
+
+			try (DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+					BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, Settings.Encoding));
+					FileInputStream inputFile = new FileInputStream(file);)
 			{
 				// File prefix
 				os.writeBytes(twoHyphens + boundary + crlf);
-				os.writeBytes("Content-Disposition: form-data; name=\"" +
-				    attachmentName + "\";filename=\"" + 
-				    attachmentFileName + "\"" + crlf);
+				os.writeBytes("Content-Disposition: form-data; name=\"" + attachmentName + "\";filename=\""
+						+ attachmentFileName + "\"" + crlf);
 				os.writeBytes(crlf);
-				
+
 				// The file
 				final int BUFFER_SIZE = 4 * 1024;
 				byte[] buffer = new byte[BUFFER_SIZE];
 				int real_buffer_size;
-				while ((real_buffer_size = inputFile.read(buffer,  0,  BUFFER_SIZE)) > 0)
+				while ((real_buffer_size = inputFile.read(buffer, 0, BUFFER_SIZE)) > 0)
 					os.write(buffer, 0, real_buffer_size);
-				
+
 				// File postfix
 				os.writeBytes(crlf);
 				os.writeBytes(twoHyphens + boundary + twoHyphens + crlf);
-				
+
 				writer.flush();
 			}
 		}
