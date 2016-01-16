@@ -22,35 +22,9 @@
  SOFTWARE.
 ********************************************************************************/
 
-package copyleaks.sdk.api.helpers;
+package copyleaks.sdk.api.models;
 
-import java.io.File;
-
-public final class FileHelpers
+public enum eOcrLanguage
 {
-	public static String getFileName(File file)
-	{
-		String name = file.getName();
-		try
-		{
-			return name.substring(0, name.lastIndexOf("."));
-		}
-		catch (Exception e)
-		{
-			return "";
-		}
-	}
-	
-	public static String getFileExtension(File file)
-	{
-		String name = file.getName();
-		try
-		{
-			return name.substring(name.lastIndexOf(".") + 1);
-		}
-		catch (Exception e)
-		{
-			return "";
-		}
-	}
+	Afrikaans, Albanian, Basque, Brazilian, Bulgarian, Byelorussian, Catalan, Chinese_Simplified, Chinese_Traditional, Croatian, Czech, Danish, Dutch, English, Esperanto, Estonian, Finnish, French, Galician, German, Greek, Hungarian, Icelandic, Indonesian, Italian, Japanese, Korean, Latin, Latvian, Lithuanian, Macedonian, Malay, Moldavian, Norwegian, Polish, Portuguese, Romanian, Russian, Serbian, Slovak, Slovenian, Spanish, Swedish, Tagalog, Turkish, Ukrainian
 }

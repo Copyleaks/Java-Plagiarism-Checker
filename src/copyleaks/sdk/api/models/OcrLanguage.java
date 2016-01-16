@@ -22,35 +22,42 @@
  SOFTWARE.
 ********************************************************************************/
 
-package copyleaks.sdk.api.helpers;
+package copyleaks.sdk.api.models;
 
-import java.io.File;
-
-public final class FileHelpers
+public class OcrLanguage
 {
-	public static String getFileName(File file)
+	private String Name;
+	private eOcrLanguage Type;
+
+	public OcrLanguage(eOcrLanguage language)
 	{
-		String name = file.getName();
-		try
-		{
-			return name.substring(0, name.lastIndexOf("."));
-		}
-		catch (Exception e)
-		{
-			return "";
-		}
+		this.setType(language);
+		this.setName(language.toString().replace("_", " "));
+	}
+
+	@Override
+	public String toString()
+	{
+		return this.Name;
+	}
+
+	public String getName()
+	{
+		return Name;
+	}
+
+	private void setName(String name)
+	{
+		Name = name;
 	}
 	
-	public static String getFileExtension(File file)
+	public eOcrLanguage getCode()
 	{
-		String name = file.getName();
-		try
-		{
-			return name.substring(name.lastIndexOf(".") + 1);
-		}
-		catch (Exception e)
-		{
-			return "";
-		}
+		return Type;
+	}
+
+	private void setType(eOcrLanguage type)
+	{
+		Type = type;
 	}
 }

@@ -22,35 +22,26 @@
  SOFTWARE.
 ********************************************************************************/
 
-package copyleaks.sdk.api.helpers;
+package copyleaks.sdk.api.models;
 
-import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
-public final class FileHelpers
+public final class OcrLanguages
 {
-	public static String getFileName(File file)
+	private static List<OcrLanguage> SupportedLanguagesList;
+	static 
 	{
-		String name = file.getName();
-		try
-		{
-			return name.substring(0, name.lastIndexOf("."));
-		}
-		catch (Exception e)
-		{
-			return "";
-		}
+		SupportedLanguagesList = new ArrayList<OcrLanguage>();
+		
+		eOcrLanguage[] values = eOcrLanguage.class.getEnumConstants();
+		
+		for(eOcrLanguage value: values)
+			SupportedLanguagesList.add(new OcrLanguage(value));
 	}
-	
-	public static String getFileExtension(File file)
+
+	public final OcrLanguage[] getSupportedLanguages()
 	{
-		String name = file.getName();
-		try
-		{
-			return name.substring(name.lastIndexOf(".") + 1);
-		}
-		catch (Exception e)
-		{
-			return "";
-		}
+		return SupportedLanguagesList.toArray(new OcrLanguage[SupportedLanguagesList.size()]);
 	}
 }

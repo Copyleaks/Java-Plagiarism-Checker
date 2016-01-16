@@ -22,35 +22,51 @@
  SOFTWARE.
 ********************************************************************************/
 
-package copyleaks.sdk.api.helpers;
+package copyleaks.sdk.api.models;
 
-import java.io.File;
+import java.net.URI;
+import java.util.HashMap;
 
-public final class FileHelpers
+public class ProcessOptions
 {
-	public static String getFileName(File file)
+	public ProcessOptions()
 	{
-		String name = file.getName();
-		try
-		{
-			return name.substring(0, name.lastIndexOf("."));
-		}
-		catch (Exception e)
-		{
-			return "";
-		}
+		this.setCustomFields(new HashMap<String, String>());
+	}
+
+	private URI HttpCallback;
+
+	public URI getHttpCallback()
+	{
+		return HttpCallback;
+	}
+
+	public void setHttpCallback(URI httpCallback)
+	{
+		HttpCallback = httpCallback;
+	}
+
+	private HashMap<String, String> CustomFields;
+
+	public HashMap<String, String> getCustomFields()
+	{
+		return CustomFields;
+	}
+
+	public void setCustomFields(HashMap<String, String> customFields)
+	{
+		CustomFields = customFields;
 	}
 	
-	public static String getFileExtension(File file)
+	private boolean SandboxMode;
+	
+	public boolean isSandboxMode()
 	{
-		String name = file.getName();
-		try
-		{
-			return name.substring(name.lastIndexOf(".") + 1);
-		}
-		catch (Exception e)
-		{
-			return "";
-		}
+		return SandboxMode;
+	}
+
+	public void setSandboxMode(boolean sandboxMode)
+	{
+		SandboxMode = sandboxMode;
 	}
 }
