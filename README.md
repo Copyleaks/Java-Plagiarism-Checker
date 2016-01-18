@@ -24,56 +24,65 @@ Install-Package CopyleaksAPI
 <h3>Example</h3>
 <p>This code will show you where the textual content in the parameter ‘url’ has been used online:</p>
 <pre>
-using System;
-using System.Threading;
-using Copyleaks.SDK.API;
-// ...
+public static void Scan(String email, String key, String url) {
+		CopyleaksCloud copyleaks = new CopyleaksCloud();
+		try {
+			System.out.print("Login to Copyleaks cloud...");
+			copyleaks.Login(email, key);
+			System.out.println("Done!");
 
-private static void Scan(string email, string apiKey, string url)
-{
-    CopyleaksCloud copyleaks = new CopyleaksCloud();
-    System.out.print("Login to Copyleaks cloud...");
-    copyleaks.Login(email, apiKey);
-    System.out.println("Done!");
+			System.out.print("Checking account balance...");
+			int creditsBalance = copyleaks.getCredits();
+			System.out.println("Done (" + creditsBalance + " credits)!");
+			if (creditsBalance == 0) {
+				System.out.println(
+						"ERROR: You have insufficient credits for scanning content! (current credits balance = "
+								+ creditsBalance + ")");
+				return;
+			}
 
-    ProcessOptions scanOptions = new ProcessOptions();
-    // scanOptions.setSandboxMode(true); // <--------------- Read more @ https://api.copyleaks.com/Documentation/RequestHeaders#sandbox-mode
+			ProcessOptions scanOptions = new ProcessOptions();
+			// scanOptions.setSandboxMode(true); // <------ Read more @
+			// https://api.copyleaks.com/Documentation/RequestHeaders#sandbox-mode
 
-    ResultRecord[] results;
-    CopyleaksProcess createdProcess;
+			ResultRecord[] results;
+			CopyleaksProcess createdProcess;
 
-    createdProcess = copyleaks.CreateByUrl(new URI(url), scanOptions);
+			createdProcess = copyleaks.CreateByUrl(new URI(url), scanOptions);
 
-    // Waiting for process completion...
-    System.out.println("Scanning...");
-    int percents = 0;
-    while (percents != 100 && (percents = createdProcess.getCurrentProgress()) <= 100)
-    {
-        System.out.print("\r" + DisplayBar(percents) + " " + percents + "%");
+			// Waiting for process completion...
+			System.out.println("Scanning...");
+			int percents = 0;
+			while (percents != 100 && (percents = createdProcess.getCurrentProgress()) <= 100) {
+				System.out.println(percents + "%");
 
-        if (percents != 100)
-            Thread.sleep(5000);
-    }
-    System.out.println();
+				if (percents != 100)
+					Thread.sleep(4000);
+			}
 
-    results = createdProcess.GetResults();
+			results = createdProcess.GetResults();
 
-    if (results.length == 0)
-    {
-        System.out.println("No results.");
-    }
-    else
-    {
-        for (int i = 0; i < results.length; ++i)
-        {
-            System.out.println();
-            System.out.println(String.format("Result %1$s:", i + 1));
-            System.out.println(String.format("Url: %1$s", results[i].getURL()));
-            System.out.println(String.format("Percents: %1$s", results[i].getPercents()));
-            System.out.println(String.format("CopiedWords: %1$s", results[i].getNumberOfCopiedWords()));
-        }
-    }
-}
+			if (results.length == 0) {
+				System.out.println("No results.");
+			} else {
+				for (int i = 0; i < results.length; ++i) {
+					System.out.println();
+					System.out.println(String.format("Result %1$s:", i + 1));
+					System.out.println(String.format("Url: %1$s", results[i].getURL()));
+					System.out.println(String.format("Percents: %1$s", results[i].getPercents()));
+					System.out.println(String.format("CopiedWords: %1$s", results[i].getNumberOfCopiedWords()));
+				}
+			}
+		} catch (CommandFailedException copyleaksException) {
+			System.out.println("Failed!");
+			System.out.format("*** Error (%d):\n", copyleaksException.getCopyleaksErrorCode());
+			System.out.println(copyleaksException.getMessage());
+		} catch (Exception ex) {
+			System.out.println("Failed!");
+			System.out.println("Unhandled Exception");
+			System.out.println(ex);
+		}
+	}
 </pre>
 <h3>Dependencies:</h3>
 <h5>Referenced Assemblies:</h5>
