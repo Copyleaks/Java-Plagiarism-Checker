@@ -6,16 +6,13 @@ Copyleaks SDK is a simple framework that allows you to perform plagiarism scans 
 With Copyleaks SDK you can submit for scan:  
 <ul>
 <li>Webpages</li>
-<li>Local files (see supported files here)</li>
-<li>OCR (Optical Character Recognition) - scanning pictures containing textual content (see supported files here)</li>
+<li>Local files - pdf, doc, docx, rtf and more <a href="https://api.copyleaks.com/Documentation/TechnicalSpecifications/#non-textual-formats">(see full list)</a></li>
+<li>OCR (Optical Character Recognition) - scanning pictures containing textual content <a href="https://api.copyleaks.com/Documentation/TechnicalSpecifications/#ocr-formats">(see full list)</a></li>
 </ul>
 Instructions for using the SDK are below. For a quick example demonstrating the SDK capabilities just look at the code examples under “examples”.
 </p>
 <h3>Configuration</h3>
-<p>You can configure Copyleaks SDK in one of two ways:</p>
-<ol>
-<li>Download the code from here, compile it and add reference to the assembly.</li>
-<li>Add <i>CopyleaksAPI</i> NuGet by running the following command in the <a href="http://docs.nuget.org/consume/package-manager-console">Package Manager Console</a></li>
+Download the code from here, compile it and add reference to the assembly.
 <pre>
 Install-Package CopyleaksAPI
 </pre>
@@ -79,20 +76,15 @@ private static void Scan(string email, string apiKey, string url)
 }
 </pre>
 <h3>Dependencies:</h3>
-<ul>
-<li><a href="http://www.microsoft.com/en-us/download/details.aspx?id=30653">.Net framework 4.5</a></li>
-</ul>
 <h5>Referenced Assemblies:</h5>
 <ul>
-<li><a href="https://www.nuget.org/packages/Microsoft.Net.Http">Microsoft.Net.Http</a></li>
-<li><a href="https://www.nuget.org/packages/Newtonsoft.Json">Newtonsoft.Json</a></li>
-<li><a href="https://www.nuget.org/packages/Microsoft.Bcl">Microsoft.Bcl</a></li>
-<li><a href="https://www.nuget.org/packages/Microsoft.Bcl.Build/1.0.21">Microsoft.Bcl.Build</a></li>
+<li><a href="https://commons.apache.org/proper/commons-cli/">commons-cli-1.3.1.jar</a></li>
+<li><a href="https://github.com/google/gson">gson-2.4.jar</a></li>
+<li><a href="https://github.com/FasterXML/jackson-annotations">jackson-annotations-2.6.0.jar</a></li>
 </ul>
 
 <h3>Read More</h3>
 <ul>
 <li><a href="https://api.copyleaks.com/Guides/HowToUse">Copyleaks API guide</a></li>
 <li><a href="https://api.copyleaks.com/Documentation">Copyleaks API documentation</a></li>
-<li><a href="https://www.nuget.org/packages/CopyleaksAPI/">Copyleaks NuGet package</a></li>
 </ul>
