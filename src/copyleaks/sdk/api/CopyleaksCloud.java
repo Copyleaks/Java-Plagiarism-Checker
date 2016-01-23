@@ -26,6 +26,8 @@ package copyleaks.sdk.api;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -238,8 +240,35 @@ public class CopyleaksCloud
 	 *             during the processing of a command
 	 * @throws SecurityTokenException
 	 *             The login-token is undefined or expired
+	 * @throws FileNotFoundException 
+	 * 				Occur when the localfile isn't exists.
 	 */
 	public CopyleaksProcess CreateByFile(File localfile, ProcessOptions options)
+			throws SecurityTokenException, CommandFailedException, FileNotFoundException
+	{
+		return CreateByFile(new FileInputStream(localfile), FileHelpers.getFileName(localfile), FileHelpers.getFileExtension(localfile), options);
+	}
+
+	/**
+	 * Submitting local file to plagiarism scan
+	 * 
+	 * @param stream
+	 *            Stream to file you want to scan.
+	 * @param filename
+	 * 				The file name of the file. WITHOUT extension.
+	 * @param fileExtension
+	 * 				The file type. Without dot (".") before it. For example- "pdf".
+	 * @param options
+	 *            Process Options: include HTTP callback and add custom fields
+	 *            to the process
+	 * @return The newly created process
+	 * @throws CommandFailedException
+	 *             This exception is thrown if an exception situation occurred
+	 *             during the processing of a command
+	 * @throws SecurityTokenException
+	 *             The login-token is undefined or expired
+	 */
+	public CopyleaksProcess CreateByFile(InputStream stream, String filename, String fileExtension, ProcessOptions options)
 			throws SecurityTokenException, CommandFailedException
 	{
 		LoginToken.ValidateToken(this.getToken()); // Token Validation
@@ -252,13 +281,12 @@ public class CopyleaksCloud
 		{
 			reqUrl = new URL(String.format("%1$s/%2$s/%3$s/create-by-file", Settings.ServiceEntryPoint, Settings.ServiceVersion, Settings.ServicePage));
 			conn = CopyleaksClient.getClient(reqUrl, this.getToken(), RequestMethod.POST,
-					HttpContentTypes.Multipart + ";boundary=file." + FileHelpers.getFileExtension(localfile),
+					HttpContentTypes.Multipart + ";boundary=file." + fileExtension,
 					HttpContentTypes.Json);
 						
 			AddCopyleaksHeaders(options, conn);
 			
-			CopyleaksClient.HandleFile.attach(conn, localfile);
-			
+			CopyleaksClient.HandleFile.attach(conn, stream, filename, fileExtension);
 			
 			if (conn.getResponseCode() != 200)
 				throw new CommandFailedException(conn);
@@ -287,7 +315,7 @@ public class CopyleaksCloud
 		else
 			return new CopyleaksProcess(this.getToken(), response, options.getCustomFields());
 	}
-
+	
 	/**
 	 * Submitting picture, containing textual content, to plagiarism scan
 	 * 
@@ -300,8 +328,36 @@ public class CopyleaksCloud
 	 * @throws CommandFailedException
 	 *             This exception is thrown if an exception situation occurred
 	 *             during the processing of a command
+	 * @throws FileNotFoundException 
+	 * 				When the requested file wasn't found.
 	 */
-	public CopyleaksProcess CreateByOCR(File localfile, OcrLanguage lang ,ProcessOptions options) throws CommandFailedException
+	public CopyleaksProcess CreateByOCR(File localfile, OcrLanguage lang ,ProcessOptions options) 
+			throws CommandFailedException, FileNotFoundException
+	{
+		return CreateByOCR(new FileInputStream(localfile), FileHelpers.getFileName(localfile), FileHelpers.getFileExtension(localfile), lang, options);
+	}
+	
+	/**
+	 * Submitting picture, containing textual content, to plagiarism scan
+	 * 
+	 * @param stream
+	 *            Stream to the file that you want to scan
+	 * @param filename
+	 * 				The file name of the file. WITHOUT extension.
+	 * @param fileExtension
+	 * 				The file type. Without dot (".") before it. For example- "pdf".  
+	 * @param options
+	 *            Process Options: include HTTP callback and add custom fields
+	 *            to the process
+	 * @return The newly created process
+	 * @throws CommandFailedException
+	 *             This exception is thrown if an exception situation occurred
+	 *             during the processing of a command
+	 * @throws FileNotFoundException 
+	 * 				When the requested file wasn't found.
+	 */
+	public CopyleaksProcess CreateByOCR(InputStream stream, String filename, String fileExtension, OcrLanguage lang ,ProcessOptions options) 
+			throws CommandFailedException
 	{
 		LoginToken.ValidateToken(this.getToken()); // Token Validation
 
@@ -323,12 +379,12 @@ public class CopyleaksCloud
 							)
 					);
 			conn = CopyleaksClient.getClient(reqUrl, this.getToken(), RequestMethod.POST,
-					HttpContentTypes.Multipart + ";boundary=file." + FileHelpers.getFileExtension(localfile),
+					HttpContentTypes.Multipart + ";boundary=file." + fileExtension,
 					HttpContentTypes.Json);
 			
 			AddCopyleaksHeaders(options, conn);
 			
-			CopyleaksClient.HandleFile.attach(conn, localfile);
+			CopyleaksClient.HandleFile.attach(conn, stream, filename, fileExtension);
 
 			if (conn.getResponseCode() != 200)
 				throw new CommandFailedException(conn);

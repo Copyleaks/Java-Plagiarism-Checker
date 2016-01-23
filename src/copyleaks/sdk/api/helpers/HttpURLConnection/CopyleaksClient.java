@@ -29,6 +29,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
@@ -106,7 +107,8 @@ public class CopyleaksClient
 		final static String crlf = "\r\n";
 		final static String twoHyphens = "--";
 
-		public static void attach(HttpURLConnection conn, File file) throws IOException, UnsupportedEncodingException
+		public static void attach(HttpURLConnection conn, File file) 
+				throws IOException, UnsupportedEncodingException
 		{
 			final String boundary = "file." + FileHelpers.getFileExtension(file);
 			final String attachmentName = FileHelpers.getFileName(file);
@@ -134,6 +136,42 @@ public class CopyleaksClient
 				os.writeBytes(twoHyphens + boundary + twoHyphens + crlf);
 
 				writer.flush();
+			}
+		}
+		
+		public static void attach(HttpURLConnection conn, InputStream stream, String filename, String fileExtension) 
+				throws IOException, UnsupportedEncodingException
+		{
+			final String boundary = "file." + fileExtension;
+			final String attachmentFileName = filename + "." + fileExtension;
+
+			try (
+					DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+					BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, Settings.Encoding));
+				)
+			{
+				// File prefix
+				os.writeBytes(twoHyphens + boundary + crlf);
+				os.writeBytes("Content-Disposition: form-data; name=\"" + filename + "\";filename=\""
+						+ attachmentFileName + "\"" + crlf);
+				os.writeBytes(crlf);
+
+				// The file
+				final int BUFFER_SIZE = 4 * 1024;
+				byte[] buffer = new byte[BUFFER_SIZE];
+				int real_buffer_size;
+				while ((real_buffer_size = stream.read(buffer, 0, BUFFER_SIZE)) > 0)
+					os.write(buffer, 0, real_buffer_size);
+
+				// File postfix
+				os.writeBytes(crlf);
+				os.writeBytes(twoHyphens + boundary + twoHyphens + crlf);
+
+				writer.flush();
+			}
+			finally
+			{
+				if (stream != null) stream.close();
 			}
 		}
 	}
