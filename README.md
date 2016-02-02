@@ -33,9 +33,9 @@ Instructions for using the SDK are below. For a quick example demonstrating the 
 <li>Press on ‘Add External JAR’.</li>
 <li>Browse to the libraries with your extracted JAR files and choose to add them.</li>
 </ol>
-<p>Now you can use Copyleaks API in your project. If you are working with our latest version, you can also run the libraries using the code found down on this page.</p>
 </li>
 </ul>
+<p>Now you can use Copyleaks API in your project. If you are working with our latest version, you can also run the libraries using the code found down on this page.</p>
 <h3>Signing Up and Getting Your API Key</h3>
  <p>To use Copyleaks API you need to be a registered user. Signing up is free of charge.</p>
  <p><a href="https://copyleaks.com/Account/Signup">Signup</a> to Copyleaks and confirm your account by clicking the link on the confirmation email. To get your API key, click your username in the upper right corner which will lead you to <i>‘Manage Account’</i> page. Press on <i>"Generate"</i> to get your own personal API key.</p>
