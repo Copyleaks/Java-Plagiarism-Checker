@@ -24,8 +24,10 @@
 
 package copyleaks.sdk.api.models;
 
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 public class ProcessOptions
 {
@@ -68,5 +70,51 @@ public class ProcessOptions
 	public void setSandboxMode(boolean sandboxMode)
 	{
 		SandboxMode = sandboxMode;
+	}
+	
+	private String EmailCallback;
+	public String getEmailCallback()
+	{
+		return EmailCallback;
+	}
+
+	public void setEmailCallback(String emailCallback)
+	{
+		EmailCallback = emailCallback;
+	}
+	
+	protected final String COPYLEAKS_HEADER_PREFIX = "copyleaks-";
+	public void addHeaders(HttpURLConnection client)
+	{
+		if (this.getHttpCallback() != null)
+		{
+			client.addRequestProperty(COPYLEAKS_HEADER_PREFIX + "http-callback",
+					this.getHttpCallback().toString());
+			// Add HTTP callback to the request header.
+		}
+		
+		if (this.getEmailCallback() != null)
+		{
+			client.addRequestProperty(COPYLEAKS_HEADER_PREFIX + "email-callback",
+					this.getEmailCallback().toString());
+			// Add Email callback to the request header.
+		}
+
+		if (this.getCustomFields() != null)
+		{
+			final String CLIENT_CUSTOM_PREFIX = COPYLEAKS_HEADER_PREFIX + "client-custom-";
+			for (Entry<String, String> entry : this.getCustomFields().entrySet())
+			{
+				String key = entry.getKey();
+				String value = entry.getValue();
+				client.addRequestProperty(CLIENT_CUSTOM_PREFIX + key, value);
+			}
+		}
+
+		if (this.isSandboxMode())
+		{
+			final String SANDBOX_MODE_HEADER = COPYLEAKS_HEADER_PREFIX + "sandbox-mode";
+			client.addRequestProperty(SANDBOX_MODE_HEADER, "");
+		}
 	}
 }
