@@ -156,7 +156,11 @@ public class Main
 			}
 
 			ProcessOptions scanOptions = new ProcessOptions();
-			// scanOptions.setSandboxMode(true); // <--------------- Read more @ https://api.copyleaks.com/Documentation/RequestHeaders#sandbox-mode
+			
+			// In Sandbox scan you don't need credits. 
+			// Read more @ https://api.copyleaks.com/Documentation/RequestHeaders#sandbox-mode
+			// After you finish the integration with Copyleaks, remove this line.
+			scanOptions.setSandboxMode(true); 
 
 			ResultRecord[] results;
 			CopyleaksProcess createdProcess;

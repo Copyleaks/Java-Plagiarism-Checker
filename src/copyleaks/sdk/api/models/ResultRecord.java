@@ -28,8 +28,17 @@ import com.google.gson.annotations.SerializedName;
 
 public class ResultRecord implements Comparable<ResultRecord>
 {
+	public ResultRecord(String URL, int Percents, int NumberOfCopiedWords){
+		this.URL = URL;
+		this.Percents = Percents;
+		this.NumberOfCopiedWords = NumberOfCopiedWords;
+	}
+	
+	public ResultRecord(){
+		// For serialization.
+	}
+	
 	@SerializedName("URL")
-
 	private String URL;
 
 	public String getURL()
@@ -38,7 +47,6 @@ public class ResultRecord implements Comparable<ResultRecord>
 	}
 
 	@SerializedName("Percents")
-
 	private int Percents;
 
 	public int getPercents()
