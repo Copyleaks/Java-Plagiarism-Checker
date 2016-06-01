@@ -12,8 +12,8 @@ With the Copyleaks SDK you can submit a scan for:
 Instructions for using the SDK are below. For a quick example demonstrating the SDK capabilities just look at the code examples under “examples”.
 </p>
 </ol>
-<h3>Configuration</h3>
-<p>You can configure the Copyleaks SDK in one of two ways:<p/>
+<h3>Integration</h3>
+<p>You can integrate with the Copyleaks SDK in one of two ways:<p/>
 <ul>
 <li>Download the code to your workspace – choose this option if you want to alter the code and add capabilities to match your own specific needs. Download the project from here, open it using Eclipse and choose ‘Import Project’ from your own workspace. Then, follow the next steps:
 <ol>
@@ -37,8 +37,8 @@ Instructions for using the SDK are below. For a quick example demonstrating the 
 </ul>
 <p>Now you can use the Copyleaks API in your project. If you are working with our latest version, you can also run the libraries using the code found down on this page.</p>
 <h3>Signing Up and Getting Your API Key</h3>
- <p>To use Copyleaks API you need to be a registered user. Signing up is free of charge.</p>
- <p><a href="https://copyleaks.com/account/register">Signup</a> to Copyleaks and confirm your account by clicking the link in the confirmation email. To get your API key, click your username in the upper right corner, which will lead you to the <i>‘Manage Account’</i> page. Press on <i>"Generate"</i> to get your own personal API key.</p>
+ <p>To use Copyleaks API you need to be a registered user. Signing up is quick and free of charge.</p>
+ <p><a href="https://copyleaks.com/account/register">Signup</a> to Copyleaks and confirm your account by clicking the link in the confirmation email. Generate your personal API key on your <a href="https://api.copyleaks.com/Home/Dashboard">dashboard</a> under 'Access Keys'. </p>
  <p>For more information check out our <a href="https://api.copyleaks.com/Guides/HowToUse">API guide</a>.</p>
 <h3>Example</h3>
 <p>This code will show you where the textual content in the parameter ‘url’ has been used online:</p>
