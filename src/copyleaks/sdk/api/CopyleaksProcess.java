@@ -117,8 +117,9 @@ public class CopyleaksProcess implements Comparable<CopyleaksProcess>, Serializa
 		SecurityToken = securityToken;
 	}
 
-	CopyleaksProcess(LoginToken authorizationToken, ProcessInList process)
+	CopyleaksProcess(String product, LoginToken authorizationToken, ProcessInList process)
 	{
+		setProduct(product);
 		this.setPID(process.getProcessId());
 		this.setCreationTimeUTC(process.getCreationTimeUTC());
 		this.setSecurityToken(authorizationToken);
@@ -126,15 +127,27 @@ public class CopyleaksProcess implements Comparable<CopyleaksProcess>, Serializa
 		this.ListProcesses_IsCompleted = process.getStatus().equalsIgnoreCase("finished");
 	}
 
-	CopyleaksProcess(LoginToken authorizationToken, CreateResourceResponse response,
+	CopyleaksProcess(String product, LoginToken authorizationToken, CreateResourceResponse response,
 			HashMap<String, String> customFields)
 	{
+		setProduct(product);
 		this.setPID(response.getProcessId());
 		this.setCreationTimeUTC(response.getCreationTimeUTC());
 		this.setSecurityToken(authorizationToken);
 		this.setCustomFields(customFields);
 	}
 
+	private String Product;
+	protected String getProduct()
+	{
+		return this.Product;
+	}
+
+	private void setProduct(String product)
+	{
+		this.Product = product;
+	}
+	
 	/**
 	 * Get process progress information
 	 * 
@@ -161,7 +174,7 @@ public class CopyleaksProcess implements Comparable<CopyleaksProcess>, Serializa
 		try
 		{
 			url = new URL(String.format("%1$s/%2$s/%3$s/%4$s/status", Settings.ServiceEntryPoint,
-					Settings.ServiceVersion, Settings.ServicePage, getPID()));
+					Settings.ServiceVersion, this.getProduct(), getPID()));
 			conn = CopyleaksClient.getClient(url, this.getSecurityToken(), RequestMethod.GET, HttpContentTypes.Json,
 					HttpContentTypes.TextPlain);
 			
@@ -207,7 +220,7 @@ public class CopyleaksProcess implements Comparable<CopyleaksProcess>, Serializa
 		try
 		{
 			url = new URL(String.format("%1$s/%2$s/%3$s/%4$s/result", Settings.ServiceEntryPoint,
-					Settings.ServiceVersion, Settings.ServicePage, getPID()));
+					Settings.ServiceVersion, this.getProduct(), getPID()));
 			conn = CopyleaksClient.getClient(url, this.getSecurityToken(), RequestMethod.GET, HttpContentTypes.Json,
 					HttpContentTypes.Json);
 			
@@ -252,7 +265,9 @@ public class CopyleaksProcess implements Comparable<CopyleaksProcess>, Serializa
 		try
 		{
 			url = new URL(String.format("%1$s/%2$s/%3$s/%4$s/delete", Settings.ServiceEntryPoint,
-					Settings.ServiceVersion, Settings.ServicePage, this.PID));
+					Settings.ServiceVersion, 
+					this.getProduct(),
+					this.PID));
 			conn = CopyleaksClient.getClient(url, this.getSecurityToken(), RequestMethod.DELETE, HttpContentTypes.Json,
 					HttpContentTypes.Json);
 			if (conn.getResponseCode() != 200)

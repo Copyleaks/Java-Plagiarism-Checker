@@ -115,7 +115,7 @@ public class UserAuthentication
 	 * @throws SecurityTokenException
 	 *             The login-token is undefined or expired
 	 */
-	public static int getCreditBalance(LoginToken token) throws SecurityTokenException, CommandFailedException
+	public static int getCreditBalance(LoginToken token, eProduct product) throws SecurityTokenException, CommandFailedException
 	{
 		LoginToken.ValidateToken(token);
 
@@ -125,8 +125,10 @@ public class UserAuthentication
 		HttpURLConnection conn = null;
 		try
 		{
-			url = new URL(String.format("%1$s/%2$s/account/count-credits", Settings.ServiceEntryPoint,
-					Settings.ServiceVersion));
+			url = new URL(String.format("%1$s/%2$s/%3$s/count-credits", 
+					Settings.ServiceEntryPoint,
+					Settings.ServiceVersion, 
+					productToWalletName(product)));
 			conn = CopyleaksClient.getClient(url, token, RequestMethod.GET, HttpContentTypes.Json,
 					HttpContentTypes.Json);
 			if (conn.getResponseCode() != 200)
@@ -153,5 +155,19 @@ public class UserAuthentication
 		CountCreditsResponse res = gson.fromJson(json, CountCreditsResponse.class);
 
 		return res.getAmount();
+	}
+	
+	
+	private static String productToWalletName(eProduct product)
+	{
+		switch(product)
+		{
+			case Academic:
+				return "academyapi";
+			case Businesses:
+				return "publisherapi";
+			default:
+				throw new RuntimeException("Unknown product type.");
+		}
 	}
 }

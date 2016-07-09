@@ -139,7 +139,7 @@ public class Main
 
 		try
 		{
-			CopyleaksCloud copyleaks = new CopyleaksCloud();
+			CopyleaksCloud copyleaks = new CopyleaksCloud(eProduct.Businesses);
 			System.out.print("Login to Copyleaks cloud...");
 			copyleaks.Login(commandLine.getOptionValue(ARG_EMAIL_KEY), commandLine.getOptionValue(ARG_APIKEY_KEY));
 			System.out.println("Done!");

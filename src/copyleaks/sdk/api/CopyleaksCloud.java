@@ -59,6 +59,22 @@ import copyleaks.sdk.api.models.responses.ProcessInList;
  */
 public class CopyleaksCloud
 {
+	public CopyleaksCloud(eProduct selectedProduct)
+	{
+		setProduct(selectedProduct);
+	}
+	
+	private eProduct Product;
+	protected eProduct getProduct()
+	{
+		return this.Product;
+	}
+
+	private void setProduct(eProduct product)
+	{
+		this.Product = product;
+	}
+	
 	private LoginToken Token;
 
 	protected LoginToken getToken()
@@ -92,7 +108,7 @@ public class CopyleaksCloud
 		try
 		{
 			url = new URL(String.format("%1$s/%2$s/%3$s/list", Settings.ServiceEntryPoint, Settings.ServiceVersion,
-					Settings.ServicePage));
+					this.productToServicePage()));
 			conn = CopyleaksClient.getClient(url, this.getToken(), RequestMethod.GET, HttpContentTypes.Json,
 					HttpContentTypes.TextPlain);
 
@@ -117,7 +133,7 @@ public class CopyleaksCloud
 		ProcessInList[] response = gson.fromJson(json, ProcessInList[].class);
 		CopyleaksProcess[] processes = new CopyleaksProcess[response.length];
 		for (int i = 0; i < response.length; ++i)
-			processes[i] = new CopyleaksProcess(this.getToken(), response[i]);
+			processes[i] = new CopyleaksProcess(productToServicePage(),this.getToken(), response[i]);
 
 		Arrays.sort(processes, Collections.reverseOrder());
 
@@ -138,7 +154,7 @@ public class CopyleaksCloud
 	{
 		LoginToken.ValidateToken(this.getToken());
 
-		return UserAuthentication.getCreditBalance(this.getToken());
+		return UserAuthentication.getCreditBalance(this.getToken(), this.getProduct());
 	}
 
 	/**
@@ -189,7 +205,7 @@ public class CopyleaksCloud
 		try
 		{
 			reqUrl = new URL(String.format("%1$s/%2$s/%3$s/create-by-url", Settings.ServiceEntryPoint,
-					Settings.ServiceVersion, Settings.ServicePage));
+					Settings.ServiceVersion, this.productToServicePage()));
 			conn = CopyleaksClient.getClient(reqUrl, this.getToken(), RequestMethod.POST, HttpContentTypes.Json,
 					HttpContentTypes.Json);
 
@@ -220,10 +236,68 @@ public class CopyleaksCloud
 			throw new RuntimeException("Unable to process server response.");
 
 		CreateResourceResponse response = gson.fromJson(json, CreateResourceResponse.class);
-		if (options == null)
-			return new CopyleaksProcess(this.getToken(), response, null);
-		else
-			return new CopyleaksProcess(this.getToken(), response, options.getCustomFields());
+		return new CopyleaksProcess(productToServicePage(), this.getToken(), response, response.getCustomFields());
+	}
+	
+	/**
+	 * Submitting text to plagiarism scan
+	 * 
+	 * @param text
+	 *            The content to scan
+	 * @param options
+	 *            Process Options: include HTTP callback and add custom fields
+	 *            to the process
+	 * @return The newly created process
+	 * @throws CommandFailedException
+	 *             This exception is thrown if an exception situation occurred
+	 *             during the processing of a command
+	 * @throws SecurityTokenException
+	 *             The login-token is undefined or expired
+	 */
+	public CopyleaksProcess CreateByText(String text, ProcessOptions options)
+			throws SecurityTokenException, CommandFailedException
+	{
+		LoginToken.ValidateToken(this.getToken()); // Token Validation
+
+		String json;
+		Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy HH:mm:ss").create();
+		URL reqUrl;
+		HttpURLConnection conn = null;
+		try
+		{
+			reqUrl = new URL(String.format("%1$s/%2$s/%3$s/create-by-text", Settings.ServiceEntryPoint,
+					Settings.ServiceVersion, this.productToServicePage()));
+			conn = CopyleaksClient.getClient(reqUrl, this.getToken(), RequestMethod.POST, HttpContentTypes.Json,
+					HttpContentTypes.Json);
+
+			if (options != null)
+				options.addHeaders(conn);
+
+			CopyleaksClient.HandleString.attach(conn, text);
+
+			if (conn.getResponseCode() != 200)
+				throw new CommandFailedException(conn);
+
+			try (InputStream inputStream = new BufferedInputStream(conn.getInputStream()))
+			{
+				json = HttpURLConnectionHelper.convertStreamToString(inputStream);
+			}
+		}
+		catch (IOException e)
+		{
+			throw new RuntimeException(e.getMessage());
+		}
+		finally
+		{
+			if (conn != null)
+				conn.disconnect();
+		}
+
+		if (json == null || json.isEmpty())
+			throw new RuntimeException("Unable to process server response.");
+
+		CreateResourceResponse response = gson.fromJson(json, CreateResourceResponse.class);
+		return new CopyleaksProcess(productToServicePage(), this.getToken(), response, response.getCustomFields());
 	}
 
 	/**
@@ -282,7 +356,7 @@ public class CopyleaksCloud
 		try
 		{
 			reqUrl = new URL(String.format("%1$s/%2$s/%3$s/create-by-file", Settings.ServiceEntryPoint,
-					Settings.ServiceVersion, Settings.ServicePage));
+					Settings.ServiceVersion, this.productToServicePage()));
 			conn = CopyleaksClient.getClient(reqUrl, this.getToken(), RequestMethod.POST,
 					HttpContentTypes.Multipart + ";boundary=file." + fileExtension, HttpContentTypes.Json);
 
@@ -313,10 +387,7 @@ public class CopyleaksCloud
 			throw new RuntimeException("Unable to process server response.");
 
 		CreateResourceResponse response = gson.fromJson(json, CreateResourceResponse.class);
-		if (options == null)
-			return new CopyleaksProcess(this.getToken(), response, null);
-		else
-			return new CopyleaksProcess(this.getToken(), response, options.getCustomFields());
+		return new CopyleaksProcess(productToServicePage(), this.getToken(), response, response.getCustomFields());
 	}
 
 	/**
@@ -376,7 +447,7 @@ public class CopyleaksCloud
 		try
 		{
 			reqUrl = new URL(String.format("%1$s/%2$s/%3$s/create-by-file-ocr?language=%4$s",
-					Settings.ServiceEntryPoint, Settings.ServiceVersion, Settings.ServicePage,
+					Settings.ServiceEntryPoint, Settings.ServiceVersion, this.productToServicePage(),
 					URLEncoder.encode(lang.getCode().toString(), Settings.Encoding)));
 			conn = CopyleaksClient.getClient(reqUrl, this.getToken(), RequestMethod.POST,
 					HttpContentTypes.Multipart + ";boundary=file." + fileExtension, HttpContentTypes.Json);
@@ -408,9 +479,19 @@ public class CopyleaksCloud
 			throw new RuntimeException("Unable to process server response.");
 
 		CreateResourceResponse response = gson.fromJson(json, CreateResourceResponse.class);
-		if (options == null)
-			return new CopyleaksProcess(this.getToken(), response, null);
-		else
-			return new CopyleaksProcess(this.getToken(), response, options.getCustomFields());
+		return new CopyleaksProcess(productToServicePage(), this.getToken(), response, response.getCustomFields());
+	}
+	
+	protected String productToServicePage()
+	{
+		switch (this.getProduct())
+		{
+			case Businesses:
+				return Settings.BusinessesServicePage;
+			case Academic:
+				return Settings.AcademicServicePage;
+			default:
+				throw new RuntimeException("Unknown service page.");
+		}
 	}
 }

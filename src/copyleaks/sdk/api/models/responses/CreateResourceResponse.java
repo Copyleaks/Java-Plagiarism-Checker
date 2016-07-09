@@ -25,6 +25,7 @@
 package copyleaks.sdk.api.models.responses;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.UUID;
 
 public class CreateResourceResponse {
@@ -37,5 +38,11 @@ public class CreateResourceResponse {
 	public Date getCreationTimeUTC()
 	{
 		return CreationTimeUTC;
+	}
+	
+	private HashMap<String, String> CustomFields;
+	public HashMap<String, String> getCustomFields()
+	{
+		return CustomFields;
 	}
 }
