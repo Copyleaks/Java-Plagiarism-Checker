@@ -27,9 +27,9 @@ package copyleaks.sdk.api;
 public class Settings
 {
 	public static final String Encoding = "UTF-8";
-	public static final int RequestsTimeout = 30000; // In Milliseconds. Wait up
-														// to 30 seconds for
-														// response.
+	
+	public static final int NetworkReadTimeout = 30000; 
+	public static final int NetworkConnectTimeout = 15000; 
 	
 	public static final String ServiceEntryPoint = "https://api.copyleaks.com/"; // Service URL.
 			

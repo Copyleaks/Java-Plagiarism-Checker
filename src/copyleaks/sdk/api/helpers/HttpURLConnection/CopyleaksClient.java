@@ -69,6 +69,9 @@ public class CopyleaksClient
 		conn.setRequestProperty("Cache-Control", "no-cache");
 		conn.setRequestProperty("Accept-Language", getLanguage());
 
+		conn.setConnectTimeout(Settings.NetworkConnectTimeout);
+		conn.setReadTimeout(Settings.NetworkReadTimeout);
+		
 		if (securityToken != null)
 		{
 			LoginToken.ValidateToken(securityToken);

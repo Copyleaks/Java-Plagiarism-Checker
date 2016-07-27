@@ -52,6 +52,8 @@ import copyleaks.sdk.api.models.ProcessOptions;
 import copyleaks.sdk.api.models.requests.CreateCommandRequest;
 import copyleaks.sdk.api.models.responses.CreateResourceResponse;
 import copyleaks.sdk.api.models.responses.ProcessInList;
+import copyleaks.sdk.api.models.SupportedFiles;
+import copyleaks.sdk.api.models.SupportedOcrLanguage;
 
 /**
  * This class allows you to connect to Copyleaks cloud, scan for plagiarism and
@@ -493,5 +495,89 @@ public class CopyleaksCloud
 			default:
 				throw new RuntimeException("Unknown service page.");
 		}
+	}
+	
+	/**
+	 * Get a list of supported file types to upload. 
+	 * @return Supported file types list.
+	 * @throws CommandFailedException
+	 */
+	public static SupportedFiles SupportedFiles() 
+			throws CommandFailedException
+	{
+		String json;
+		Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy HH:mm:ss").create();
+		URL reqUrl;
+		HttpURLConnection conn = null;
+		try
+		{
+			reqUrl = new URL(String.format("%1$s/%2$s/miscellaneous/supported-file-types", Settings.ServiceEntryPoint, Settings.ServiceVersion));
+			conn = CopyleaksClient.getClient(reqUrl, RequestMethod.GET, HttpContentTypes.Json, HttpContentTypes.Json);
+
+			if (conn.getResponseCode() != 200)
+				throw new CommandFailedException(conn);
+
+			try (InputStream inputStream = new BufferedInputStream(conn.getInputStream()))
+			{
+				json = HttpURLConnectionHelper.convertStreamToString(inputStream);
+			}
+		}
+		catch (IOException e)
+		{
+			throw new RuntimeException(e.getMessage());
+		}
+		finally
+		{
+			if (conn != null)
+				conn.disconnect();
+		}
+
+		if (json == null || json.isEmpty())
+			throw new RuntimeException("Unable to process server response.");
+
+		SupportedFiles response = gson.fromJson(json, SupportedFiles.class);
+		return response;
+	}
+	
+	/**
+	 * Get a list of supported OCR languages. 
+	 * @return List of supported languages. Include the language name and ID.
+	 * @throws CommandFailedException
+	 */
+	public static SupportedOcrLanguage[] SupportedOcrLanguages() 
+			throws CommandFailedException
+	{
+		String json;
+		Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy HH:mm:ss").create();
+		URL reqUrl;
+		HttpURLConnection conn = null;
+		try
+		{
+			reqUrl = new URL(String.format("%1$s/%2$s/miscellaneous/ocr-languages-list", Settings.ServiceEntryPoint, Settings.ServiceVersion));
+			conn = CopyleaksClient.getClient(reqUrl, RequestMethod.GET, HttpContentTypes.Json, HttpContentTypes.Json);
+
+			if (conn.getResponseCode() != 200)
+				throw new CommandFailedException(conn);
+
+			try (InputStream inputStream = new BufferedInputStream(conn.getInputStream()))
+			{
+				json = HttpURLConnectionHelper.convertStreamToString(inputStream);
+			}
+		}
+		catch (IOException e)
+		{
+			throw new RuntimeException(e.getMessage());
+		}
+		finally
+		{
+			if (conn != null)
+				conn.disconnect();
+		}
+
+		if (json == null || json.isEmpty())
+			throw new RuntimeException("Unable to process server response.");
+
+		SupportedOcrLanguage[] response = gson.fromJson(json, SupportedOcrLanguage[].class);
+		return response;
 	}
 }
