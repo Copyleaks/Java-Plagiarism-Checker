@@ -47,7 +47,6 @@ import copyleaks.sdk.api.RequestMethod;
 import copyleaks.sdk.api.exceptions.CommandFailedException;
 import copyleaks.sdk.api.exceptions.SecurityTokenException;
 import copyleaks.sdk.api.models.LoginToken;
-import copyleaks.sdk.api.models.OcrLanguage;
 import copyleaks.sdk.api.models.ProcessOptions;
 import copyleaks.sdk.api.models.requests.CreateCommandRequest;
 import copyleaks.sdk.api.models.responses.CreateResourceResponse;
@@ -397,6 +396,9 @@ public class CopyleaksCloud
 	 * 
 	 * @param localfile
 	 *            The local picture containing the content to scan
+	 * @param languageCode
+	 * 			  The code of the language in the picture.
+	 * 			  For more information: https://api.copyleaks.com/GeneralDocumentation/OcrLanguages
 	 * @param options
 	 *            Process Options: include HTTP callback and add custom fields
 	 *            to the process
@@ -407,11 +409,11 @@ public class CopyleaksCloud
 	 * @throws FileNotFoundException
 	 *             When the requested file wasn't found.
 	 */
-	public CopyleaksProcess CreateByOCR(File localfile, OcrLanguage lang, ProcessOptions options)
+	public CopyleaksProcess CreateByOCR(File localfile, String languageCode, ProcessOptions options)
 			throws CommandFailedException, FileNotFoundException
 	{
 		return CreateByOCR(new FileInputStream(localfile), FileHelpers.getFileName(localfile),
-				FileHelpers.getFileExtension(localfile), lang, options);
+				FileHelpers.getFileExtension(localfile), languageCode, options);
 	}
 
 	/**
@@ -421,6 +423,9 @@ public class CopyleaksCloud
 	 *            Stream to the file that you want to scan
 	 * @param filename
 	 *            The file name of the file. WITHOUT extension.
+	 * @param languageCode
+	 * 			  The language code of the text in the picture. 
+	 * 			  For more information: https://api.copyleaks.com/GeneralDocumentation/OcrLanguages
 	 * @param fileExtension
 	 *            The file type. Without dot (".") before it. For example-
 	 *            "pdf".
@@ -434,13 +439,13 @@ public class CopyleaksCloud
 	 * @throws FileNotFoundException
 	 *             When the requested file wasn't found.
 	 */
-	public CopyleaksProcess CreateByOCR(InputStream stream, String filename, String fileExtension, OcrLanguage lang,
+	public CopyleaksProcess CreateByOCR(InputStream stream, String filename, String fileExtension, String languageCode,
 			ProcessOptions options) throws CommandFailedException
 	{
 		LoginToken.ValidateToken(this.getToken()); // Token Validation
 
-		if (lang == null)
-			throw new RuntimeException("lang cannot be null!");
+		if (languageCode == null || languageCode.trim() == "")
+			throw new RuntimeException("lang cannot be null or empty!");
 
 		String json;
 		Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy HH:mm:ss").create();
@@ -450,7 +455,7 @@ public class CopyleaksCloud
 		{
 			reqUrl = new URL(String.format("%1$s/%2$s/%3$s/create-by-file-ocr?language=%4$s",
 					Settings.ServiceEntryPoint, Settings.ServiceVersion, this.productToServicePage(),
-					URLEncoder.encode(lang.getCode().toString(), Settings.Encoding)));
+					URLEncoder.encode(languageCode, Settings.Encoding)));
 			conn = CopyleaksClient.getClient(reqUrl, this.getToken(), RequestMethod.POST,
 					HttpContentTypes.Multipart + ";boundary=file." + fileExtension, HttpContentTypes.Json);
 
