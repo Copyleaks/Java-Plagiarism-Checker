@@ -64,7 +64,7 @@ public class UserAuthentication
 	{
 		LoginToken loginToken;
 		String json;
-		Gson gson = new GsonBuilder().create();
+		Gson gson = new GsonBuilder().setDateFormat(Settings.DateFormat).create();
 
 		// Open connection to Copyleaks and set properties
 		URL url = new URL(String.format("%1$s/%2$s/account/login-api", Settings.ServiceEntryPoint, Settings.ServiceVersion));
