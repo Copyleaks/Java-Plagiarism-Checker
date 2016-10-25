@@ -6,9 +6,9 @@ Copyleaks SDK is a simple framework that allows you to perform plagiarism scans 
 With the Copyleaks SDK you can submit a scan for:  
 <ul>
 <li>Webpages</li>
-<li>Local files - pdf, doc, docx, rtf and more <a href="https://api.copyleaks.com/Documentation/TechnicalSpecifications/#non-textual-formats">(see full list)</a></li>
+<li>Local files - pdf, doc, docx, rtf and more <a href="https://api.copyleaks.com/GeneralDocumentation/TechnicalSpecifications#supportedfiletypes">(see full list)</a></li>
 <li>Free text</li>
-<li>OCR (Optical Character Recognition) - scanning pictures containing textual content <a href="https://api.copyleaks.com/Documentation/TechnicalSpecifications/#ocr-formats">(see full list)</a></li>
+<li>OCR (Optical Character Recognition) - scanning pictures containing textual content <a href="https://api.copyleaks.com/GeneralDocumentation/TechnicalSpecifications#supportedfiletypes">(see full list)</a></li>
 </ul>
 Instructions for using the SDK are below. For a quick example demonstrating the SDK capabilities just look at the code examples under “examples”.
 </p>
