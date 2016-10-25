@@ -114,5 +114,4 @@ public static void Scan(String email, String key, String url) {
 <h3>Read More</h3>
 <ul>
 <li><a href="https://api.copyleaks.com/Guides/HowToUse">Copyleaks API guide</a></li>
-<li><a href="https://api.copyleaks.com/Documentation">Copyleaks API documentation</a></li>
 </ul>
