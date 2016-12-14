@@ -63,6 +63,51 @@ public class ResultRecord implements Comparable<ResultRecord>
 		return NumberOfCopiedWords;
 	}
 	
+	@SerializedName("ComparisonReport")
+
+	private String ComparisonReport;
+
+	public String getComparisonReport()
+	{
+		return ComparisonReport;
+	}
+	
+	@SerializedName("CachedVersion")
+
+	private String CachedVersion;
+
+	public String getCachedVersion()
+	{
+		return CachedVersion;
+	}
+	
+	@SerializedName("Title")
+
+	private String Title;
+
+	public String getTitle()
+	{
+		return Title;
+	}
+	
+	@SerializedName("Introduction")
+
+	private String Introduction;
+
+	public String getIntroduction()
+	{
+		return Introduction;
+	}
+
+	@SerializedName("EmbededComparison")
+
+	private String EmbededComparison;
+
+	public String getEmbededComparison()
+	{
+		return EmbededComparison;
+	}
+	
 	@Override
 	public int compareTo(ResultRecord o) {
 		return Integer.compare(this.getPercents(), o.getPercents());
