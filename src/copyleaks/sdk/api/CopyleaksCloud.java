@@ -52,7 +52,7 @@ import copyleaks.sdk.api.models.requests.CreateCommandRequest;
 import copyleaks.sdk.api.models.responses.CreateResourceResponse;
 import copyleaks.sdk.api.models.responses.ProcessInList;
 import copyleaks.sdk.api.models.SupportedFiles;
-import copyleaks.sdk.api.models.SupportedOcrLanguage;
+
 
 /**
  * This class allows you to connect to Copyleaks cloud, scan for plagiarism and
@@ -549,7 +549,7 @@ public class CopyleaksCloud
 	 * @return List of supported languages. Include the language name and ID.
 	 * @throws CommandFailedException
 	 */
-	public static SupportedOcrLanguage[] SupportedOcrLanguages() 
+	public static String[] SupportedOcrLanguages() 
 			throws CommandFailedException
 	{
 		String json;
@@ -582,7 +582,6 @@ public class CopyleaksCloud
 		if (json == null || json.isEmpty())
 			throw new RuntimeException("Unable to process server response.");
 
-		SupportedOcrLanguage[] response = gson.fromJson(json, SupportedOcrLanguage[].class);
-		return response;
+		return gson.fromJson(json, String[].class);
 	}
 }

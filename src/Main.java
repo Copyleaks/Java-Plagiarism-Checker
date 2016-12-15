@@ -95,7 +95,6 @@ public class Main
 	{
 		// For more information, visit Copyleaks How-To page:
 		// https://api.copyleaks.com/Guides/HowToUse
-		
 		final CommandLineParser cmdLineGnuParser = new DefaultParser();
 		final Options options = new Options();
 		SetupOptions(options);

@@ -28,16 +28,24 @@ import com.google.gson.annotations.SerializedName;
 
 public class ResultRecord implements Comparable<ResultRecord>
 {
-	public ResultRecord(String URL, int Percents, int NumberOfCopiedWords){
+	public ResultRecord(String URL, int Percents, int NumberOfCopiedWords, String CachedVersion,
+			String ComparisonReport, String Title, String Introduction, String EmbededComparison)
+	{
 		this.URL = URL;
 		this.Percents = Percents;
 		this.NumberOfCopiedWords = NumberOfCopiedWords;
+		this.CachedVersion = CachedVersion;
+		this.ComparisonReport = ComparisonReport;
+		this.Title = Title;
+		this.Introduction = Introduction;
+		this.EmbededComparison = EmbededComparison;
 	}
-	
-	public ResultRecord(){
+
+	public ResultRecord()
+	{
 		// For serialization.
 	}
-	
+
 	@SerializedName("URL")
 	private String URL;
 
@@ -62,7 +70,7 @@ public class ResultRecord implements Comparable<ResultRecord>
 	{
 		return NumberOfCopiedWords;
 	}
-	
+
 	@SerializedName("ComparisonReport")
 
 	private String ComparisonReport;
@@ -71,7 +79,7 @@ public class ResultRecord implements Comparable<ResultRecord>
 	{
 		return ComparisonReport;
 	}
-	
+
 	@SerializedName("CachedVersion")
 
 	private String CachedVersion;
@@ -80,7 +88,7 @@ public class ResultRecord implements Comparable<ResultRecord>
 	{
 		return CachedVersion;
 	}
-	
+
 	@SerializedName("Title")
 
 	private String Title;
@@ -89,7 +97,7 @@ public class ResultRecord implements Comparable<ResultRecord>
 	{
 		return Title;
 	}
-	
+
 	@SerializedName("Introduction")
 
 	private String Introduction;
@@ -107,9 +115,10 @@ public class ResultRecord implements Comparable<ResultRecord>
 	{
 		return EmbededComparison;
 	}
-	
+
 	@Override
-	public int compareTo(ResultRecord o) {
+	public int compareTo(ResultRecord o)
+	{
 		return Integer.compare(this.getPercents(), o.getPercents());
-    }
+	}
 }
