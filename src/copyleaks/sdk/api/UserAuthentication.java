@@ -166,6 +166,8 @@ public class UserAuthentication
 				return Settings.AcademicServicePage;
 			case Businesses:
 				return Settings.BusinessesServicePage;
+			case Websites:
+				return Settings.WebsitesServicePage;
 			default:
 				throw new RuntimeException("Unknown product type.");
 		}

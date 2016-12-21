@@ -38,6 +38,7 @@ public class Settings
 	
 	public static final String BusinessesServicePage = "businesses";
 	public static final String AcademicServicePage = "academic";
+	public static final String WebsitesServicePage = "websites";
 	public static final String DownloadsServicePage = "downloads";
 	
 	public static final String USER_AGENT = "CopyleaksJavaSDK/1.1";// User agent

@@ -497,6 +497,8 @@ public class CopyleaksCloud
 				return Settings.BusinessesServicePage;
 			case Academic:
 				return Settings.AcademicServicePage;
+			case Websites:
+				return Settings.WebsitesServicePage;
 			default:
 				throw new RuntimeException("Unknown service page.");
 		}
