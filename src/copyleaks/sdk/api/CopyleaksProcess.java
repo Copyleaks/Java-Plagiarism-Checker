@@ -44,6 +44,7 @@ import copyleaks.sdk.api.helpers.HttpURLConnection.HttpURLConnectionHelper;
 import copyleaks.sdk.api.RequestMethod;
 import copyleaks.sdk.api.exceptions.CommandFailedException;
 import copyleaks.sdk.api.exceptions.SecurityTokenException;
+import copyleaks.sdk.api.models.ComparisonResult;
 import copyleaks.sdk.api.models.LoginToken;
 import copyleaks.sdk.api.models.ResultRecord;
 import copyleaks.sdk.api.models.responses.CheckStatusResponse;
@@ -92,7 +93,7 @@ public class CopyleaksProcess implements Comparable<CopyleaksProcess>, Serializa
 	}
 
 	private boolean ListProcesses_IsCompleted = false;
-	
+
 	private HashMap<String, String> CustomFields;
 
 	public HashMap<String, String> getCustomFields()
@@ -138,6 +139,7 @@ public class CopyleaksProcess implements Comparable<CopyleaksProcess>, Serializa
 	}
 
 	private String Product;
+
 	protected String getProduct()
 	{
 		return this.Product;
@@ -147,7 +149,7 @@ public class CopyleaksProcess implements Comparable<CopyleaksProcess>, Serializa
 	{
 		this.Product = product;
 	}
-	
+
 	/**
 	 * Get process progress information
 	 * 
@@ -164,7 +166,7 @@ public class CopyleaksProcess implements Comparable<CopyleaksProcess>, Serializa
 		{
 			return 100;
 		}
-		
+
 		LoginToken.ValidateToken(this.getSecurityToken());
 
 		URL url;
@@ -177,7 +179,7 @@ public class CopyleaksProcess implements Comparable<CopyleaksProcess>, Serializa
 					Settings.ServiceVersion, this.getProduct(), getPID()));
 			conn = CopyleaksClient.getClient(url, this.getSecurityToken(), RequestMethod.GET, HttpContentTypes.Json,
 					HttpContentTypes.TextPlain);
-			
+
 			if (conn.getResponseCode() != 200)
 				throw new CommandFailedException(conn);
 
@@ -223,7 +225,7 @@ public class CopyleaksProcess implements Comparable<CopyleaksProcess>, Serializa
 					Settings.ServiceVersion, this.getProduct(), getPID()));
 			conn = CopyleaksClient.getClient(url, this.getSecurityToken(), RequestMethod.GET, HttpContentTypes.Json,
 					HttpContentTypes.Json);
-			
+
 			if (conn.getResponseCode() != 200)
 				throw new CommandFailedException(conn);
 
@@ -265,9 +267,7 @@ public class CopyleaksProcess implements Comparable<CopyleaksProcess>, Serializa
 		try
 		{
 			url = new URL(String.format("%1$s/%2$s/%3$s/%4$s/delete", Settings.ServiceEntryPoint,
-					Settings.ServiceVersion, 
-					this.getProduct(),
-					this.PID));
+					Settings.ServiceVersion, this.getProduct(), this.PID));
 			conn = CopyleaksClient.getClient(url, this.getSecurityToken(), RequestMethod.DELETE, HttpContentTypes.Json,
 					HttpContentTypes.Json);
 			if (conn.getResponseCode() != 200)
@@ -282,6 +282,107 @@ public class CopyleaksProcess implements Comparable<CopyleaksProcess>, Serializa
 			if (conn != null)
 				conn.disconnect();
 		}
+	}
+
+	public String DownloadSourceText()
+			throws SecurityTokenException, CommandFailedException
+	{
+		LoginToken.ValidateToken(this.getSecurityToken());
+
+		URL url;
+		HttpURLConnection conn = null;
+		try
+		{
+			url = new URL(String.format("%1$s/%2$s/%3$s/source-text?pid=%4$s", Settings.ServiceEntryPoint,
+					Settings.ServiceVersion, Settings.DownloadsServicePage, getPID()));
+			conn = CopyleaksClient.getClient(url, this.getSecurityToken(), RequestMethod.GET, HttpContentTypes.Json,
+					HttpContentTypes.Json);
+
+			if (conn.getResponseCode() != 200)
+				throw new CommandFailedException(conn);
+
+			try (InputStream inputStream = new BufferedInputStream(conn.getInputStream()))
+			{
+				return HttpURLConnectionHelper.convertStreamToString(inputStream);
+			}
+		}
+		catch (IOException e)
+		{
+			throw new RuntimeException(e.getMessage());
+		}
+		finally
+		{
+			if (conn != null)
+				conn.disconnect();
+		}
+	}
+	
+	public String DownloadResultText(ResultRecord result)
+			throws SecurityTokenException, CommandFailedException
+	{
+		LoginToken.ValidateToken(this.getSecurityToken());
+
+		URL url;
+		HttpURLConnection conn = null;
+		try
+		{
+			url = new URL(result.getCachedVersion());
+			conn = CopyleaksClient.getClient(url, this.getSecurityToken(), RequestMethod.GET, HttpContentTypes.Json,
+					HttpContentTypes.Json);
+
+			if (conn.getResponseCode() != 200)
+				throw new CommandFailedException(conn);
+
+			try (InputStream inputStream = new BufferedInputStream(conn.getInputStream()))
+			{
+				return HttpURLConnectionHelper.convertStreamToString(inputStream);
+			}
+		}
+		catch (IOException e)
+		{
+			throw new RuntimeException(e.getMessage());
+		}
+		finally
+		{
+			if (conn != null)
+				conn.disconnect();
+		}
+	}
+	
+	public ComparisonResult DownloadResultComparison(ResultRecord result)
+			throws SecurityTokenException, CommandFailedException
+	{
+		LoginToken.ValidateToken(this.getSecurityToken());
+
+		String json;
+		URL url;
+		HttpURLConnection conn = null;
+		Gson gson = new GsonBuilder().create();
+		try
+		{
+			url = new URL(result.getComparisonReport());
+			conn = CopyleaksClient.getClient(url, this.getSecurityToken(), RequestMethod.GET, HttpContentTypes.Json,
+					HttpContentTypes.Json);
+
+			if (conn.getResponseCode() != 200)
+				throw new CommandFailedException(conn);
+
+			try (InputStream inputStream = new BufferedInputStream(conn.getInputStream()))
+			{
+				json = HttpURLConnectionHelper.convertStreamToString(inputStream);
+			}
+		}
+		catch (IOException e)
+		{
+			throw new RuntimeException(e.getMessage());
+		}
+		finally
+		{
+			if (conn != null)
+				conn.disconnect();
+		}
+
+		return gson.fromJson(json, ComparisonResult.class);
 	}
 
 	@Override

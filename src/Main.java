@@ -1,3 +1,4 @@
+
 /********************************************************************************
  The MIT License(MIT)
  
@@ -26,6 +27,7 @@ import java.io.File;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.URI;
+import java.net.URLDecoder;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -36,6 +38,7 @@ import org.apache.commons.cli.ParseException;
 
 import copyleaks.sdk.api.*;
 import copyleaks.sdk.api.exceptions.CommandFailedException;
+import copyleaks.sdk.api.models.ComparisonResult;
 import copyleaks.sdk.api.models.ProcessOptions;
 import copyleaks.sdk.api.models.ResultRecord;
 
@@ -142,7 +145,7 @@ public class Main
 			System.out.print("Login to Copyleaks cloud...");
 			copyleaks.Login(commandLine.getOptionValue(ARG_EMAIL_KEY), commandLine.getOptionValue(ARG_APIKEY_KEY));
 			System.out.println("Done!");
-			
+
 			System.out.print("Checking account balance...");
 			int creditsBalance = copyleaks.getCredits();
 			System.out.println("Done (" + creditsBalance + " credits)!");
@@ -155,11 +158,13 @@ public class Main
 			}
 
 			ProcessOptions scanOptions = new ProcessOptions();
-			
-			// In Sandbox scan you don't need credits. 
-			// Read more @ https://api.copyleaks.com/Documentation/RequestHeaders#sandbox-mode
-			// After you finish the integration with Copyleaks, remove this line.
-			scanOptions.setSandboxMode(true); 
+
+			// In Sandbox scan you don't need credits.
+			// Read more @
+			// https://api.copyleaks.com/Documentation/RequestHeaders#sandbox-mode
+			// After you finish the integration with Copyleaks, remove this
+			// line.
+			scanOptions.setSandboxMode(true);
 
 			ResultRecord[] results;
 			CopyleaksProcess createdProcess;
@@ -198,12 +203,25 @@ public class Main
 				for (int i = 0; i < results.length; ++i)
 				{
 					System.out.println();
-					System.out.println(String.format("Result %1$s:", i + 1));
+					System.out.println("------------------------------------------------");
+					System.out.println(String.format("Title: %1$s", results[i].getTitle()));
+					System.out.println(String.format("Information: %1$s copied words (%2$s%%)",
+							results[i].getNumberOfCopiedWords(), results[i].getPercents()));
+					System.out.println(String.format("Introduction: %1$s", results[i].getIntroduction()));
 					System.out.println(String.format("Url: %1$s", results[i].getURL()));
-					System.out.println(String.format("Percents: %1$s", results[i].getPercents()));
-					System.out.println(String.format("CopiedWords: %1$s", results[i].getNumberOfCopiedWords()));
+					System.out.println(String.format("Comparison link: %1$s", results[i].getEmbededComparison()));
+					
+					// Optional: Download result full text. Uncomment to activate
+					// System.out.println("Result full-text:");
+					// System.out.println("*****************");
+					// System.out.println(createdProcess.DownloadResultText(results[i]));
 				}
 			}
+
+			// Optional: Download source full text. Uncomment to activate.
+			//System.out.println("Source full-text:");
+			//System.out.println("*****************");
+			//System.out.println(createdProcess.DownloadSourceText());
 		}
 		catch (CommandFailedException copyleaksException)
 		{

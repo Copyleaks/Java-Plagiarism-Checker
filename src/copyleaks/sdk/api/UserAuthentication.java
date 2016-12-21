@@ -163,9 +163,9 @@ public class UserAuthentication
 		switch(product)
 		{
 			case Academic:
-				return "academyapi";
+				return Settings.AcademicServicePage;
 			case Businesses:
-				return "publisherapi";
+				return Settings.BusinessesServicePage;
 			default:
 				throw new RuntimeException("Unknown product type.");
 		}
