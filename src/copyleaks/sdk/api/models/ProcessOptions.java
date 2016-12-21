@@ -47,6 +47,18 @@ public class ProcessOptions
 	{
 		HttpCallback = httpCallback;
 	}
+	
+	private URI InProgressResultsHttpCallback;
+
+	public URI getInProgressResultsHttpCallback()
+	{
+		return InProgressResultsHttpCallback;
+	}
+
+	public void setInProgressResultsHttpCallback(URI uri)
+	{
+		InProgressResultsHttpCallback = uri;
+	}
 
 	private HashMap<String, String> CustomFields;
 
@@ -88,9 +100,16 @@ public class ProcessOptions
 	{
 		if (this.getHttpCallback() != null)
 		{
-			client.addRequestProperty(COPYLEAKS_HEADER_PREFIX + "http-callback",
+			client.addRequestProperty(COPYLEAKS_HEADER_PREFIX + "http-completion-callback",
 					this.getHttpCallback().toString());
 			// Add HTTP callback to the request header.
+		}
+		
+		if (this.getInProgressResultsHttpCallback() != null)
+		{
+			client.addRequestProperty(COPYLEAKS_HEADER_PREFIX + "in-progress-new-result",
+					this.getInProgressResultsHttpCallback().toString());
+			// Add HTTP in progress result callback to the request header.
 		}
 		
 		if (this.getEmailCallback() != null)
