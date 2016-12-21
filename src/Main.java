@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.URI;
-import java.net.URLDecoder;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -38,7 +37,6 @@ import org.apache.commons.cli.ParseException;
 
 import copyleaks.sdk.api.*;
 import copyleaks.sdk.api.exceptions.CommandFailedException;
-import copyleaks.sdk.api.models.ComparisonResult;
 import copyleaks.sdk.api.models.ProcessOptions;
 import copyleaks.sdk.api.models.ResultRecord;
 
@@ -141,7 +139,7 @@ public class Main
 
 		try
 		{
-			CopyleaksCloud copyleaks = new CopyleaksCloud(eProduct.Websites);
+			CopyleaksCloud copyleaks = new CopyleaksCloud(eProduct.Businesses);
 			System.out.print("Login to Copyleaks cloud...");
 			copyleaks.Login(commandLine.getOptionValue(ARG_EMAIL_KEY), commandLine.getOptionValue(ARG_APIKEY_KEY));
 			System.out.println("Done!");
