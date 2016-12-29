@@ -64,6 +64,11 @@ public static void Scan(String email, String key, String url) {
 		// scanOptions.setSandboxMode(true); // <------ Read more @
 		// https://api.copyleaks.com/Documentation/RequestHeaders#sandbox-mode
 
+		// Use the callbacks in order to get notified once the scan results are ready
+		// Read more about the callbacks here - https://api.copyleaks.com/GeneralDocumentation/RequestHeaders#http-callbacks
+		//scanOptions.setHttpCallback(new URI("http://yourendpoint.com?pid={PID}"));
+		//scanOptions.setInProgressResultsHttpCallback(new URI("http://yourendpoint.com?pid={PID}"));
+		
 		ResultRecord[] results;
 		CopyleaksProcess createdProcess;
 
@@ -88,8 +93,12 @@ public static void Scan(String email, String key, String url) {
 				System.out.println();
 				System.out.println(String.format("Result %1$s:", i + 1));
 				System.out.println(String.format("Url: %1$s", results[i].getURL()));
-				System.out.println(String.format("Percents: %1$s", results[i].getPercents()));
-				System.out.println(String.format("CopiedWords: %1$s", results[i].getNumberOfCopiedWords()));
+				System.out.println(String.format("Information: %1$s copied words (%2$s%%)",
+				results[i].getNumberOfCopiedWords(), results[i].getPercents()));
+				System.out.println(String.format("Comparison Report: %1$s", results[i].getComparisonReport()));
+				System.out.println(String.format("Title: %1$s", results[i].getTitle()));
+				System.out.println(String.format("Introduction: %1$s", results[i].getIntroduction()));
+				System.out.println(String.format("Embeded Comparison: %1$s",results[i].getEmbededComparison()));
 			}
 		}
 	} catch (CommandFailedException copyleaksException) {
