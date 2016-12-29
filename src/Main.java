@@ -1,26 +1,26 @@
 
 /********************************************************************************
- The MIT License(MIT)
- 
+The MIT License(MIT)
+
  Copyright(c) 2016 Copyleaks LTD (https://copyleaks.com)
- 
+
  Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sub-license, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
- 
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sub-license, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
  The above copyright notice and this permission notice shall be included in all
- copies or substantial portions of the Software.
- 
+copies or substantial portions of the Software.
+
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 ********************************************************************************/
 
 import java.io.File;
@@ -157,12 +157,21 @@ public class Main
 
 			ProcessOptions scanOptions = new ProcessOptions();
 
-			// In Sandbox scan you don't need credits.
+			// In sandbox mode you don't need credits.
 			// Read more @
 			// https://api.copyleaks.com/Documentation/RequestHeaders#sandbox-mode
 			// After you finish the integration with Copyleaks, remove this
 			// line.
 			scanOptions.setSandboxMode(true);
+
+			// Use the callbacks in order to get notified once the scan results
+			// are ready
+			// Read more about the callbacks here -
+			// https://api.copyleaks.com/GeneralDocumentation/RequestHeaders#http-callbacks
+			// scanOptions.setHttpCallback(new
+			// URI("http://yourendpoint.com?pid={PID}"));
+			// scanOptions.setInProgressResultsHttpCallback(new
+			// URI("http://yourendpoint.com?pid={PID}"));
 
 			ResultRecord[] results;
 			CopyleaksProcess createdProcess;
@@ -202,14 +211,16 @@ public class Main
 				{
 					System.out.println();
 					System.out.println("------------------------------------------------");
-					System.out.println(String.format("Title: %1$s", results[i].getTitle()));
+					System.out.println(String.format("Url: %1$s", results[i].getURL()));
 					System.out.println(String.format("Information: %1$s copied words (%2$s%%)",
 							results[i].getNumberOfCopiedWords(), results[i].getPercents()));
+					System.out.println(String.format("Comparison Report: %1$s", results[i].getComparisonReport()));
+					System.out.println(String.format("Title: %1$s", results[i].getTitle()));
 					System.out.println(String.format("Introduction: %1$s", results[i].getIntroduction()));
-					System.out.println(String.format("Url: %1$s", results[i].getURL()));
-					System.out.println(String.format("Comparison link: %1$s", results[i].getEmbededComparison()));
-					
-					// Optional: Download result full text. Uncomment to activate
+					System.out.println(String.format("Embeded Comparison: %1$s", results[i].getEmbededComparison()));
+
+					// Optional: Download result full text. Uncomment to
+					// activate
 					// System.out.println("Result full-text:");
 					// System.out.println("*****************");
 					// System.out.println(createdProcess.DownloadResultText(results[i]));
@@ -217,9 +228,9 @@ public class Main
 			}
 
 			// Optional: Download source full text. Uncomment to activate.
-			//System.out.println("Source full-text:");
-			//System.out.println("*****************");
-			//System.out.println(createdProcess.DownloadSourceText());
+			// System.out.println("Source full-text:");
+			// System.out.println("*****************");
+			// System.out.println(createdProcess.DownloadSourceText());
 		}
 		catch (CommandFailedException copyleaksException)
 		{
