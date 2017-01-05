@@ -92,7 +92,10 @@ public static void Scan(String email, String key, String url) {
 			for (int i = 0; i < results.length; ++i) {
 				System.out.println();
 				System.out.println(String.format("Result %1$s:", i + 1));
-				System.out.println(String.format("Url: %1$s", results[i].getURL()));
+				if (results[i].getURL() != null)
+				{
+					System.out.println(String.format("Url: %1$s", results[i].getURL()));
+				}
 				System.out.println(String.format("Information: %1$s copied words (%2$s%%)",
 				results[i].getNumberOfCopiedWords(), results[i].getPercents()));
 				System.out.println(String.format("Comparison Report: %1$s", results[i].getComparisonReport()));
