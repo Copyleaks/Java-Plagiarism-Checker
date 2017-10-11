@@ -1,4 +1,4 @@
-<h2>Copyleaks SDK</h2>
+<h2>Copyleaks API Java SDK</h2>
 <p>
 Copyleaks SDK is a simple framework that allows you to perform plagiarism scans and track content distribution around the web, using the Copyleaks cloud.
 </p>
@@ -50,7 +50,6 @@ public static void Scan(String email, String key, String url) {
 		System.out.print("Login to Copyleaks cloud...");
 		copyleaks.Login(email, key);
 		System.out.println("Done!");
-
 		System.out.print("Checking account balance...");
 		int creditsBalance = copyleaks.getCredits();
 		System.out.println("Done (" + creditsBalance + " credits)!");
@@ -59,33 +58,25 @@ public static void Scan(String email, String key, String url) {
 					"ERROR: You do not have enough credits left in your account to proceed with this scan! 							(current credit balance = "+ creditsBalance + ")");
 			return;
 		}
-
 		ProcessOptions scanOptions = new ProcessOptions();
 		// scanOptions.setSandboxMode(true); // <------ Read more @
 		// https://api.copyleaks.com/Documentation/RequestHeaders#sandbox-mode
-
 		// Use the callbacks in order to get notified once the scan results are ready
 		// Read more about the callbacks here - https://api.copyleaks.com/GeneralDocumentation/RequestHeaders#http-callbacks
 		//scanOptions.setHttpCallback(new URI("http://yourendpoint.com?pid={PID}"));
 		//scanOptions.setInProgressResultsHttpCallback(new URI("http://yourendpoint.com?pid={PID}"));
-		
 		ResultRecord[] results;
 		CopyleaksProcess createdProcess;
-
 		createdProcess = copyleaks.CreateByUrl(new URI(url), scanOptions);
-
 		// Waiting for process completion...
 		System.out.println("Scanning...");
 		int percents = 0;
 		while (percents != 100 && (percents = createdProcess.getCurrentProgress()) <= 100) {
 			System.out.println(percents + "%");
-
 			if (percents != 100)
 				Thread.sleep(4000);
 		}
-
 		results = createdProcess.GetResults();
-
 		if (results.length == 0) {
 			System.out.println("No results.");
 		} else {
