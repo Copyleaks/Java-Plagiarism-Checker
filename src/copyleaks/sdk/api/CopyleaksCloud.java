@@ -104,7 +104,7 @@ public class CopyleaksCloud
 
 		URL url;
 		HttpURLConnection conn = null;
-		Gson gson = new GsonBuilder().setDateFormat(Settings.DateFormat).create();
+		Gson gson = new GsonBuilder().setDateFormat("dd/MM/yyyy HH:mm:ss").create();
 		String json;
 		try
 		{

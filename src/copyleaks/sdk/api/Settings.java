@@ -31,7 +31,7 @@ public class Settings
 	public static final int NetworkReadTimeout = 30000; 
 	public static final int NetworkConnectTimeout = 15000; 
 	
-	public static final String ServiceEntryPoint = "https://api.copyleaks.com/"; // Service URL.
+	public static final String ServiceEntryPoint = "https://api.copyleaks.com"; // Service URL.
 			
 	public static final String ServiceVersion = "v1"; // Current version of the
 														// API
@@ -42,5 +42,5 @@ public class Settings
 	public static final String DownloadsServicePage = "downloads";
 	
 	public static final String USER_AGENT = "CopyleaksJavaSDK/1.1";// User agent
-	public static final String DateFormat = "dd/MM/yyyy HH:mm:ss";
+	public static final String DateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 }

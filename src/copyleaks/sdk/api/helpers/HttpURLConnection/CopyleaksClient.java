@@ -81,8 +81,10 @@ public class CopyleaksClient
 		conn.setRequestMethod(methodType.toString());
 		conn.setUseCaches(false);
 
-		if (methodType.toString() == "POST")
+		if (methodType.toString() == "POST") {
 			conn.setDoOutput(true);
+			conn.setRequestMethod("POST");
+		}
 
 		return conn;
 	}
