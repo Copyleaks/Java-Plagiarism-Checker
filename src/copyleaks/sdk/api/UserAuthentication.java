@@ -72,14 +72,17 @@ public class UserAuthentication
 
 		try
 		{
-			conn = CopyleaksClient.getClient(url, RequestMethod.POST, HttpContentTypes.UrlEncoded,
+			conn = CopyleaksClient.getClient(url, null, RequestMethod.POST, HttpContentTypes.Json,
 					HttpContentTypes.Json);
 
 			// Add parameters
 			Map<String, String> dic = new HashMap<String, String>();
 			dic.put("email", email);
 			dic.put("apiKey", apiKey);
-			CopyleaksClient.HandleString.attach(conn, HttpURLConnectionHelper.getQuery(dic));
+			
+			String body = gson.toJson(dic);
+
+			CopyleaksClient.HandleString.attach(conn, body);
 
 			if (conn.getResponseCode() != 200)
 				throw new CommandFailedException(conn);
