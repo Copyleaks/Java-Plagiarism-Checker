@@ -22,16 +22,23 @@
  SOFTWARE.
 ********************************************************************************/
 
-package copyleaks.sdk.api;
+package copyleaks.sdk.api.models.types;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
- * 
- * Copyleaks SDK HTTP configuration
+ * Filter result domains mode
  *
  */
-public class Settings {
-	public static final String ApiEndPoint = "https://api.copyleaks.com/";
-	public static final String IdentityEndPoint = "https://id.copyleaks.com/";
-	public static final int RequestsTimeoutMilis = 60000;
-	public static final String ApiVersion = "v3";	
+public enum eDomainsFilteringMode {
+	/**
+	 * Exclude the domains
+	 */
+	@SerializedName("0")
+	BlackList,
+	/**
+	 * Include the domain
+	 */
+	@SerializedName("1")
+	WhiteList
 }

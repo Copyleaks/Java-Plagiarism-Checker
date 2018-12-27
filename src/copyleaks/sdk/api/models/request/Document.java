@@ -22,16 +22,47 @@
  SOFTWARE.
 ********************************************************************************/
 
-package copyleaks.sdk.api;
+package copyleaks.sdk.api.models.request;
+
+import java.io.Serializable;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 /**
- * 
- * Copyleaks SDK HTTP configuration
- *
+ * Represents a basic document for submission to Copyleaks API 
  */
-public class Settings {
-	public static final String ApiEndPoint = "https://api.copyleaks.com/";
-	public static final String IdentityEndPoint = "https://id.copyleaks.com/";
-	public static final int RequestsTimeoutMilis = 60000;
-	public static final String ApiVersion = "v3";	
+abstract class Document implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
+	@SerializedName("properties")
+	@Expose
+	private ScanProperties properties;
+	
+	/**
+	 * No args constructor for use in serialization
+	 * 
+	 */
+	public Document() {
+	}
+
+	/**
+	 * Create a new basic document for submission to Copyleaks API
+	 * @param base64: Base64 file content. Bytes -> base64 string 
+	 * @param filename: The original filename.
+	 * @param properties: The scan request properties
+	 */
+	public Document(ScanProperties properties) {
+		super();
+		this.properties = properties;
+	}
+	
+	public ScanProperties getProperties() {
+		return properties;
+	}
+
+	public void setProperties(ScanProperties properties) {
+		this.properties = properties;
+	}
+
+
 }

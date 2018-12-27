@@ -24,14 +24,23 @@
 
 package copyleaks.sdk.api;
 
-/**
- * 
- * Copyleaks SDK HTTP configuration
- *
- */
-public class Settings {
-	public static final String ApiEndPoint = "https://api.copyleaks.com/";
-	public static final String IdentityEndPoint = "https://id.copyleaks.com/";
-	public static final int RequestsTimeoutMilis = 60000;
-	public static final String ApiVersion = "v3";	
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+
+abstract class CopyleaksBaseApi {
+
+	protected CopyleaksHttpClient client;
+
+	public CopyleaksBaseApi() {
+		this.client = new CopyleaksHttpClient();
+	}
+	
+	public CopyleaksBaseApi(String clientCertificatePath, String certificatePassword) throws KeyManagementException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException  {
+		this.client = new CopyleaksHttpClient(clientCertificatePath, certificatePassword);
+	}
+
 }

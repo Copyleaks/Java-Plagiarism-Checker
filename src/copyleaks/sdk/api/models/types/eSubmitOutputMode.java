@@ -22,16 +22,22 @@
  SOFTWARE.
 ********************************************************************************/
 
-package copyleaks.sdk.api;
+package copyleaks.sdk.api.models.types;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
- * 
- * Copyleaks SDK HTTP configuration
- *
+ * Configure the scan output mode
  */
-public class Settings {
-	public static final String ApiEndPoint = "https://api.copyleaks.com/";
-	public static final String IdentityEndPoint = "https://id.copyleaks.com/";
-	public static final int RequestsTimeoutMilis = 60000;
-	public static final String ApiVersion = "v3";	
+public enum eSubmitOutputMode {
+	/**
+	 * The scan results will be in text format
+	 */
+	@SerializedName("0")
+	TXT,
+	/**
+	 * The scan results will be in HTML format when possible, i.e.: when submitting a url for scan
+	 */
+	@SerializedName("1")
+	HTML
 }

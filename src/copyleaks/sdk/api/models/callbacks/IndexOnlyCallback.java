@@ -22,16 +22,18 @@
  SOFTWARE.
 ********************************************************************************/
 
-package copyleaks.sdk.api;
+package copyleaks.sdk.api.models.callbacks;
+
+import copyleaks.sdk.api.models.response.BaseResponse;
 
 /**
- * 
- * Copyleaks SDK HTTP configuration
- *
+ * The callback that will be called from Copyleaks API once an `index only`
+ * request is completed To match the scan result callback add the '{STATUS}'
+ * placeholder, this placeholder will be replaced by copyleaks API with the
+ * process status
  */
-public class Settings {
-	public static final String ApiEndPoint = "https://api.copyleaks.com/";
-	public static final String IdentityEndPoint = "https://id.copyleaks.com/";
-	public static final int RequestsTimeoutMilis = 60000;
-	public static final String ApiVersion = "v3";	
+public class IndexOnlyCallback extends BaseResponse {
+
+	private static final long serialVersionUID = 5635371391589283731L;
+
 }

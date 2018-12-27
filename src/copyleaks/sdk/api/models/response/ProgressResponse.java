@@ -22,16 +22,42 @@
  SOFTWARE.
 ********************************************************************************/
 
-package copyleaks.sdk.api;
+package copyleaks.sdk.api.models.response;
 
-/**
- * 
- * Copyleaks SDK HTTP configuration
- *
- */
-public class Settings {
-	public static final String ApiEndPoint = "https://api.copyleaks.com/";
-	public static final String IdentityEndPoint = "https://id.copyleaks.com/";
-	public static final int RequestsTimeoutMilis = 60000;
-	public static final String ApiVersion = "v3";	
+import java.io.Serializable;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+public class ProgressResponse implements Serializable {
+
+	@SerializedName("percents")
+	@Expose
+	private Integer percents;
+	private final static long serialVersionUID = 741087994759140003L;
+
+	/**
+	 * No args constructor for use in serialization
+	 * 
+	 */
+	public ProgressResponse() {
+	}
+
+	/**
+	 * Returned when requesting the progress of a scan from Copyleaks API
+	 * 
+	 * @param percents: The progress of the scan in percents
+	 */
+	public ProgressResponse(Integer percents) {
+		super();
+		this.percents = percents;
+	}
+
+	public Integer getPercents() {
+		return percents;
+	}
+
+	public void setPercents(Integer percents) {
+		this.percents = percents;
+	}
+
 }

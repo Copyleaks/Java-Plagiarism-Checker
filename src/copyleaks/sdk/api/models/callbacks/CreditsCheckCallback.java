@@ -22,16 +22,45 @@
  SOFTWARE.
 ********************************************************************************/
 
-package copyleaks.sdk.api;
+package copyleaks.sdk.api.models.callbacks;
+
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+import copyleaks.sdk.api.models.response.BaseResponse;
+import copyleaks.sdk.api.models.response.Error;
+import copyleaks.sdk.api.models.types.eScanStatus;
 
 /**
  * 
- * Copyleaks SDK HTTP configuration
- *
+ * The callback that will be called from Copyleaks API once an `check credits`
+ * request is completed To match the scan result callback add the '{STATUS}'
+ * placeholder, this placeholder will be replaced by copyleaks API with the
+ * process status
  */
-public class Settings {
-	public static final String ApiEndPoint = "https://api.copyleaks.com/";
-	public static final String IdentityEndPoint = "https://id.copyleaks.com/";
-	public static final int RequestsTimeoutMilis = 60000;
-	public static final String ApiVersion = "v3";	
+public class CreditsCheckCallback extends BaseResponse {
+
+	private static final long serialVersionUID = -1413878731273813794L;
+
+	/**
+	 * The amount of credist that will be consumed by the scan
+	 */
+	@SerializedName("credits")
+    @Expose
+    private int credits;
+	
+	public CreditsCheckCallback() {}
+	
+	public CreditsCheckCallback(eScanStatus status, Error error, String developerPayload, int credits) {
+		super(status, error, developerPayload);
+		this.credits = credits;
+	}
+	
+	public int getCredits() {
+		return credits;
+	}
+
+	public void setCredits(int credits) {
+		this.credits = credits;
+	}
 }

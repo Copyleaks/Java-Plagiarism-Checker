@@ -10,7 +10,7 @@ With the Copyleaks SDK you can submit a scan for:
 <li>Free text</li>
 <li>OCR (Optical Character Recognition) - scanning pictures containing textual content <a href="https://api.copyleaks.com/GeneralDocumentation/TechnicalSpecifications#supportedfiletypes">(see full list)</a></li>
 </ul>
-Instructions for using the SDK are below. For a quick example demonstrating the SDK capabilities just look at the code examples under “examples”.  You can also watch the following video demonstrating how to easily integrate with the API - https://www.youtube.com/watch?v=KZhw17se0jw. 
+Instructions for using the SDK are below. For a quick example demonstrating the SDK capabilities just look at the code examples under <a href="#example">example</a>.  You can also watch the following video demonstrating how to easily integrate with the API - <i>Coming soon</i> 
 </p>
 </ol>
 <h3>Integration</h3>
@@ -23,9 +23,9 @@ Instructions for using the SDK are below. For a quick example demonstrating the 
 <li>Make sure that the project Copyleaks API is checked.</li>
 <li>Press ‘Finish’.</li>
 </ol>
-<p>Now you have the project in your workspace and you can make alterations that fits your own specific needs. As default, the project includes the file ‘Main.java’. This file will allow you to easily run and check your project.</p></li>
+<p>Now you have the project in your workspace and you can make alterations that fits your own specific needs. As default, the project includes the file ‘AsynchronousExample.java’. This file will allow you to easily run and check your project.</p></li>
 
-<li>Download the JAR files – choose this option if you want to use the code as-is. Download the <a href="https://api.copyleaks.com/downloads/sdk/java/CopyleaksAPI.Java.JARs.v2.0.zip">JAR files</a> and then, follow the next steps:
+<li>Download the JAR files – choose this option if you want to use the code as-is. Download the <a href="copyleaks-sdk.jar">JAR files</a> and then, follow the next steps:
 <ol>
 <li>Extract the files.</li>
 <li>Open Eclipse and select the process you want to integrate with Copyleaks API.</li>
@@ -41,77 +41,113 @@ Instructions for using the SDK are below. For a quick example demonstrating the 
  <p>To use Copyleaks API you need to be a registered user. Signing up is quick and free of charge.</p>
  <p><a href="https://copyleaks.com/account/register">Signup</a> to Copyleaks and confirm your account by clicking the link in the confirmation email. Generate your personal API key on your dashboard (<a href="https://api.copyleaks.com/businessesapi">Businesses dashboard/</a><a href="https://api.copyleaks.com/academicapi">Academic dashboard/</a><a href="https://api.copyleaks.com/websitesapi">Websites dashboard</a>) under 'Access Keys'. </p>
  <p>For more information check out our <a href="https://api.copyleaks.com/Guides/HowToUse">API guide</a>.</p>
-<h3>Example</h3>
+<a name="example"><h3>Example</h3></a>
 <p>This code will show you where the textual content in the parameter ‘url’ has been used online:</p>
 <pre>
-public static void Scan(String email, String key, String url) {
-	CopyleaksCloud copyleaks = new CopyleaksCloud();
-	try {
-		System.out.print("Login to Copyleaks cloud...");
-		copyleaks.Login(email, key);
-		System.out.println("Done!");
-		System.out.print("Checking account balance...");
-		int creditsBalance = copyleaks.getCredits();
-		System.out.println("Done (" + creditsBalance + " credits)!");
-		if (creditsBalance == 0) {
-			System.out.println(
-					"ERROR: You do not have enough credits left in your account to proceed with this scan! 							(current credit balance = "+ creditsBalance + ")");
-			return;
-		}
-		ProcessOptions scanOptions = new ProcessOptions();
-		// scanOptions.setSandboxMode(true); // <------ Read more @
-		// https://api.copyleaks.com/Documentation/RequestHeaders#sandbox-mode
-		// Use the callbacks in order to get notified once the scan results are ready
-		// Read more about the callbacks here - https://api.copyleaks.com/GeneralDocumentation/RequestHeaders#http-callbacks
-		//scanOptions.setHttpCallback(new URI("http://yourendpoint.com?pid={PID}"));
-		//scanOptions.setInProgressResultsHttpCallback(new URI("http://yourendpoint.com?pid={PID}"));
-		ResultRecord[] results;
-		CopyleaksProcess createdProcess;
-		createdProcess = copyleaks.CreateByUrl(new URI(url), scanOptions);
-		// Waiting for process completion...
-		System.out.println("Scanning...");
-		int percents = 0;
-		while (percents != 100 && (percents = createdProcess.getCurrentProgress()) <= 100) {
-			System.out.println(percents + "%");
-			if (percents != 100)
-				Thread.sleep(4000);
-		}
-		results = createdProcess.GetResults();
-		if (results.length == 0) {
-			System.out.println("No results.");
-		} else {
-			for (int i = 0; i < results.length; ++i) {
-				System.out.println();
-				System.out.println(String.format("Result %1$s:", i + 1));
-				if (results[i].getURL() != null)
-				{
-					System.out.println(String.format("Url: %1$s", results[i].getURL()));
-				}
-				System.out.println(String.format("Information: %1$s copied words (%2$s%%)",
-				results[i].getNumberOfCopiedWords(), results[i].getPercents()));
-				System.out.println(String.format("Comparison Report: %1$s", results[i].getComparisonReport()));
-				System.out.println(String.format("Title: %1$s", results[i].getTitle()));
-				System.out.println(String.format("Introduction: %1$s", results[i].getIntroduction()));
-				System.out.println(String.format("Embeded Comparison: %1$s",results[i].getEmbededComparison()));
+enum SubmissionType {
+	FILE, IMAGE, FREE_TEXT, URL
+};
+
+public static void scan(String email, String apiKey, eProduct product, String scanId) {
+		try {
+
+			/*
+			 * Obtain an access token from Copyleaks API
+			 */
+			CopyleaksIdentityApi identity = new CopyleaksIdentityApi();
+			LoginResponse loginResponse;
+			loginResponse = identity.Login(email, apiKey);
+
+			CopyleaksScansApi api = new CopyleaksScansApi(product, loginResponse.getAccessToken());
+
+			System.out.println(String.format("You've got %d Copyleaks %s API credits", api.creditBalance(),
+					api.getProduct().toString()));
+
+			/*
+			 * Use this option to submit your document to full scan Other possible values:
+			 * eSubmitAction.Index: Upload your content to Copyleaks internal database to be
+			 * compared against in future scans eSubmitAction.checkCredits: Check the amount
+			 * of credits your content submit request will consume
+			 */
+			eSubmitAction submitAction = eSubmitAction.Scan;
+
+			Callbacks callbacks = new Callbacks("https://fake/completion/callbask/",
+					"https://fake/newResult/callbask/");
+
+			/*
+			 * You can test the integration with Copyleaks API for free using the sandbox mode. You will be able to submit content to scan and get back mock results, simulating the way Copyleaks will work
+			 */
+			boolean sandboxMode = true;
+
+			/*
+			 * Add the properties to your scan
+			 */
+			ScanProperties properties = new ScanPropertiesBuilder().setAction(submitAction).setCallbacks(callbacks)
+					.setSandbox(sandboxMode).build();
+
+			/*
+			 * Choose your content type for submission
+			 */
+			SubmissionType submitionType = SubmissionType.URL;
+			switch (submitionType) {
+
+			/*
+			 * Submit url
+			 */
+			case URL:
+				UrlDocument urlDocument = new UrlDocument("http://example.com", properties);
+				api.submitUrl(scanId, urlDocument);
+				break;
+
+			/*
+			 * submit free text
+			 */
+			case FREE_TEXT:
+				FileDocument freeTextDocument = new FreeTextDocumentBuilder().setFilename("freeText.txt")
+						.setFreeText("helo world").setScanProperties(properties).build();
+				api.submitFile(scanId, freeTextDocument);
+				break;
+			/*
+			 * Submit a textual file
+			 */
+			case FILE:
+				String textFileName = "file.txt";
+				String filePath = "c:\\path\\to\\your\\" + textFileName;
+				FileDocument fileDocument = new FileDocumentBuilder().setFilename(textFileName).setFilePath(filePath)
+						.setScanProperties(properties).build();
+				api.submitFile(scanId, fileDocument);
+				break;
+			/*
+			 * Submit an OCR image with text
+			 */
+			case IMAGE:
+				String imageFileName = "imageWithText.png";
+				String imagePath = "c:\\path\\to\\your\\" + imageFileName;
+				FileOcrDocument fileOcrDocument = new FileOcrDocumentBuilder().setLanguageCode("en")
+						.setFilePath(imagePath).setFilename(imageFileName).setScanProperties(properties).build();
+				api.submitImageOcrFile(scanId, fileOcrDocument);
+				break;
 			}
+			System.out.println("Submitted. You will receive a callback soon.");
+
+		} catch (CopyleaksException copyleaksException) {
+			System.out.println("Failed!");
+			System.out.format("*** Error (%d):\n", copyleaksException.getCopyleaksErrorCode());
+			System.out.println(copyleaksException.getMessage());
+		} catch (Exception ex) {
+			System.out.println("Failed!");
+			System.out.println("Unhandled Exception");
+			System.out.println(ex);
 		}
-	} catch (CommandFailedException copyleaksException) {
-		System.out.println("Failed!");
-		System.out.format("*** Error (%d):\n", copyleaksException.getCopyleaksErrorCode());
-		System.out.println(copyleaksException.getMessage());
-	} catch (Exception ex) {
-		System.out.println("Failed!");
-		System.out.println("Unhandled Exception");
-		System.out.println(ex);
+
 	}
-}
 </pre>
 <h3>Dependencies:</h3>
-<h5>Referenced Assemblies:</h5>
+<h5>Maven dependencies:</h5>
 <ul>
-<li><a href="https://commons.apache.org/proper/commons-cli/">commons-cli-1.3.1.jar</a></li>
-<li><a href="https://github.com/google/gson">gson-2.4.jar</a></li>
-<li><a href="https://github.com/FasterXML/jackson-annotations">jackson-annotations-2.6.0.jar</a></li>
+<li><a href="https://mvnrepository.com/artifact/com.google.code.gson/gson/2.8.5">gson 2.8.5</a></li>
+<li><a href="https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient/4.5.6">HttpClient 4.5.6</a></li>
+
 </ul>
 
 <h3>Read More</h3>

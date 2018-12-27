@@ -22,16 +22,37 @@
  SOFTWARE.
 ********************************************************************************/
 
-package copyleaks.sdk.api;
+package copyleaks.sdk.api.models.types;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
- * 
- * Copyleaks SDK HTTP configuration
- *
+ * The status of the scan request
  */
-public class Settings {
-	public static final String ApiEndPoint = "https://api.copyleaks.com/";
-	public static final String IdentityEndPoint = "https://id.copyleaks.com/";
-	public static final int RequestsTimeoutMilis = 60000;
-	public static final String ApiVersion = "v3";	
+public enum eScanStatus {
+	/**
+	 * The scan request has completed successfully
+	 */
+	@SerializedName("0")
+	CompletedSuccessfully,
+	/**
+	 * The scan request has completed in error
+	 */
+	@SerializedName("1")
+	Error,
+	/**
+	 * The check scan credits request has completed successfully
+	 */
+	@SerializedName("2")
+	CreditsChecked,
+	/**
+	 * The Scanned content has been indexed in Copyleaks internal database
+	 */
+	@SerializedName("3")
+	Indexed,
+	/**
+	 * The Scan is in progress
+	 */
+	@SerializedName("4")
+	InProgress
 }

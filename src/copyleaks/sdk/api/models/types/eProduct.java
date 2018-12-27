@@ -22,16 +22,35 @@
  SOFTWARE.
 ********************************************************************************/
 
-package copyleaks.sdk.api;
+package copyleaks.sdk.api.models.types;
 
 /**
- * 
- * Copyleaks SDK HTTP configuration
- *
+ * The product for scanning the documents
  */
-public class Settings {
-	public static final String ApiEndPoint = "https://api.copyleaks.com/";
-	public static final String IdentityEndPoint = "https://id.copyleaks.com/";
-	public static final int RequestsTimeoutMilis = 60000;
-	public static final String ApiVersion = "v3";	
+public enum eProduct {
+	/**
+	 * Bests for Education purposes (schools, universities, students, ...).
+	 */
+	Education,
+	/**
+	 * Bests for: publishers, blogger, writers...
+	 */
+	Businesses,
+	/**
+	 * Bests for scanning random HTML URLs.
+	 */
+	Websites;
+
+	public String toString() {
+		switch (this) {
+		case Businesses:
+			return "businesses";
+		case Education:
+			return "education";
+		case Websites:
+			return "websites";
+		default:
+			return null;
+		}
+	}
 }

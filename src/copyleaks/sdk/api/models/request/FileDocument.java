@@ -22,16 +22,57 @@
  SOFTWARE.
 ********************************************************************************/
 
-package copyleaks.sdk.api;
+package copyleaks.sdk.api.models.request;
 
-/**
- * 
- * Copyleaks SDK HTTP configuration
- *
- */
-public class Settings {
-	public static final String ApiEndPoint = "https://api.copyleaks.com/";
-	public static final String IdentityEndPoint = "https://id.copyleaks.com/";
-	public static final int RequestsTimeoutMilis = 60000;
-	public static final String ApiVersion = "v3";	
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+public class FileDocument extends Document {
+
+	@SerializedName("base64")
+	@Expose
+	private String base64;
+	@SerializedName("filename")
+	@Expose
+	private String filename;
+	
+	private final static long serialVersionUID = -5514176145361599314L;
+
+	/**
+	 * No args constructor for use in serialization
+	 * 
+	 */
+	public FileDocument() {
+	}
+
+	/**
+	 * Create a new file document for submission
+	 * 
+	 *  It is recommended to use FileDocumentBuilder when creating a new FileDocument object
+	 * @param base64: Base64 file content. Bytes -> base64 string
+	 * @param filename: The original filename.
+	 * @param properties: The scan request properties
+	 */
+	public FileDocument(String base64, String filename, ScanProperties properties) {
+		super(properties);
+		this.base64 = base64;
+		this.filename = filename;
+	}
+
+	public String getBase64() {
+		return base64;
+	}
+
+	public void setBase64(String base64) {
+		this.base64 = base64;
+	}
+
+	public String getFilename() {
+		return filename;
+	}
+
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
+
 }

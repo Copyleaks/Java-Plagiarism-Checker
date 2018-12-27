@@ -22,16 +22,27 @@
  SOFTWARE.
 ********************************************************************************/
 
-package copyleaks.sdk.api;
+package copyleaks.sdk.api.models.types;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
- * 
- * Copyleaks SDK HTTP configuration
- *
+ * The possible actions when submitting a new Scan
  */
-public class Settings {
-	public static final String ApiEndPoint = "https://api.copyleaks.com/";
-	public static final String IdentityEndPoint = "https://id.copyleaks.com/";
-	public static final int RequestsTimeoutMilis = 60000;
-	public static final String ApiVersion = "v3";	
+public enum eSubmitAction {
+	/**
+	 * Scan the request
+	 */
+	@SerializedName("0")
+	Scan,
+	/**
+	 * Check how many credits the scan will consume
+	 */
+	@SerializedName("1")
+	checkCredits,
+	/**
+	 * Index the content in Copyleaks internal database
+	 */
+	@SerializedName("2")
+	Index
 }

@@ -22,16 +22,40 @@
  SOFTWARE.
 ********************************************************************************/
 
-package copyleaks.sdk.api;
+package copyleaks.sdk.api.models.response;
 
-/**
- * 
- * Copyleaks SDK HTTP configuration
- *
- */
-public class Settings {
-	public static final String ApiEndPoint = "https://api.copyleaks.com/";
-	public static final String IdentityEndPoint = "https://id.copyleaks.com/";
-	public static final int RequestsTimeoutMilis = 60000;
-	public static final String ApiVersion = "v3";	
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+public abstract class BasicInternalResult extends BasicResult {
+
+	private static final long serialVersionUID = -4426953258085295954L;
+
+	/**
+	 * The scan id
+	 */
+	@SerializedName("scanId")
+	@Expose
+	private String scanId;
+
+	/**
+	 * No args constructor for use in serialization
+	 * 
+	 */
+	public BasicInternalResult() {
+	}
+
+	public BasicInternalResult(String scanId, String id, String title, String introduction, Integer matchedWords,
+			String comparison) {
+		super(id, title, introduction, matchedWords, comparison);
+		this.scanId = scanId;
+	}
+
+	public String getScanId() {
+		return scanId;
+	}
+
+	public void setScanId(String scanId) {
+		this.scanId = scanId;
+	}
 }

@@ -22,16 +22,22 @@
  SOFTWARE.
 ********************************************************************************/
 
-package copyleaks.sdk.api;
+package copyleaks.sdk.api.models.types;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
- * 
- * Copyleaks SDK HTTP configuration
- *
+ * Configure what to do incase one or more scan id's have failed
  */
-public class Settings {
-	public static final String ApiEndPoint = "https://api.copyleaks.com/";
-	public static final String IdentityEndPoint = "https://id.copyleaks.com/";
-	public static final int RequestsTimeoutMilis = 60000;
-	public static final String ApiVersion = "v3";	
+public enum eErrorHandling {
+	/**
+	 * cancel the entire request
+	 */
+	@SerializedName("0")
+	Cancel,
+	/**
+	 * start non failed scan id's
+	 */
+	@SerializedName("1")
+	Ignore
 }

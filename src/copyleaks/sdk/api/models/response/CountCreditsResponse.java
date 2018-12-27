@@ -22,16 +22,45 @@
  SOFTWARE.
 ********************************************************************************/
 
-package copyleaks.sdk.api;
+package copyleaks.sdk.api.models.response;
 
-/**
- * 
- * Copyleaks SDK HTTP configuration
- *
- */
-public class Settings {
-	public static final String ApiEndPoint = "https://api.copyleaks.com/";
-	public static final String IdentityEndPoint = "https://id.copyleaks.com/";
-	public static final int RequestsTimeoutMilis = 60000;
-	public static final String ApiVersion = "v3";	
+import java.io.Serializable;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+public class CountCreditsResponse implements Serializable {
+
+	/**
+	 * The amount of credits that will be consumed by the scan
+	 */
+	@SerializedName("Amount")
+	@Expose
+	private Integer amount;
+	private final static long serialVersionUID = 5452889504106777817L;
+
+	/**
+	 * No args constructor for use in serialization
+	 * 
+	 */
+	public CountCreditsResponse() {
+	}
+
+	/**
+	 * Returned from Copyleaks API after submitting a 'check credits' request
+	 * 
+	 * @param amount: The amount of credits that will be consumed by the scan
+	 */
+	public CountCreditsResponse(Integer amount) {
+		super();
+		this.amount = amount;
+	}
+
+	public Integer getAmount() {
+		return amount;
+	}
+
+	public void setAmount(Integer amount) {
+		this.amount = amount;
+	}
+
 }

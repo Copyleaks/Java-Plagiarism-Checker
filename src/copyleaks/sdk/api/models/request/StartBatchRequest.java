@@ -22,16 +22,49 @@
  SOFTWARE.
 ********************************************************************************/
 
-package copyleaks.sdk.api;
+package copyleaks.sdk.api.models.request;
 
-/**
- * 
- * Copyleaks SDK HTTP configuration
- *
- */
-public class Settings {
-	public static final String ApiEndPoint = "https://api.copyleaks.com/";
-	public static final String IdentityEndPoint = "https://id.copyleaks.com/";
-	public static final int RequestsTimeoutMilis = 60000;
-	public static final String ApiVersion = "v3";	
+import java.util.List;
+
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+import copyleaks.sdk.api.models.types.eErrorHandling;
+
+public class StartBatchRequest extends StartRequest {
+
+	/**
+	 * A list of process to include in the submit request
+	 */
+	@SerializedName("include")
+	@Expose
+	private List<String> include = null;
+
+	private final static long serialVersionUID = 1003677575832626234L;
+
+	/**
+	 * No args constructor for use in serialization
+	 * 
+	 */
+	public StartBatchRequest() {
+	}
+
+	/**
+	 * Start a new batch scan request for multiple scan id's in 'price checked' status
+	 * @param trigger: The process id to start scanning
+	 * @param errorHandling: Define what to do in case of error
+	 * @param include: A list of process to include in the submit requests
+	 */
+	public StartBatchRequest(List<String> include, List<String> trigger, eErrorHandling errorHandling) {
+		super(trigger, errorHandling);
+		this.include = include;
+	}
+
+	public List<String> getInclude() {
+		return include;
+	}
+
+	public void setInclude(List<String> include) {
+		this.include = include;
+	}
 }
