@@ -25,46 +25,84 @@
 package copyleaks.sdk.api.models.request;
 
 import java.io.Serializable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Represents a basic document for submission to Copyleaks API 
- */
-abstract class Document implements Serializable {
-	
-	
-	private static final long serialVersionUID = -1000958876076996731L;
-	
-	@SerializedName("properties")
-	@Expose
-	private ScanProperties properties;
-	
+public class ReportCustomization implements Serializable {
+
 	/**
-	 * No args constructor for use in serialization
 	 * 
 	 */
-	public Document() {
-	}
+	private static final long serialVersionUID = 7305621483644295391L;
 
-	/**
-	 * Create a new basic document for submission to Copyleaks API
-	 * @param base64: Base64 file content. Bytes -> base64 string 
-	 * @param filename: The original filename.
-	 * @param properties: The scan request properties
-	 */
-	public Document(ScanProperties properties) {
-		super();
-		this.properties = properties;
+	@SerializedName("Title")
+	@Expose
+	private Boolean Title;
+	@SerializedName("LargeLogo")
+	@Expose
+	private String LargeLogo;
+	@SerializedName("SmallLogo")
+	@Expose
+	private String SmallLogo;
+	@SerializedName("RTL")
+	@Expose
+	private Boolean RTL;
+	@SerializedName("Colors")
+	@Expose
+	private ReportCustomizationColors Colors;
+		
+	public ReportCustomization() {
+		
 	}
 	
-	public ScanProperties getProperties() {
-		return properties;
+	public ReportCustomization(Boolean Title, String LargeLogo, String SmallLogo, Boolean RTL, ReportCustomizationColors Colors) {
+		super();
+		this.Title = Title;
+		this.LargeLogo = LargeLogo;
+		this.SmallLogo = SmallLogo;
+		this.RTL = RTL;
+		this.Colors = Colors;
 	}
 
-	public void setProperties(ScanProperties properties) {
-		this.properties = properties;
+	public Boolean getTitle() {
+		return Title;
 	}
 
+	public void setTitle(Boolean title) {
+		Title = title;
+	}
+
+	public String getLargeLogo() {
+		return LargeLogo;
+	}
+
+	public void setLargeLogo(String largeLogo) {
+		LargeLogo = largeLogo;
+	}
+
+	public String getSmallLogo() {
+		return SmallLogo;
+	}
+
+	public void setSmallLogo(String smallLogo) {
+		SmallLogo = smallLogo;
+	}
+
+	public Boolean getRTL() {
+		return RTL;
+	}
+
+	public void setRTL(Boolean rTL) {
+		RTL = rTL;
+	}
+
+	public ReportCustomizationColors getColors() {
+		return Colors;
+	}
+
+	public void setColors(ReportCustomizationColors colors) {
+		Colors = colors;
+	}
 
 }

@@ -24,12 +24,21 @@
 
 package copyleaks.sdk.api.models.request.builders;
 
+import javax.naming.directory.InvalidAttributesException;
+
 import copyleaks.sdk.api.models.request.Author;
+import copyleaks.sdk.api.models.request.BusinessesScanProperties;
 import copyleaks.sdk.api.models.request.Callbacks;
+import copyleaks.sdk.api.models.request.EducationScanProperties;
+import copyleaks.sdk.api.models.request.EducationScanning;
 import copyleaks.sdk.api.models.request.Exclude;
 import copyleaks.sdk.api.models.request.Filters;
+import copyleaks.sdk.api.models.request.ReportCustomization;
 import copyleaks.sdk.api.models.request.ScanProperties;
 import copyleaks.sdk.api.models.request.Scanning;
+import copyleaks.sdk.api.models.request.WebsitesScanProperties;
+import copyleaks.sdk.api.models.types.eProduct;
+import copyleaks.sdk.api.models.types.eScanPriority;
 import copyleaks.sdk.api.models.types.eSubmitAction;
 import copyleaks.sdk.api.models.types.eSubmitOutputMode;
 
@@ -40,12 +49,16 @@ public class ScanPropertiesBuilder {
 	private Boolean sandbox = true;
 	private Callbacks callbacks = new Callbacks();
 	private Integer expiration = 2880;
-	private Scanning scanning = new Scanning();
+	private Scanning scanning = null;
 	private Exclude exclude = new Exclude();
 	private Filters filters = new Filters();
 	private Author author = new Author();
+	private ReportCustomization reportExport = new ReportCustomization();
+	private eScanPriority priority;
+	private eProduct product;
 
-	public ScanPropertiesBuilder() {
+	public ScanPropertiesBuilder(eProduct product) {
+		this.product = product;
 	}
 
 	/**
@@ -119,8 +132,12 @@ public class ScanPropertiesBuilder {
 	 * 
 	 * @param scanning
 	 * @return ScanPropertiesBuilder
+	 * @throws InvalidAttributesException
 	 */
-	public ScanPropertiesBuilder setScanning(Scanning scanning) {
+	public ScanPropertiesBuilder setScanning(Scanning scanning) throws InvalidAttributesException {
+		if (this.product == eProduct.Education && scanning instanceof EducationScanning == false)
+			throw new InvalidAttributesException(
+					"Education scannaing section must be of type " + EducationScanning.class.getName());
 		this.scanning = scanning;
 		return this;
 	}
@@ -159,13 +176,56 @@ public class ScanPropertiesBuilder {
 	}
 
 	/**
+	 * Add configuration to generate a report from the scan
+	 * @param reportExport
+	 * @return ScanPropertiesBuilder
+	 */
+	public ScanPropertiesBuilder setReportExport(ReportCustomization reportExport) {
+		this.reportExport = reportExport;
+		return this;
+	}
+	
+	/**
+	 * Add the scan priority
+	 * 
+	 * @param priority
+	 * @return ScanPropertiesBuilder
+	 */
+	public ScanPropertiesBuilder setScanPriority(eScanPriority priority) {
+		this.priority = priority;
+		return this;
+	}
+
+	/**
 	 * Build the ScanProperties
 	 * 
 	 * @return ScanProperties
+	 * @throws InvalidAttributesException
 	 */
-	public ScanProperties build() {
-		return new ScanProperties(action, outputMode, developerPayload, sandbox, callbacks, expiration, scanning,
-				exclude, filters, author);
+	public ScanProperties build() throws InvalidAttributesException {
+		ScanProperties properties;
+		
+		switch (this.product) {
+		case Businesses:
+			if(this.scanning == null)
+				this.scanning = new Scanning();
+			properties = new BusinessesScanProperties(action, outputMode, developerPayload, sandbox, callbacks,
+					expiration, exclude, filters, author, scanning, priority);
+		case Education:
+			if(this.scanning == null)
+				this.scanning = new EducationScanning();
+			EducationScanning educationScanning = (EducationScanning) this.scanning;
+			properties = new EducationScanProperties(action, outputMode, developerPayload, sandbox, callbacks,
+					expiration, exclude, filters, author, educationScanning, reportExport, priority);
+			break;
+		case Websites:
+			properties = new WebsitesScanProperties(action, outputMode, developerPayload, sandbox, callbacks,
+					expiration, exclude, filters, author, priority);
+			break;
+		default:
+			throw new InvalidAttributesException("Unknown product " + this.product.toString());
+		}
+		return properties;
 	}
 
 }

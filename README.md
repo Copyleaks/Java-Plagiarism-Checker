@@ -82,7 +82,7 @@ public static void scan(String email, String apiKey, eProduct product, String sc
 			/*
 			 * Add the properties to your scan
 			 */
-			ScanProperties properties = new ScanPropertiesBuilder().setAction(submitAction).setCallbacks(callbacks)
+			ScanProperties properties = new ScanPropertiesBuilder(product).setAction(submitAction).setCallbacks(callbacks)
 					.setSandbox(sandboxMode).build();
 
 			/*

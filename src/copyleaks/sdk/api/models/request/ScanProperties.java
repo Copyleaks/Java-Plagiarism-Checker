@@ -28,10 +28,11 @@ import java.io.Serializable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import copyleaks.sdk.api.models.types.eScanPriority;
 import copyleaks.sdk.api.models.types.eSubmitAction;
 import copyleaks.sdk.api.models.types.eSubmitOutputMode;
 
-public class ScanProperties implements Serializable {
+public abstract class ScanProperties implements Serializable {
 
 	/**
 	 * The type of action to submit
@@ -71,12 +72,6 @@ public class ScanProperties implements Serializable {
 	@Expose
 	private Integer experation;
 	/**
-	 * Defines which mediums to scan.
-	 */
-	@SerializedName("scanning")
-	@Expose
-	private Scanning scanning;
-	/**
 	 * Exclude properties from scan
 	 */
 	@SerializedName("exclude")
@@ -94,6 +89,10 @@ public class ScanProperties implements Serializable {
 	@SerializedName("author")
 	@Expose
 	private Author author;
+	@SerializedName("priority")
+	@Expose
+	private eScanPriority priority;
+	
 	private final static long serialVersionUID = 4244964270182073373L;
 
 	/**
@@ -106,9 +105,10 @@ public class ScanProperties implements Serializable {
 	/**
 	 * The scan request properties
 	 * 
-	 * It is recommended to use ScanPropertiesBuilder when creating a new ScanProperties object
+	 * It is recommended to use ScanPropertiesBuilder when creating a new
+	 * ScanProperties object
 	 * 
-	 * @param author :Represent the author of the submitted content
+	 * @param 	     author :Represent the author of the submitted content
 	 * @param        developerPayload: Custom developer payload that will be
 	 *               attached to the scan results
 	 * @param        scanning: Defines which mediums to scan.
@@ -122,10 +122,10 @@ public class ScanProperties implements Serializable {
 	 * @param        experation: The expiration time of the scan, when expired the
 	 *               scan results will be deleted from Copyleak's servers The
 	 *               maximum allowed value is 2880 (~ 4 month)
+	 * @param		 priority: The scan priority
 	 */
 	public ScanProperties(eSubmitAction action, eSubmitOutputMode outputMode, String developerPayload, Boolean sandbox,
-			Callbacks callbacks, Integer experation, Scanning scanning, Exclude exclude, Filters filters,
-			Author author) {
+			Callbacks callbacks, Integer experation, Exclude exclude, Filters filters, Author author, eScanPriority prioirty) {
 		super();
 		this.action = action;
 		this.outputMode = outputMode;
@@ -133,10 +133,10 @@ public class ScanProperties implements Serializable {
 		this.sandbox = sandbox;
 		this.callbacks = callbacks;
 		this.experation = experation;
-		this.scanning = scanning;
 		this.exclude = exclude;
 		this.filters = filters;
 		this.author = author;
+		this.priority = prioirty;
 	}
 
 	public eSubmitAction getAction() {
@@ -187,14 +187,6 @@ public class ScanProperties implements Serializable {
 		this.experation = experation;
 	}
 
-	public Scanning getScanning() {
-		return scanning;
-	}
-
-	public void setScanning(Scanning scanning) {
-		this.scanning = scanning;
-	}
-
 	public Exclude getExclude() {
 		return exclude;
 	}
@@ -217,6 +209,14 @@ public class ScanProperties implements Serializable {
 
 	public void setAuthor(Author author) {
 		this.author = author;
+	}
+
+	public eScanPriority getPriority() {
+		return priority;
+	}
+
+	public void setPriority(eScanPriority priority) {
+		this.priority = priority;
 	}
 
 }

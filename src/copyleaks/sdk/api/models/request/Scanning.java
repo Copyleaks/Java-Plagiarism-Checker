@@ -28,15 +28,15 @@ import java.io.Serializable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * Filter the sources of your scan 
+ */
 public class Scanning implements Serializable
 {
 
     @SerializedName("internet")
     @Expose
     private Boolean internet;
-    @SerializedName("copyleaksDB")
-    @Expose
-    private Boolean copyleaksDB;
     private final static long serialVersionUID = 4042060338518645190L;
 
     /**
@@ -53,10 +53,9 @@ public class Scanning implements Serializable
 	 *        true, it will also index the scanned document into the database.
 	 * @param internet: Scan against the Internet?
 	 */
-    public Scanning(Boolean internet, Boolean copyleaksDB) {
+    public Scanning(Boolean internet) {
         super();
         this.internet = internet;
-        this.copyleaksDB = copyleaksDB;
     }
 
     public Boolean getInternet() {
@@ -66,13 +65,4 @@ public class Scanning implements Serializable
     public void setInternet(Boolean internet) {
         this.internet = internet;
     }
-
-    public Boolean getCopyleaksDB() {
-        return copyleaksDB;
-    }
-
-    public void setCopyleaksDB(Boolean copyleaksDB) {
-        this.copyleaksDB = copyleaksDB;
-    }
-
 }

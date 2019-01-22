@@ -58,7 +58,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 import copyleaks.sdk.api.exceptions.CopyleaksException;
-import copyleaks.sdk.api.models.response.BadResponse;
 
 /**
  * 

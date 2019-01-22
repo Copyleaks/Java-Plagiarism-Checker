@@ -24,47 +24,58 @@
 
 package copyleaks.sdk.api.models.request;
 
-import java.io.Serializable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import copyleaks.sdk.api.models.types.eScanPriority;
+import copyleaks.sdk.api.models.types.eSubmitAction;
+import copyleaks.sdk.api.models.types.eSubmitOutputMode;
+
 /**
- * Represents a basic document for submission to Copyleaks API 
+ * The Scan properties for Education product
  */
-abstract class Document implements Serializable {
-	
-	
-	private static final long serialVersionUID = -1000958876076996731L;
-	
-	@SerializedName("properties")
-	@Expose
-	private ScanProperties properties;
-	
+public class EducationScanProperties extends ScanProperties {
+
 	/**
-	 * No args constructor for use in serialization
 	 * 
 	 */
-	public Document() {
-	}
+	private static final long serialVersionUID = -4570028154003573232L;
 
 	/**
-	 * Create a new basic document for submission to Copyleaks API
-	 * @param base64: Base64 file content. Bytes -> base64 string 
-	 * @param filename: The original filename.
-	 * @param properties: The scan request properties
+	 * Defines which mediums to scan.
 	 */
-	public Document(ScanProperties properties) {
-		super();
-		this.properties = properties;
+	@SerializedName("scanning")
+	@Expose
+	private EducationScanning scanning;
+	@SerializedName("reportExport")
+	@Expose
+	private ReportCustomization reportExport;
+
+	public EducationScanProperties() {
 	}
 	
-	public ScanProperties getProperties() {
-		return properties;
+	public EducationScanProperties(eSubmitAction action, eSubmitOutputMode outputMode, String developerPayload,
+			Boolean sandbox, Callbacks callbacks, Integer experation, Exclude exclude,
+			Filters filters, Author author, EducationScanning scanning, ReportCustomization reportExport, eScanPriority priority) {
+		super(action, outputMode, developerPayload, sandbox, callbacks, experation, exclude, filters, author, priority);
+		this.reportExport = reportExport;
+		this.scanning = scanning;
+	}
+	
+	public Scanning getScanning() {
+		return scanning;
 	}
 
-	public void setProperties(ScanProperties properties) {
-		this.properties = properties;
+	public void setScanning(EducationScanning scanning) {
+		this.scanning = scanning;
 	}
 
+	public ReportCustomization getReportExport() {
+		return reportExport;
+	}
+
+	public void setReportExport(ReportCustomization reportExport) {
+		this.reportExport = reportExport;
+	}
 
 }

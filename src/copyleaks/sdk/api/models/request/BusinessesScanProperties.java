@@ -22,22 +22,47 @@
  SOFTWARE.
 ********************************************************************************/
 
-package copyleaks.sdk.api.models.types;
+package copyleaks.sdk.api.models.request;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import copyleaks.sdk.api.models.types.eScanPriority;
+import copyleaks.sdk.api.models.types.eSubmitAction;
+import copyleaks.sdk.api.models.types.eSubmitOutputMode;
+
 /**
- * Configure what to do in case one or more scan id's have failed
+ * The Scan properties for Businesses product  
  */
-public enum eErrorHandling {
+public class BusinessesScanProperties extends ScanProperties {
+
 	/**
-	 * cancel the entire request
+	 * 
 	 */
-	@SerializedName("0")
-	Cancel,
+	private static final long serialVersionUID = -841251550678810053L;
+
 	/**
-	 * start non failed scan id's
+	 * Defines which mediums to scan.
 	 */
-	@SerializedName("1")
-	Ignore
+	@SerializedName("scanning")
+	@Expose
+	private Scanning scanning;
+	
+	public BusinessesScanProperties() {	}
+	
+	public BusinessesScanProperties(eSubmitAction action, eSubmitOutputMode outputMode, String developerPayload,
+			Boolean sandbox, Callbacks callbacks, Integer experation, Exclude exclude,
+			Filters filters, Author author, Scanning scanning, eScanPriority prioriy) {
+		super(action, outputMode, developerPayload, sandbox, callbacks, experation, exclude, filters, author, prioriy);
+		this.scanning = scanning;
+	}
+	
+	public Scanning getScanning() {
+		return scanning;
+	}
+
+	public void setScanning(Scanning scanning) {
+		this.scanning = scanning;
+	}
+
 }

@@ -22,22 +22,38 @@
  SOFTWARE.
 ********************************************************************************/
 
-package copyleaks.sdk.api.models.types;
+package copyleaks.sdk.api.models.request;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Configure what to do in case one or more scan id's have failed
+ * Filter the sources of your scan for Education product 
  */
-public enum eErrorHandling {
+public class EducationScanning extends Scanning {
+
 	/**
-	 * cancel the entire request
+	 * 
 	 */
-	@SerializedName("0")
-	Cancel,
-	/**
-	 * start non failed scan id's
-	 */
-	@SerializedName("1")
-	Ignore
+	private static final long serialVersionUID = -4977322859927702768L;
+
+	@SerializedName("copyleaksDB")
+	@Expose
+	private Boolean copyleaksDB;
+
+	public EducationScanning() {
+	}
+
+	public EducationScanning(Boolean internet, Boolean copyleaksDB) {
+		super(internet);
+		this.copyleaksDB = copyleaksDB;
+	}
+
+	public Boolean getCopyleaksDB() {
+		return copyleaksDB;
+	}
+
+	public void setCopyleaksDB(Boolean copyleaksDB) {
+		this.copyleaksDB = copyleaksDB;
+	}
 }

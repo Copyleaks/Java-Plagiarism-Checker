@@ -63,6 +63,10 @@ public class AsynchronousExample {
 		 */
 		String email = "<YOUR_EMAIL_HERE>";
 		String apiKey = "<YOUR_API_KEY_HERE>";
+		
+		/*
+		 * Select the product
+		 */
 		eProduct product = eProduct.Education;
 
 		/*
@@ -74,10 +78,15 @@ public class AsynchronousExample {
 		 */
 		String scanId = UUID.randomUUID().toString();
 
-		scan(email, apiKey, product, scanId);
+		/*
+		 * Choose your content type for submission
+		 */
+		SubmissionType submitionType = SubmissionType.IMAGE;
+		
+		scan(email, apiKey, product, scanId, submitionType);
 	}
 
-	public static void scan(String email, String apiKey, eProduct product, String scanId) {
+	public static void scan(String email, String apiKey, eProduct product, String scanId, SubmissionType submitionType) {
 		try {
 			/*
 			 * Obtain an access token from Copyleaks API
@@ -101,22 +110,24 @@ public class AsynchronousExample {
 
 			Callbacks callbacks = new Callbacks("https://fake/completion/callbask/",
 					"https://fake/newResult/callbask/");
+			
 
 			/*
-			 * You can test the integration with Copyleaks API for free using the sandbox mode. You will be able to submit content to scan and get back mock results, simulating the way Copyleaks will work
+			 * You can test the integration with Copyleaks API for free using the sandbox
+			 * mode. You will be able to submit content to scan and get back mock results,
+			 * simulating the way Copyleaks will work
 			 */
-			boolean sandboxMode = true;
+			boolean sandboxMode = false;
 
 			/*
 			 * Add the properties to your scan
 			 */
-			ScanProperties properties = new ScanPropertiesBuilder().setAction(submitAction).setCallbacks(callbacks)
-					.setSandbox(sandboxMode).build();
+			ScanProperties properties = new ScanPropertiesBuilder(product)
+					.setAction(submitAction)
+					.setCallbacks(callbacks)
+					.setSandbox(sandboxMode)
+					.build();
 
-			/*
-			 * Choose your content type for submission
-			 */
-			SubmissionType submitionType = SubmissionType.URL;
 			switch (submitionType) {
 
 			/*

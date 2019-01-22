@@ -22,22 +22,26 @@
  SOFTWARE.
 ********************************************************************************/
 
-package copyleaks.sdk.api.models.types;
+package copyleaks.sdk.api.models.request;
 
-import com.google.gson.annotations.SerializedName;
+import copyleaks.sdk.api.models.types.eScanPriority;
+import copyleaks.sdk.api.models.types.eSubmitAction;
+import copyleaks.sdk.api.models.types.eSubmitOutputMode;
 
-/**
- * Configure what to do in case one or more scan id's have failed
- */
-public enum eErrorHandling {
+public class WebsitesScanProperties extends ScanProperties {
+
 	/**
-	 * cancel the entire request
+	 * 
 	 */
-	@SerializedName("0")
-	Cancel,
-	/**
-	 * start non failed scan id's
-	 */
-	@SerializedName("1")
-	Ignore
+	private static final long serialVersionUID = 4383741041298957883L;
+
+	public WebsitesScanProperties() {
+	}
+
+	public WebsitesScanProperties(eSubmitAction action, eSubmitOutputMode outputMode, String developerPayload,
+			Boolean sandbox, Callbacks callbacks, Integer experation, Exclude exclude,
+			Filters filters, Author author, eScanPriority priority) {
+		super(action, outputMode, developerPayload, sandbox, callbacks, experation, exclude, filters, author, priority);
+	}
+
 }

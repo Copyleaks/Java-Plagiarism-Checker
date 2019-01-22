@@ -27,17 +27,26 @@ package copyleaks.sdk.api.models.types;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Configure what to do in case one or more scan id's have failed
+ * Select the priority of your scan. This will effect the number of credits that
+ * will be consumed and the time until the scan is completed
  */
-public enum eErrorHandling {
+public enum eScanPriority {
+
 	/**
-	 * cancel the entire request
-	 */
-	@SerializedName("0")
-	Cancel,
-	/**
-	 * start non failed scan id's
+	 * Start the scan in low priority. Will consume the least amount of credits and
+	 * will take the longest time to complete the scan.
 	 */
 	@SerializedName("1")
-	Ignore
+	Low,
+	/**
+	 * Start the scan in Normal priority.
+	 */
+	@SerializedName("2")
+	Normal,
+	/**
+	 * Start the scan in high priority. Will consume the highest amount of credits
+	 * and will take the shortest time to complete the scan
+	 */
+	@SerializedName("3")
+	High
 }
