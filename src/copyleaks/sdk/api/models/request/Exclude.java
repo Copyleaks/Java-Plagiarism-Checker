@@ -31,9 +31,6 @@ import com.google.gson.annotations.SerializedName;
 public class Exclude implements Serializable
 {
 
-    @SerializedName("references")
-    @Expose
-    private Boolean references;
     @SerializedName("quotes")
     @Expose
     private Boolean quotes;
@@ -59,20 +56,11 @@ public class Exclude implements Serializable
      * @param titles: Exclude titles from the scan.
      * @param htmlTemplate: When scanning an HTML document, exclude the HTML tags and attribute metadata from the scan. 
      */
-    public Exclude(Boolean references, Boolean quotes, Boolean titles, Boolean htmlTemplate) {
+    public Exclude(Boolean quotes, Boolean titles, Boolean htmlTemplate) {
         super();
-        this.references = references;
         this.quotes = quotes;
         this.titles = titles;
         this.htmlTemplate = htmlTemplate;
-    }
-
-    public Boolean getReferences() {
-        return references;
-    }
-
-    public void setReferences(Boolean references) {
-        this.references = references;
     }
 
     public Boolean getQuotes() {

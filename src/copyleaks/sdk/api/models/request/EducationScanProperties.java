@@ -50,6 +50,8 @@ public class EducationScanProperties extends ScanProperties {
 	@SerializedName("reportExport")
 	@Expose
 	private ReportCustomization reportExport;
+	
+	
 
 	public EducationScanProperties() {
 	}

@@ -29,6 +29,7 @@ import javax.naming.directory.InvalidAttributesException;
 import copyleaks.sdk.api.models.request.Author;
 import copyleaks.sdk.api.models.request.BusinessesScanProperties;
 import copyleaks.sdk.api.models.request.Callbacks;
+import copyleaks.sdk.api.models.request.EducationExclude;
 import copyleaks.sdk.api.models.request.EducationScanProperties;
 import copyleaks.sdk.api.models.request.EducationScanning;
 import copyleaks.sdk.api.models.request.Exclude;
@@ -147,8 +148,12 @@ public class ScanPropertiesBuilder {
 	 * 
 	 * @param exclude
 	 * @return ScanPropertiesBuilder
+	 * @throws InvalidAttributesException 
 	 */
-	public ScanPropertiesBuilder setExclude(Exclude exclude) {
+	public ScanPropertiesBuilder setExclude(Exclude exclude) throws InvalidAttributesException {
+		if(this.product == eProduct.Education && exclude instanceof EducationExclude == false)
+			throw new InvalidAttributesException(
+					"Education exclude section must be of type " + EducationExclude.class.getName());
 		this.exclude = exclude;
 		return this;
 	}
