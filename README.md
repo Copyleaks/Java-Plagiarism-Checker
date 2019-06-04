@@ -25,7 +25,8 @@ Instructions for using the SDK are below. For a quick example demonstrating the 
 </ol>
 <p>Now you have the project in your workspace and you can make alterations that fits your own specific needs. As default, the project includes the file ‘Main.java’. This file will allow you to easily run and check your project.</p></li>
 
-<li>Download the JAR files – choose this option if you want to use the code as-is. Download the <a href="https://api.copyleaks.com/downloads/sdk/java/CopyleaksAPI.Java.JARs.v2.0.zip">JAR files</a> and then, follow the next steps:
+<li>Download the 
+	files – choose this option if you want to use the code as-is. Download the <a href="https://github.com/Copyleaks/Java-Plagiarism-Checker/raw/master/copyleaks_api.jar">JAR files</a> and then, follow the next steps:
 <ol>
 <li>Extract the files.</li>
 <li>Open Eclipse and select the process you want to integrate with Copyleaks API.</li>
@@ -39,7 +40,7 @@ Instructions for using the SDK are below. For a quick example demonstrating the 
 <p>Now you can use the Copyleaks API in your project. If you are working with our latest version, you can also run the libraries using the code found down on this page.</p>
 <h3>Signing Up and Getting Your API Key</h3>
  <p>To use Copyleaks API you need to be a registered user. Signing up is quick and free of charge.</p>
- <p><a href="https://copyleaks.com/account/register">Signup</a> to Copyleaks and confirm your account by clicking the link in the confirmation email. Generate your personal API key on your dashboard (<a href="https://api.copyleaks.com/businessesapi">Businesses dashboard/</a><a href="https://api.copyleaks.com/academicapi">Academic dashboard/</a><a href="https://api.copyleaks.com/websitesapi">Websites dashboard</a>) under 'Access Keys'. </p>
+ <p><a href="https://copyleaks.com/account/register">Signup</a> to Copyleaks and confirm your account by clicking the link in the confirmation email. Generate your personal API key on your dashboard (<a href="https://api.copyleaks.com/businessesapi">Businesses dashboard/</a><a href="https://api.copyleaks.com/academicapi">Academic dashboard/</a>) under 'Access Keys'. </p>
  <p>For more information check out our <a href="https://api.copyleaks.com/Guides/HowToUse">API guide</a>.</p>
 <h3>Example</h3>
 <p>This code will show you where the textual content in the parameter ‘url’ has been used online:</p>
