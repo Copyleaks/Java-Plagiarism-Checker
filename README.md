@@ -1,3 +1,4 @@
+*This package is supporting v1 of the API which will no longer be in use as of July 1, ,2020. It's recommended to use the new v3 of the API, see full documentation with code snippets here - https://api.copyleaks.com/documentation/v3.*                                               
 <h2>Copyleaks API Java SDK</h2>
 <p>
 Copyleaks SDK is a simple framework that allows you to perform plagiarism scans and track content distribution around the web, using the Copyleaks cloud.
