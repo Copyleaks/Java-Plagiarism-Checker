@@ -42,12 +42,10 @@ public class DatabaseResult extends BasicInternalResult {
 	 * @param matchedWords: Number of matched words
 	 * @param title: The results title
 	 * @param scanId: The scan id
-	 * @param comparison: downloadable comparison report
 	 * @param introduction: The results introduction
 	 */
-	public DatabaseResult(String scanId, String id, String title, String introduction, Integer matchedWords,
-			String comparison) {
-		super(scanId, id, title, introduction, matchedWords, comparison);
+	public DatabaseResult(String scanId, String id, String title, String introduction, Integer matchedWords) {
+		super(scanId, id, title, introduction, matchedWords);
 	}
 
 	/**

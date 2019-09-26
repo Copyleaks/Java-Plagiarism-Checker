@@ -29,7 +29,6 @@ import com.google.gson.annotations.SerializedName;
 
 import copyleaks.sdk.api.models.types.eScanPriority;
 import copyleaks.sdk.api.models.types.eSubmitAction;
-import copyleaks.sdk.api.models.types.eSubmitOutputMode;
 
 /**
  * The Scan properties for Businesses product  
@@ -50,10 +49,10 @@ public class BusinessesScanProperties extends ScanProperties {
 	
 	public BusinessesScanProperties() {	}
 	
-	public BusinessesScanProperties(eSubmitAction action, eSubmitOutputMode outputMode, String developerPayload,
+	public BusinessesScanProperties(eSubmitAction action, boolean includeHtml, String developerPayload,
 			Boolean sandbox, Callbacks callbacks, Integer experation, Exclude exclude,
 			Filters filters, Author author, Scanning scanning, eScanPriority prioriy) {
-		super(action, outputMode, developerPayload, sandbox, callbacks, experation, exclude, filters, author, prioriy);
+		super(action, includeHtml, developerPayload, sandbox, callbacks, experation, exclude, filters, author, prioriy);
 		this.scanning = scanning;
 	}
 	

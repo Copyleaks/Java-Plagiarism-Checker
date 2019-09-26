@@ -26,7 +26,6 @@ package copyleaks.sdk.api.models.request;
 
 import copyleaks.sdk.api.models.types.eScanPriority;
 import copyleaks.sdk.api.models.types.eSubmitAction;
-import copyleaks.sdk.api.models.types.eSubmitOutputMode;
 
 public class WebsitesScanProperties extends ScanProperties {
 
@@ -38,10 +37,11 @@ public class WebsitesScanProperties extends ScanProperties {
 	public WebsitesScanProperties() {
 	}
 
-	public WebsitesScanProperties(eSubmitAction action, eSubmitOutputMode outputMode, String developerPayload,
-			Boolean sandbox, Callbacks callbacks, Integer experation, Exclude exclude,
-			Filters filters, Author author, eScanPriority priority) {
-		super(action, outputMode, developerPayload, sandbox, callbacks, experation, exclude, filters, author, priority);
+	public WebsitesScanProperties(eSubmitAction action, boolean includeHtml, String developerPayload, Boolean sandbox,
+			Callbacks callbacks, Integer experation, Exclude exclude, Filters filters, Author author,
+			eScanPriority priority) {
+		super(action, includeHtml, developerPayload, sandbox, callbacks, experation, exclude, filters, author,
+				priority);
 	}
 
 }

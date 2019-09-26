@@ -22,46 +22,65 @@
  SOFTWARE.
 ********************************************************************************/
 
-package copyleaks.sdk.api.models.response;
+package copyleaks.sdk.api.models.request.download;
+
+import java.io.Serializable;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class InternetResult extends BasicResult {
+public class SuspectedVersion implements Serializable {
 
-	@SerializedName("url")
+	private static final long serialVersionUID = 1416307247887098871L;
+
+	@SerializedName("value")
 	@Expose
-	private String url;
+	private String value;
+	@SerializedName("pages")
+	@Expose
+	private Pages pages;
+	@SerializedName("comparison")
+	@Expose
+	private Comparison comparison;
 
-	private final static long serialVersionUID = 813046936617362195L;
-
-	/**
-	 * No args constructor for use in serialization
-	 * 
-	 */
-	public InternetResult() {
+	public SuspectedVersion() {
 	}
 
-	/**
-	 * A result from the Internet
-	 * 
-	 * @param id: Unique result id
-	 * @param matchedWords: Number of matched words
-	 * @param title: Result title
-	 * @param introduction: The results introduction
-	 * @param url: The result url
-	 */
-	public InternetResult(String url, String id, String title, String introduction, Integer matchedWords) {
-		super(id, title, introduction, matchedWords);
-		this.url = url;
-
+	public SuspectedVersion(String value, Pages pages, Comparison comparison) {
+		super();
+		this.value = value;
+		this.pages = pages;
+		this.comparison = comparison;
+	}
+	
+	public String getValue() {
+		return value;
 	}
 
-	public String getUrl() {
-		return url;
+	public void setValue(String value) {
+		this.value = value;
 	}
 
-	public void setUrl(String url) {
-		this.url = url;
+	public Pages getPages() {
+		return pages;
 	}
+
+	public void setPages(Pages pages) {
+		this.pages = pages;
+	}
+
+	public Comparison getComparison() {
+		return comparison;
+	}
+
+	public void setComparison(Comparison comparison) {
+		this.comparison = comparison;
+	}
+
+	@Override
+	public String toString() {
+		String ellipsis = value.length() > 20 ? value.substring(0,20) + "..." : value;
+		return "SuspectedVersion [value=" + ellipsis + ", pages=" + pages + ", comparison=" + comparison + "]";
+	}
+
 }

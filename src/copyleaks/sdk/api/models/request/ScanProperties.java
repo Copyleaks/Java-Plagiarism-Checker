@@ -30,7 +30,6 @@ import com.google.gson.annotations.SerializedName;
 
 import copyleaks.sdk.api.models.types.eScanPriority;
 import copyleaks.sdk.api.models.types.eSubmitAction;
-import copyleaks.sdk.api.models.types.eSubmitOutputMode;
 
 public abstract class ScanProperties implements Serializable {
 
@@ -45,7 +44,7 @@ public abstract class ScanProperties implements Serializable {
 	 */
 	@SerializedName("outputMode")
 	@Expose
-	private eSubmitOutputMode outputMode;
+	private boolean includeHtml;
 	/**
 	 * Custom developer payload that will be attached to the scan results
 	 */
@@ -124,11 +123,11 @@ public abstract class ScanProperties implements Serializable {
 	 *               maximum allowed value is 2880 (~ 4 month)
 	 * @param		 priority: The scan priority
 	 */
-	public ScanProperties(eSubmitAction action, eSubmitOutputMode outputMode, String developerPayload, Boolean sandbox,
+	public ScanProperties(eSubmitAction action, boolean includeHtml, String developerPayload, Boolean sandbox,
 			Callbacks callbacks, Integer experation, Exclude exclude, Filters filters, Author author, eScanPriority prioirty) {
 		super();
 		this.action = action;
-		this.outputMode = outputMode;
+		this.includeHtml = includeHtml;
 		this.developerPayload = developerPayload;
 		this.sandbox = sandbox;
 		this.callbacks = callbacks;
@@ -147,12 +146,12 @@ public abstract class ScanProperties implements Serializable {
 		this.action = action;
 	}
 
-	public eSubmitOutputMode getOutputMode() {
-		return outputMode;
+	public boolean getIncludeHtml() {
+		return includeHtml;
 	}
 
-	public void setOutputMode(eSubmitOutputMode outputMode) {
-		this.outputMode = outputMode;
+	public void setIncludeHtml(boolean includeHtml) {
+		this.includeHtml = includeHtml;
 	}
 
 	public String getDeveloperPayload() {

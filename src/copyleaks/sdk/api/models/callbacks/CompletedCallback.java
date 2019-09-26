@@ -24,7 +24,12 @@
 
 package copyleaks.sdk.api.models.callbacks;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import copyleaks.sdk.api.models.response.ResultResponse;
+
+import copyleaks.sdk.api.models.response.ReportResponse;
 
 /**
  * The callback that will be called from Copyleaks API once an a scan request is
@@ -34,5 +39,8 @@ import copyleaks.sdk.api.models.response.ResultResponse;
 public class CompletedCallback extends ResultResponse {
 
 	private static final long serialVersionUID = -5811082642780324542L;
-
+	
+	@SerializedName("downloadableReport")
+	@Expose
+	private ReportResponse ReportResponse;
 }

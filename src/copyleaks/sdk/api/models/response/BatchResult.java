@@ -46,9 +46,8 @@ public class BatchResult extends BasicInternalResult {
 	 * @param comparison: downloadable comparison report
 	 * @param introduction: The results introduction
 	 */
-	public BatchResult(String scanId, String id, String title, String introduction, Integer matchedWords,
-			String comparison) {
-		super(scanId, id, title, introduction, matchedWords, comparison);
+	public BatchResult(String scanId, String id, String title, String introduction, Integer matchedWords) {
+		super(scanId, id, title, introduction, matchedWords);
 
 	}
 

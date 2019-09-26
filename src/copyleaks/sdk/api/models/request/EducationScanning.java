@@ -39,21 +39,21 @@ public class EducationScanning extends Scanning {
 
 	@SerializedName("copyleaksDB")
 	@Expose
-	private Boolean copyleaksDB;
+	private InternalDatabaseScan copyleaksDB;
 
 	public EducationScanning() {
 	}
 
-	public EducationScanning(Boolean internet, Boolean copyleaksDB) {
+	public EducationScanning(Boolean internet, InternalDatabaseScan copyleaksDB) {
 		super(internet);
 		this.copyleaksDB = copyleaksDB;
 	}
 
-	public Boolean getCopyleaksDB() {
+	public InternalDatabaseScan getCopyleaksDB() {
 		return copyleaksDB;
 	}
 
-	public void setCopyleaksDB(Boolean copyleaksDB) {
+	public void setCopyleaksDB(InternalDatabaseScan copyleaksDB) {
 		this.copyleaksDB = copyleaksDB;
 	}
 }

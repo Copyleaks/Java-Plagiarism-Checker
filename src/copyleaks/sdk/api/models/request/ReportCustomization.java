@@ -36,9 +36,13 @@ public class ReportCustomization implements Serializable {
 	 */
 	private static final long serialVersionUID = 7305621483644295391L;
 
+	
 	@SerializedName("Title")
 	@Expose
-	private Boolean Title;
+	private Boolean Create;
+	@SerializedName("Title")
+	@Expose
+	private String Title;
 	@SerializedName("LargeLogo")
 	@Expose
 	private String LargeLogo;
@@ -56,8 +60,9 @@ public class ReportCustomization implements Serializable {
 		
 	}
 	
-	public ReportCustomization(Boolean Title, String LargeLogo, String SmallLogo, Boolean RTL, ReportCustomizationColors Colors) {
+	public ReportCustomization(Boolean Create, String Title, String LargeLogo, String SmallLogo, Boolean RTL, ReportCustomizationColors Colors) {
 		super();
+		this.Create = Create;
 		this.Title = Title;
 		this.LargeLogo = LargeLogo;
 		this.SmallLogo = SmallLogo;
@@ -65,11 +70,19 @@ public class ReportCustomization implements Serializable {
 		this.Colors = Colors;
 	}
 
-	public Boolean getTitle() {
+	public Boolean GetCreate() {
+		return this.Create;
+	}
+	
+	public void SetCreate(Boolean create) {
+		this.Create = create;
+	}
+	
+	public String getTitle() {
 		return Title;
 	}
 
-	public void setTitle(Boolean title) {
+	public void setTitle(String title) {
 		Title = title;
 	}
 

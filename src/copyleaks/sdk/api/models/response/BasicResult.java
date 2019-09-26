@@ -34,12 +34,11 @@ public abstract class BasicResult implements Serializable {
 	public BasicResult() {
 	}
 
-	public BasicResult(String id, String title, String introduction, Integer matchedWords, String comparison) {
+	public BasicResult(String id, String title, String introduction, Integer matchedWords) {
 		this.id = id;
 		this.title = title;
 		this.introduction = introduction;
 		this.matchedWords = matchedWords;
-		this.comparison = comparison;
 	}
 
 	/**
@@ -59,10 +58,7 @@ public abstract class BasicResult implements Serializable {
 	@SerializedName("matchedWords")
 	@Expose
 	private Integer matchedWords;
-	@SerializedName("comparison")
-	@Expose
-	private String comparison;
-
+	
 	public String getId() {
 		return id;
 	}
@@ -93,14 +89,6 @@ public abstract class BasicResult implements Serializable {
 
 	public void setMatchedWords(Integer matchedWords) {
 		this.matchedWords = matchedWords;
-	}
-
-	public String getComparison() {
-		return comparison;
-	}
-
-	public void setComparison(String comparison) {
-		this.comparison = comparison;
 	}
 
 }

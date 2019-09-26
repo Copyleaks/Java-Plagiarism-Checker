@@ -22,46 +22,38 @@
  SOFTWARE.
 ********************************************************************************/
 
-package copyleaks.sdk.api.models.response;
+package copyleaks.sdk.api.models.request.download;
+
+import java.io.Serializable;
+import java.util.Arrays;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class InternetResult extends BasicResult {
+public class Pages implements Serializable{
 
-	@SerializedName("url")
+	private static final long serialVersionUID = 2264751234584931356L;
+	
+	@SerializedName("startPosition")
 	@Expose
-	private String url;
-
-	private final static long serialVersionUID = 813046936617362195L;
-
-	/**
-	 * No args constructor for use in serialization
-	 * 
-	 */
-	public InternetResult() {
+	private Integer [] startPosition;
+	
+	public Pages() {}
+	public Pages(Integer[] startPosition) {
+		super();
+		this.startPosition = startPosition;
 	}
-
-	/**
-	 * A result from the Internet
-	 * 
-	 * @param id: Unique result id
-	 * @param matchedWords: Number of matched words
-	 * @param title: Result title
-	 * @param introduction: The results introduction
-	 * @param url: The result url
-	 */
-	public InternetResult(String url, String id, String title, String introduction, Integer matchedWords) {
-		super(id, title, introduction, matchedWords);
-		this.url = url;
-
+	
+	public Integer[] getStartPosition() {
+		return startPosition;
 	}
-
-	public String getUrl() {
-		return url;
+	
+	public void setStartPosition(Integer[] startPosition) {
+		this.startPosition = startPosition;
 	}
-
-	public void setUrl(String url) {
-		this.url = url;
+	
+	@Override
+	public String toString() {
+		return "Pages [startPosition=" + Arrays.toString(startPosition) + "]";
 	}
 }

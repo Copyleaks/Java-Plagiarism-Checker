@@ -61,8 +61,11 @@ public class AsynchronousExample {
 		 * dashboard on http://api.copyleaks.com of the product that you would like to
 		 * use. Currently available products: Businesses, Education and Websites.
 		 */
-		String email = "<YOUR_EMAIL_HERE>";
-		String apiKey = "<YOUR_API_KEY_HERE>";
+		// TODO:
+//		String email = "<YOUR_EMAIL_HERE>";
+//		String apiKey = "<YOUR_API_KEY_HERE>";
+		String email = "erezh@copyleaks.com";
+		String apiKey = "87F681C8-2DC8-498D-AEE2-368E02B2E7C6";
 		
 		/*
 		 * Select the product
@@ -168,6 +171,27 @@ public class AsynchronousExample {
 				break;
 			}
 			System.out.println("Submitted. You will receive a callback soon.");
+			
+			/*
+			 * Download example:
+			 * 
+			
+			// Get process results once the process is completed
+			ResultResponse result = api.result(scanId);
+
+			// Get Internet results
+			for(String resultId: result.getResults().getInternet().stream().map(i->i.getId()).collect(Collectors.toList()) )
+				System.out.println(api.download(scanId, resultId));
+
+			// Get Copyleaks internal database results
+			for(String resultId: result.getResults().getDatabase().stream().map(i->i.getId()).collect(Collectors.toList()) )
+				System.out.println(api.download(scanId, resultId));
+			
+			// Get SameBatch results
+			for(String resultId: result.getResults().getBatch().stream().map(i->i.getId()).collect(Collectors.toList()) )
+				System.out.println(api.download(scanId, resultId));
+				
+			*/
 
 		} catch (CopyleaksException copyleaksException) {
 			System.out.println("Failed!");

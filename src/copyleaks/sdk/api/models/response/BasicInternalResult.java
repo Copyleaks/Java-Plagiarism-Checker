@@ -45,9 +45,8 @@ public abstract class BasicInternalResult extends BasicResult {
 	public BasicInternalResult() {
 	}
 
-	public BasicInternalResult(String scanId, String id, String title, String introduction, Integer matchedWords,
-			String comparison) {
-		super(id, title, introduction, matchedWords, comparison);
+	public BasicInternalResult(String scanId, String id, String title, String introduction, Integer matchedWords) {
+		super(id, title, introduction, matchedWords);
 		this.scanId = scanId;
 	}
 

@@ -73,34 +73,5 @@ public class CopyleaksIdentityApi extends CopyleaksBaseApi{
 		HttpResponse response = this.client.post(url, dic);
 		return this.client.deserelizeResponseBody(response, LoginResponse.class);
     }
-    
-    /**
-     * Get or create a readonly key for scan
-     */
-    public String regenerateReadonlyKey(String token, String scanId) throws ClientProtocolException, IOException, ParseException, CopyleaksException {
-    	String url = String.format("%s%s/account/permissions/%s/readonly", Settings.IdentityEndPoint, Settings.ApiVersion, scanId);
-    	this.client.setToken(token);
-    	HttpResponse response = this.client.post(url, "");
-    	return this.client.deserelizeResponseBody(response, String.class);
-    }
-
-    /**
-     * Get an existing readonly key for scan
-     */
-    public String getReadonlyKey(String token, String scanId) throws ClientProtocolException, IOException, ParseException, CopyleaksException {
-    	String url = String.format("%s%s/account/permissions/%s/readonly", Settings.IdentityEndPoint, Settings.ApiVersion, scanId);
-    	this.client.setToken(token);
-    	HttpResponse response = this.client.get(url); 
-    	return this.client.deserelizeResponseBody(response, String.class);
-    }
-    /**
-     * Delete a readonly key for scan
-     */
-    public void deleteReadOnlyToken(String token, String scanId) throws ClientProtocolException, IOException, ParseException, CopyleaksException {
-    	String url = String.format("%s%s/account/permissions/%s/readonly", Settings.IdentityEndPoint, Settings.ApiVersion, scanId);
-    	this.client.setToken(token);
-    	HttpResponse response = this.client.delete(url); 
-    	this.client.validateStatusCode(response);
-    }
 
 }

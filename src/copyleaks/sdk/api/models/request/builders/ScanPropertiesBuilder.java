@@ -41,11 +41,10 @@ import copyleaks.sdk.api.models.request.WebsitesScanProperties;
 import copyleaks.sdk.api.models.types.eProduct;
 import copyleaks.sdk.api.models.types.eScanPriority;
 import copyleaks.sdk.api.models.types.eSubmitAction;
-import copyleaks.sdk.api.models.types.eSubmitOutputMode;
 
 public class ScanPropertiesBuilder {
 	private eSubmitAction action = eSubmitAction.Scan;
-	private eSubmitOutputMode outputMode = eSubmitOutputMode.TXT;
+	private boolean includeHtml = false;
 	private String developerPayload = null;
 	private Boolean sandbox = true;
 	private Callbacks callbacks = new Callbacks();
@@ -79,8 +78,8 @@ public class ScanPropertiesBuilder {
 	 * @param outputMode
 	 * @return ScanPropertiesBuilder
 	 */
-	public ScanPropertiesBuilder setOutputMode(eSubmitOutputMode outputMode) {
-		this.outputMode = outputMode;
+	public ScanPropertiesBuilder setIncludeHtml(boolean includeHtml) {
+		this.includeHtml = includeHtml;
 		return this;
 	}
 
@@ -214,17 +213,17 @@ public class ScanPropertiesBuilder {
 		case Businesses:
 			if(this.scanning == null)
 				this.scanning = new Scanning();
-			properties = new BusinessesScanProperties(action, outputMode, developerPayload, sandbox, callbacks,
+			properties = new BusinessesScanProperties(action, includeHtml, developerPayload, sandbox, callbacks,
 					expiration, exclude, filters, author, scanning, priority);
 		case Education:
 			if(this.scanning == null)
 				this.scanning = new EducationScanning();
 			EducationScanning educationScanning = (EducationScanning) this.scanning;
-			properties = new EducationScanProperties(action, outputMode, developerPayload, sandbox, callbacks,
+			properties = new EducationScanProperties(action, includeHtml, developerPayload, sandbox, callbacks,
 					expiration, exclude, filters, author, educationScanning, reportExport, priority);
 			break;
 		case Websites:
-			properties = new WebsitesScanProperties(action, outputMode, developerPayload, sandbox, callbacks,
+			properties = new WebsitesScanProperties(action, includeHtml, developerPayload, sandbox, callbacks,
 					expiration, exclude, filters, author, priority);
 			break;
 		default:

@@ -30,7 +30,9 @@ package copyleaks.sdk.api;
  *
  */
 public class Settings {
-	public static final String ApiEndPoint = "https://api.copyleaks.com/";
+	// TODO: 
+	public static final String ApiEndPoint = "https://beta-api.copyleaks.com/";
+	//public static final String ApiEndPoint = "https://api.copyleaks.com/";
 	public static final String IdentityEndPoint = "https://id.copyleaks.com/";
 	public static final int RequestsTimeoutMilis = 60000;
 	public static final String ApiVersion = "v3";	

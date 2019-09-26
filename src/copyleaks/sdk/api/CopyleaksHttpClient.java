@@ -27,6 +27,7 @@ package copyleaks.sdk.api;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -195,6 +196,16 @@ public class CopyleaksHttpClient {
 		} catch (JsonSyntaxException e) {
 			throw new CopyleaksException(responseString, statusCode);
 		}
+	}
+	
+	public InputStream getResponseStream(HttpResponse response) throws CopyleaksException, IOException {
+		HttpEntity responseEntity = response.getEntity();
+		InputStream content= null;
+		int statusCode = response.getStatusLine().getStatusCode();
+		content = responseEntity.getContent();
+		if(!validateStatusCode(statusCode))
+			throw new CopyleaksException(EntityUtils.toString(responseEntity), statusCode);
+		return content;
 	}
 
 	private void configureHttpClient(HttpRequestBase request) {

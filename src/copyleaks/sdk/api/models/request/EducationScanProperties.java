@@ -29,7 +29,6 @@ import com.google.gson.annotations.SerializedName;
 
 import copyleaks.sdk.api.models.types.eScanPriority;
 import copyleaks.sdk.api.models.types.eSubmitAction;
-import copyleaks.sdk.api.models.types.eSubmitOutputMode;
 
 /**
  * The Scan properties for Education product
@@ -47,7 +46,7 @@ public class EducationScanProperties extends ScanProperties {
 	@SerializedName("scanning")
 	@Expose
 	private EducationScanning scanning;
-	@SerializedName("reportExport")
+	@SerializedName("pdf")
 	@Expose
 	private ReportCustomization reportExport;
 	
@@ -56,10 +55,10 @@ public class EducationScanProperties extends ScanProperties {
 	public EducationScanProperties() {
 	}
 	
-	public EducationScanProperties(eSubmitAction action, eSubmitOutputMode outputMode, String developerPayload,
+	public EducationScanProperties(eSubmitAction action, boolean includeHtml, String developerPayload,
 			Boolean sandbox, Callbacks callbacks, Integer experation, Exclude exclude,
 			Filters filters, Author author, EducationScanning scanning, ReportCustomization reportExport, eScanPriority priority) {
-		super(action, outputMode, developerPayload, sandbox, callbacks, experation, exclude, filters, author, priority);
+		super(action, includeHtml, developerPayload, sandbox, callbacks, experation, exclude, filters, author, priority);
 		this.reportExport = reportExport;
 		this.scanning = scanning;
 	}

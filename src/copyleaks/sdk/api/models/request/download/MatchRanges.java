@@ -22,46 +22,52 @@
  SOFTWARE.
 ********************************************************************************/
 
-package copyleaks.sdk.api.models.response;
+package copyleaks.sdk.api.models.request.download;
+
+import java.io.Serializable;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class InternetResult extends BasicResult {
+public class MatchRanges implements Serializable {
 
-	@SerializedName("url")
+	private static final long serialVersionUID = -6935752071203730228L;
+
+	@SerializedName("chars")
 	@Expose
-	private String url;
+	private Ranges chars;
+	@SerializedName("words")
+	@Expose
+	private Ranges words;
 
-	private final static long serialVersionUID = 813046936617362195L;
-
-	/**
-	 * No args constructor for use in serialization
-	 * 
-	 */
-	public InternetResult() {
+	public MatchRanges() {
 	}
 
-	/**
-	 * A result from the Internet
-	 * 
-	 * @param id: Unique result id
-	 * @param matchedWords: Number of matched words
-	 * @param title: Result title
-	 * @param introduction: The results introduction
-	 * @param url: The result url
-	 */
-	public InternetResult(String url, String id, String title, String introduction, Integer matchedWords) {
-		super(id, title, introduction, matchedWords);
-		this.url = url;
-
+	public MatchRanges(Ranges chars, Ranges words) {
+		super();
+		this.chars = chars;
+		this.words = words;
 	}
 
-	public String getUrl() {
-		return url;
+	public Ranges getChars() {
+		return chars;
 	}
 
-	public void setUrl(String url) {
-		this.url = url;
+	public void setChars(Ranges chars) {
+		this.chars = chars;
 	}
+
+	public Ranges getWords() {
+		return words;
+	}
+
+	public void setWords(Ranges words) {
+		this.words = words;
+	}
+
+	@Override
+	public String toString() {
+		return "MatchRanges [chars=" + chars + ", words=" + words + "]";
+	}
+	
 }

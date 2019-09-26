@@ -32,13 +32,13 @@ import com.google.gson.annotations.SerializedName;
  */
 public enum eDomainsFilteringMode {
 	/**
-	 * Exclude the domains
+	 * Include the domains
 	 */
 	@SerializedName("0")
-	BlackList,
+	Include,
 	/**
-	 * Include the domain
+	 * Exclude the domain
 	 */
 	@SerializedName("1")
-	WhiteList
+	Exclude
 }

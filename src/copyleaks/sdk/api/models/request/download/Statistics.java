@@ -22,46 +22,64 @@
  SOFTWARE.
 ********************************************************************************/
 
-package copyleaks.sdk.api.models.response;
+package copyleaks.sdk.api.models.request.download;
+
+import java.io.Serializable;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class InternetResult extends BasicResult {
+public class Statistics implements Serializable {
 
-	@SerializedName("url")
+	private static final long serialVersionUID = 5751882952393563670L;
+	
+	@SerializedName("identical")
 	@Expose
-	private String url;
-
-	private final static long serialVersionUID = 813046936617362195L;
-
-	/**
-	 * No args constructor for use in serialization
-	 * 
-	 */
-	public InternetResult() {
+	private Integer identical;
+	@SerializedName("minorChanges")
+	@Expose
+	private Integer minorChanges;
+	@SerializedName("relatedMeaning")
+	@Expose
+	private Integer relatedMeaning;
+	
+	
+	public Statistics() {}
+	
+	public Statistics(Integer identical, Integer minorChanges, Integer relatedMeaning) {
+		this.identical = identical;
+		this.minorChanges = minorChanges;
+		this.relatedMeaning = relatedMeaning;
 	}
 
-	/**
-	 * A result from the Internet
-	 * 
-	 * @param id: Unique result id
-	 * @param matchedWords: Number of matched words
-	 * @param title: Result title
-	 * @param introduction: The results introduction
-	 * @param url: The result url
-	 */
-	public InternetResult(String url, String id, String title, String introduction, Integer matchedWords) {
-		super(id, title, introduction, matchedWords);
-		this.url = url;
-
+	public Integer getIdentical() {
+		return identical;
 	}
 
-	public String getUrl() {
-		return url;
+	public void setIdentical(Integer identical) {
+		this.identical = identical;
 	}
 
-	public void setUrl(String url) {
-		this.url = url;
+	public Integer getMinorChanges() {
+		return minorChanges;
 	}
+
+	public void setMinorChanges(Integer minorChanges) {
+		this.minorChanges = minorChanges;
+	}
+
+	public Integer getRelatedMeaning() {
+		return relatedMeaning;
+	}
+
+	public void setRelatedMeaning(Integer relatedMeaning) {
+		this.relatedMeaning = relatedMeaning;
+	}
+
+	@Override
+	public String toString() {
+		return "Statistics [identical=" + identical + ", minorChanges=" + minorChanges + ", relatedMeaning="
+				+ relatedMeaning + "]";
+	}
+
 }

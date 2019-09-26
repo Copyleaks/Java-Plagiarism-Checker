@@ -25,6 +25,7 @@
 package copyleaks.sdk.api;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -41,6 +42,7 @@ import copyleaks.sdk.api.models.request.FileDocument;
 import copyleaks.sdk.api.models.request.StartBatchRequest;
 import copyleaks.sdk.api.models.request.StartRequest;
 import copyleaks.sdk.api.models.request.UrlDocument;
+import copyleaks.sdk.api.models.request.download.DownloadResponse;
 import copyleaks.sdk.api.models.response.CountCreditsResponse;
 import copyleaks.sdk.api.models.response.DeleteResponse;
 import copyleaks.sdk.api.models.response.ProgressResponse;
@@ -239,6 +241,30 @@ public class CopyleaksScansApi extends CopyleaksBaseApi {
 		return this.client.deserelizeResponseBody(response, ResultResponse.class);
 	}
 
+	/**
+	 * Get a suspected result by result id
+	 * @param scanId
+	 * @param resultId
+	 * @return The report of the result id
+	 * @throws ClientProtocolException
+	 * @throws IOException
+	 * @throws ParseException
+	 * @throws CopyleaksException
+	 */
+	public DownloadResponse download(String scanId, String resultId) throws ClientProtocolException, IOException, ParseException, CopyleaksException {
+		String url = String.format("%s%s/downloads/%s/results/%s", Settings.ApiEndPoint, Settings.ApiVersion, scanId, resultId);
+		this.client.setToken(this.token);
+		HttpResponse response = this.client.get(url);
+		return this.client.deserelizeResponseBody(response, DownloadResponse.class);
+	}
+	
+	public InputStream DonwloadPdfReport(String scanId) throws ClientProtocolException, IOException, CopyleaksException {
+		String url = String.format("%s%s/downloads/%s", Settings.ApiEndPoint, Settings.ApiVersion, scanId);
+		this.client.setToken(this.token);
+		HttpResponse response = this.client.get(url);
+		return this.client.getResponseStream(response);
+	}
+	
 	/**
 	 * Get a full list of supported file types.
 	 * @return Full list of supported file types.
