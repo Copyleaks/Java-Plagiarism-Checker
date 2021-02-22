@@ -22,7 +22,7 @@ As a registered user you can generate your personal API key. You can do so at yo
 For more information check out our [API guide](https://api.copyleaks.com/documentation/v3).
 
 ## Examples
-See the Example.java file.
+See the [Example.java](https://github.com/Copyleaks/Java-Plagiarism-Checker/blob/master/src/main/java/Example.java) file.
 
 ## Dependency
 * [Gson](https://github.com/google/gson)
