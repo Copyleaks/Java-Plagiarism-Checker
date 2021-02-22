@@ -1,1 +1,4 @@
+.idea/
+out/
+target/
 *.class

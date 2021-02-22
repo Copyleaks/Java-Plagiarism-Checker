@@ -1,131 +1,33 @@
-<p>
-	<b>This package is supporting v1 of the API which will no longer be in use as of July 1 ,2020.
-		<br>
-		It's recommended to use the new v3 of the API, see full documentation with code snippets here - https://api.copyleaks.com/documentation/v3
-</b></p>
-<br>
-<br>
-<p>Copyleaks finds plagiarism online using copyright infringement detection technology. Find those who have used your content with Copyleaks. See here how to integrate Copyleaks easily with your services, using Java, to detect plagiarism.</p>
-<h2>Copyleaks API Java SDK</h2>
-<p>
-Copyleaks SDK is a simple framework that allows you to perform plagiarism scans and track content distribution around the web, using the Copyleaks cloud.
-</p>
-<p>
-With the Copyleaks SDK you can submit a scan for:  
-<ul>
-<li>Webpages</li>
-<li>Local files - pdf, doc, docx, rtf and more <a href="https://api.copyleaks.com/GeneralDocumentation/TechnicalSpecifications#supportedfiletypes">(see full list)</a></li>
-<li>Free text</li>
-<li>OCR (Optical Character Recognition) - scanning pictures containing textual content <a href="https://api.copyleaks.com/GeneralDocumentation/TechnicalSpecifications#supportedfiletypes">(see full list)</a></li>
-</ul>
-Instructions for using the SDK are below. For a quick example demonstrating the SDK capabilities just look at the code examples under “examples”.  You can also watch the following video demonstrating how to easily integrate with the API - https://www.youtube.com/watch?v=KZhw17se0jw. 
-</p>
-</ol>
-<h3>Integration</h3>
-<p>You can integrate with the Copyleaks SDK in one of two ways:<p/>
-<ul>
-<li>Download the code to your workspace – choose this option if you want to alter the code and add capabilities to match your own specific needs. Download the project from here, open it using Eclipse and choose ‘Import Project’ from your own workspace. Then, follow the next steps:
-<ol>
-<li>Go to ‘General’, choose ‘Existing projects into workspace’ and press next.</li>
-<li>Fill in the details about the project you just downloaded under ‘Select root directory’.</li>
-<li>Make sure that the project Copyleaks API is checked.</li>
-<li>Press ‘Finish’.</li>
-</ol>
-<p>Now you have the project in your workspace and you can make alterations that fits your own specific needs. As default, the project includes the file ‘Main.java’. This file will allow you to easily run and check your project.</p></li>
+# Copyleaks Java SDK
 
-<li>Download the 
-	files – choose this option if you want to use the code as-is. Download the <a href="https://github.com/Copyleaks/Java-Plagiarism-Checker/raw/master/copyleaks_api.jar">JAR files</a> and then, follow the next steps:
-<ol>
-<li>Extract the files.</li>
-<li>Open Eclipse and select the process you want to integrate with Copyleaks API.</li>
-<li>Press the right mouse key and choose ‘Build Path’ -> ‘Configure Build Path’.</li>
-<li>In the window that opened choose the tab ‘Libraries’.</li>
-<li>Press on ‘Add External JAR’.</li>
-<li>Browse the libraries with your extracted JAR files and choose to add them.</li>
-</ol>
-</li>
-</ul>
-<p>Now you can use the Copyleaks API in your project. If you are working with our latest version, you can also run the libraries using the code found down on this page.</p>
-<h3>Signing Up and Getting Your API Key</h3>
- <p>To use Copyleaks API you need to be a registered user. Signing up is quick and free of charge.</p>
- <p><a href="https://copyleaks.com/account/register">Signup</a> to Copyleaks and confirm your account by clicking the link in the confirmation email. Generate your personal API key on your dashboard (<a href="https://api.copyleaks.com/businessesapi">Businesses dashboard/</a><a href="https://api.copyleaks.com/academicapi">Academic dashboard/</a>) under 'Access Keys'. </p>
- <p>For more information check out our <a href="https://api.copyleaks.com/Guides/HowToUse">API guide</a>.</p>
-<h3>Example</h3>
-<p>This code will show you where the textual content in the parameter ‘url’ has been used online:</p>
-<pre>
-public static void Scan(String email, String key, String url) {
-	CopyleaksCloud copyleaks = new CopyleaksCloud();
-	try {
-		System.out.print("Login to Copyleaks cloud...");
-		copyleaks.Login(email, key);
-		System.out.println("Done!");
-		System.out.print("Checking account balance...");
-		int creditsBalance = copyleaks.getCredits();
-		System.out.println("Done (" + creditsBalance + " credits)!");
-		if (creditsBalance == 0) {
-			System.out.println(
-					"ERROR: You do not have enough credits left in your account to proceed with this scan! 							(current credit balance = "+ creditsBalance + ")");
-			return;
-		}
-		ProcessOptions scanOptions = new ProcessOptions();
-		// scanOptions.setSandboxMode(true); // <------ Read more @
-		// https://api.copyleaks.com/Documentation/RequestHeaders#sandbox-mode
-		// Use the callbacks in order to get notified once the scan results are ready
-		// Read more about the callbacks here - https://api.copyleaks.com/GeneralDocumentation/RequestHeaders#http-callbacks
-		//scanOptions.setHttpCallback(new URI("http://yourendpoint.com?pid={PID}"));
-		//scanOptions.setInProgressResultsHttpCallback(new URI("http://yourendpoint.com?pid={PID}"));
-		ResultRecord[] results;
-		CopyleaksProcess createdProcess;
-		createdProcess = copyleaks.CreateByUrl(new URI(url), scanOptions);
-		// Waiting for process completion...
-		System.out.println("Scanning...");
-		int percents = 0;
-		while (percents != 100 && (percents = createdProcess.getCurrentProgress()) <= 100) {
-			System.out.println(percents + "%");
-			if (percents != 100)
-				Thread.sleep(4000);
-		}
-		results = createdProcess.GetResults();
-		if (results.length == 0) {
-			System.out.println("No results.");
-		} else {
-			for (int i = 0; i < results.length; ++i) {
-				System.out.println();
-				System.out.println(String.format("Result %1$s:", i + 1));
-				if (results[i].getURL() != null)
-				{
-					System.out.println(String.format("Url: %1$s", results[i].getURL()));
-				}
-				System.out.println(String.format("Information: %1$s copied words (%2$s%%)",
-				results[i].getNumberOfCopiedWords(), results[i].getPercents()));
-				System.out.println(String.format("Comparison Report: %1$s", results[i].getComparisonReport()));
-				System.out.println(String.format("Title: %1$s", results[i].getTitle()));
-				System.out.println(String.format("Introduction: %1$s", results[i].getIntroduction()));
-				System.out.println(String.format("Embeded Comparison: %1$s",results[i].getEmbededComparison()));
-			}
-		}
-	} catch (CommandFailedException copyleaksException) {
-		System.out.println("Failed!");
-		System.out.format("*** Error (%d):\n", copyleaksException.getCopyleaksErrorCode());
-		System.out.println(copyleaksException.getMessage());
-	} catch (Exception ex) {
-		System.out.println("Failed!");
-		System.out.println("Unhandled Exception");
-		System.out.println(ex);
-	}
-}
-</pre>
-<h3>Dependencies:</h3>
-<h5>Referenced Assemblies:</h5>
-<ul>
-<li><a href="https://commons.apache.org/proper/commons-cli/">commons-cli-1.3.1.jar</a></li>
-<li><a href="https://github.com/google/gson">gson-2.4.jar</a></li>
-<li><a href="https://github.com/FasterXML/jackson-annotations">jackson-annotations-2.6.0.jar</a></li>
-</ul>
+Copyleaks SDK enables you to scan text for plagiarism and detect content distribution online, using the Copyleaks plagiarism checker API.
 
-<h3>Read More</h3>
-<ul>
-<li><a href="https://api.copyleaks.com/">API Homepage</a></li>
-<li><a href="https://api.copyleaks.com/Guides/HowToUse">Copyleaks API guide</a></li>
-<li><a href="https://copyleaks.com/">Copyleaks Homepage</a></li>
-</ul>
+Using Copyleaks SDK you can check for plagiarism in:
+* Online content and webpages
+* Local and cloud files (see [supported files](https://api.copyleaks.com/documentation/specifications#2-supported-file-types))
+* Free text
+* OCR (Optical Character Recognition) - scanning pictures with textual content (see [supported files](https://api.copyleaks.com/documentation/specifications#6-supported-image-types-ocr))
+
+## Installation
+
+Supported Java version: 11 and above.
+
+Download the code from this repository and add it to your project.
+
+## Register and Get Your API Key
+To use the Copyleaks API you need to first be a registered user. Creating a Copyleaks account takes a minute and is free of charge. [Signup](https://api.copyleaks.com/?register=true) and make sure to confirm your account with the activation email.
+
+As a registered user you can generate your personal API key. You can do so at your [dashboard home](https://api.copyleaks.com/dashboard/:product) under 'API Access Credentials'.
+
+For more information check out our [API guide](https://api.copyleaks.com/documentation/v3).
+
+## Examples
+See the Example.java file.
+
+## Dependency
+* [Gson](https://github.com/google/gson)
+
+## Read More
+* [API Homepage](https://api.copyleaks.com/)
+* [API Documentation](https://api.copyleaks.com/documentation)
+* [Plagiarism Report](https://github.com/Copyleaks/plagiarism-report)
