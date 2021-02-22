@@ -22,9 +22,6 @@ import models.exceptions.AuthExpiredException;
 import models.exceptions.CommandException;
 import models.exceptions.RateLimitException;
 import models.exceptions.UnderMaintenanceException;
-import models.exports.CopyleaksExportModel;
-import models.exports.ExportCrawledVersion;
-import models.exports.ExportResults;
 import models.misc.Products;
 import models.response.CopyleaksAuthToken;
 import models.submissions.CopyleaksFileSubmissionModel;
@@ -50,26 +47,21 @@ public class Example {
             token = Copyleaks.login(EMAIL_ADDRESS, KEY);
         } catch (ExecutionException e) {
             System.out.println(e.getMessage() + "\n");
-            System.out.println(e.getMessage() + "\n");
             e.printStackTrace();
             return;
         } catch (InterruptedException e) {
-            System.out.println(e.getMessage() + "\n");
             System.out.println(e.getMessage() + "\n");
             e.printStackTrace();
             return;
         } catch (UnderMaintenanceException e) {
             System.out.println(e.getMessage() + "\n");
-            System.out.println(e.getMessage() + "\n");
             e.printStackTrace();
             return;
         } catch (RateLimitException e) {
             System.out.println(e.getMessage() + "\n");
-            System.out.println(e.getMessage() + "\n");
             e.printStackTrace();
             return;
         } catch (CommandException e) {
-            System.out.println(e.getMessage() + "\n");
             System.out.println(e.getMessage() + "\n");
             e.printStackTrace();
             return;
@@ -124,57 +116,55 @@ public class Example {
         // Once the webhooks arrived and the scan was completed successfully (see the `status` flag) you can
         // proceed to exporting all the artifacts related to your scan.
 
-        String[][] headers = new String[][]{
-                new String[]{"key", "value"}, new String[]{"key2", "value2"}
-        };
-
-        //Make results
-        ExportResults results = new ExportResults(
-                "2a1b402420",
-                "https://your.server/webhook/export/result/2a1b402420",
-                "POST",
-                headers);
-        ExportResults[] exportResultsArray = new ExportResults[1];
-        exportResultsArray[0] = results;
-
-        //Make crawled Version
-        ExportCrawledVersion crawledVersion = new ExportCrawledVersion(
-                "https://your.server/webhook/export/result/08338e505d",
-                "POST",
-                headers);
-        CopyleaksExportModel exportModel = new CopyleaksExportModel("https://your.server/webhook/export/result/2b42c39fba",
-                exportResultsArray, crawledVersion);
-        try {
-            Copyleaks.export(token, "2a1b402420", "08338e505d", exportModel); // 'exportId' value determined by you
-        } catch (ParseException e) {
-            System.out.println(e.getMessage() + "\n");
-            e.printStackTrace();
-            return;
-        } catch (AuthExpiredException e) {
-            System.out.println(e.getMessage() + "\n");
-            e.printStackTrace();
-            return;
-        } catch (UnderMaintenanceException e) {
-            System.out.println(e.getMessage() + "\n");
-            e.printStackTrace();
-            return;
-        } catch (RateLimitException e) {
-            System.out.println(e.getMessage() + "\n");
-            e.printStackTrace();
-            return;
-        } catch (CommandException e) {
-            System.out.println(e.getMessage() + "\n");
-            e.printStackTrace();
-            return;
-        } catch (ExecutionException e) {
-            System.out.println(e.getMessage() + "\n");
-            e.printStackTrace();
-            return;
-        } catch (InterruptedException e) {
-            System.out.println(e.getMessage() + "\n");
-            e.printStackTrace();
-            return;
-        }
+        // String[][] headers = new String[][]{
+        //         new String[]{"key", "value"}, new String[]{"key2", "value2"}
+        // };
+        //
+        // ExportResults results = new ExportResults(
+        //         "2a1b402420",
+        //         "https://your.server/webhook/export/result/2a1b402420",
+        //         "POST",
+        //         headers);
+        // ExportResults[] exportResultsArray = new ExportResults[1];
+        // exportResultsArray[0] = results;
+        //
+        // ExportCrawledVersion crawledVersion = new ExportCrawledVersion(
+        //         "https://your.server/webhook/export/result/08338e505d",
+        //         "POST",
+        //         headers);
+        // CopyleaksExportModel exportModel = new CopyleaksExportModel("https://your.server/webhook/export/result/2b42c39fba",
+        //         exportResultsArray, crawledVersion);
+        // try {
+        //     Copyleaks.export(token, "2a1b402420", "08338e505d", exportModel); // 'exportId' value determined by you
+        // } catch (ParseException e) {
+        //     System.out.println(e.getMessage() + "\n");
+        //     e.printStackTrace();
+        //     return;
+        // } catch (AuthExpiredException e) {
+        //     System.out.println(e.getMessage() + "\n");
+        //     e.printStackTrace();
+        //     return;
+        // } catch (UnderMaintenanceException e) {
+        //     System.out.println(e.getMessage() + "\n");
+        //     e.printStackTrace();
+        //     return;
+        // } catch (RateLimitException e) {
+        //     System.out.println(e.getMessage() + "\n");
+        //     e.printStackTrace();
+        //     return;
+        // } catch (CommandException e) {
+        //     System.out.println(e.getMessage() + "\n");
+        //     e.printStackTrace();
+        //     return;
+        // } catch (ExecutionException e) {
+        //     System.out.println(e.getMessage() + "\n");
+        //     e.printStackTrace();
+        //     return;
+        // } catch (InterruptedException e) {
+        //     System.out.println(e.getMessage() + "\n");
+        //     e.printStackTrace();
+        //     return;
+        // }
 
         // Wait while Copyleaks servers exporting artifacts...
         // Once process completed, you will get the "Export Completed" webhook.
