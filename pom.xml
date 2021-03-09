@@ -4,7 +4,7 @@
 
     <groupId>com.copyleaks.sdk</groupId>
     <artifactId>copyleaks-java-sdk</artifactId>
-    <version>3.0.8</version>
+    <version>3.0.9</version>
     <dependencies>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -104,8 +104,8 @@
         </plugins>
     </build>
 
-    <name>classes.Copyleaks Java SDK</name>
-    <description>classes.Copyleaks official SDK for Java, using classes.Copyleaks API v3.0</description>
+    <name>Copyleaks Java SDK</name>
+    <description>Copyleaks official SDK for Java, using Copyleaks API v3.0</description>
     <url>https://github.com/Copyleaks/Java-Plagiarism-Checker</url>
 
     <licenses>
@@ -119,7 +119,7 @@
         <developer>
             <name>Or Aharon</name>
             <email>ora@copyleaks.com</email>
-            <organization>classes.Copyleaks Technologies</organization>
+            <organization>Copyleaks Technologies</organization>
             <organizationUrl>https://www.copyleaks.com</organizationUrl>
         </developer>
     </developers>
