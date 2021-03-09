@@ -18,6 +18,9 @@
  SOFTWARE.
 */
 
+
+package classes;
+
 import com.google.gson.Gson;
 import models.exceptions.AuthExpiredException;
 import models.exceptions.CommandException;
@@ -64,7 +67,8 @@ public class Copyleaks {
      *
      * @param email Copyleaks account email address.
      * @param key   Copyleaks account secret key.
-     * @returns A authentication token that being expired after certain amount of time.
+     * @return CopyleaksAuthToken A authentication token that being expired after certain amount of time.
+     * @throws ExecutionException, UnderMaintenanceException, RateLimitException, CommandException, InterruptedException
      */
     public static CopyleaksAuthToken login(String email, String key)
             throws ExecutionException, UnderMaintenanceException, RateLimitException, CommandException, InterruptedException {

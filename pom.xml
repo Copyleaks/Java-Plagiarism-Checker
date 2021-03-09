@@ -4,7 +4,7 @@
 
     <groupId>com.copyleaks.sdk</groupId>
     <artifactId>copyleaks-java-sdk</artifactId>
-    <version>3.0.6</version>
+    <version>3.0.8</version>
     <dependencies>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -33,7 +33,7 @@
                 <configuration>
                     <serverId>ossrh</serverId>
                     <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                    <autoReleaseAfterClose>false</autoReleaseAfterClose>
                 </configuration>
             </plugin>
             <plugin>
@@ -128,7 +128,7 @@
         <connection>scm:git:git://https://github.com/Copyleaks/Java-Plagiarism-Checker.git</connection>
         <developerConnection>scm:git:ssh://https://github.com/Copyleaks/Java-Plagiarism-Checker.git</developerConnection>
         <url>https://github.com/Copyleaks/Java-Plagiarism-Checker</url>
-      <tag>copyleaks-java-sdk-3.0.6</tag>
+      <tag>copyleaks-java-sdk-3.0.7</tag>
   </scm>
 
     <properties>

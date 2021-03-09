@@ -18,6 +18,8 @@
  SOFTWARE.
 */
 
+package classes;
+
 public final class Consts {
     public static final String API_SERVER_URI = "https://api.copyleaks.com";
     public static final String IDENTITY_SERVER_URI = "https://id.copyleaks.com";

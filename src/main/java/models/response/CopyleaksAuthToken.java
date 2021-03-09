@@ -23,7 +23,7 @@ package models.response;
 import com.google.gson.annotations.SerializedName;
 
 public class CopyleaksAuthToken {
-
+    @SerializedName("access_token")
     private String accessToken;
     @SerializedName(".issued")
     private String issued;
