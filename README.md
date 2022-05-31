@@ -29,6 +29,16 @@ For more information check out our [API guide](https://api.copyleaks.com/documen
 ## Examples
 See the [Example.java](https://github.com/Copyleaks/Java-Plagiarism-Checker/blob/master/src/main/java/example/Example.java) file.
 
+* (Option) To change the Identity server URI (default:"https://id.copyleaks.com"):
+```rb
+Copyleaks.setIdentityUri("<your identity server uri>");
+```
+* (Option) To change the API server URI (default:"https://api.copyleaks.com"):
+```rb
+Copyleaks.setApiUri("<your api server uri>");
+```
+
+
 ## Dependency
 * [Gson](https://github.com/google/gson)
 
