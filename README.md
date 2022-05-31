@@ -37,8 +37,6 @@ Copyleaks.setIdentityUri("<your identity server uri>");
 ```rb
 Copyleaks.setApiUri("<your api server uri>");
 ```
-
-
 ## Dependency
 * [Gson](https://github.com/google/gson)
 
