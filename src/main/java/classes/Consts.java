@@ -21,7 +21,7 @@
 package classes;
 
 public final class Consts {
-    public static final String API_SERVER_URI = "https://api.copyleaks.com";
-    public static final String IDENTITY_SERVER_URI = "https://id.copyleaks.com";
+    public static String API_SERVER_URI = "https://api.copyleaks.com";
+    public static String IDENTITY_SERVER_URI = "https://id.copyleaks.com";
     public static final String USER_AGENT = "java-sdk/3.0";
 }

@@ -4,7 +4,7 @@
 
     <groupId>com.copyleaks.sdk</groupId>
     <artifactId>copyleaks-java-sdk</artifactId>
-    <version>3.1.0</version>
+    <version>3.0.9</version>
     <dependencies>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -117,20 +117,8 @@
 
     <developers>
         <developer>
-            <name>Yehonatan Bitton</name>
-            <email>yehonatan@copyleaks.com</email>
-            <organization>Copyleaks Technologies</organization>
-            <organizationUrl>https://www.copyleaks.com</organizationUrl>
-        </developer>
-        <developer>
-            <name>Aiham AbuRafaa</name>
-            <email>aihama@copyleaks.com</email>
-            <organization>Copyleaks Technologies</organization>
-            <organizationUrl>https://www.copyleaks.com</organizationUrl>
-        </developer>
-        <developer>
-            <name>Avichai Aziz</name>
-            <email>avichaia@copyleaks.com</email>
+            <name>Or Aharon</name>
+            <email>ora@copyleaks.com</email>
             <organization>Copyleaks Technologies</organization>
             <organizationUrl>https://www.copyleaks.com</organizationUrl>
         </developer>
@@ -140,7 +128,7 @@
         <connection>scm:git:git://https://github.com/Copyleaks/Java-Plagiarism-Checker.git</connection>
         <developerConnection>scm:git:ssh://https://github.com/Copyleaks/Java-Plagiarism-Checker.git</developerConnection>
         <url>https://github.com/Copyleaks/Java-Plagiarism-Checker</url>
-      <tag>copyleaks-java-sdk-3.1.0</tag>
+      <tag>copyleaks-java-sdk-3.0.7</tag>
   </scm>
 
     <properties>

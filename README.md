@@ -22,13 +22,21 @@ https://search.maven.org/artifact/com.copyleaks.sdk/copyleaks-java-sdk
 ## Register and Get Your API Key
 To use the Copyleaks API you need to first be a registered user. Creating a Copyleaks account takes a minute and is free of charge. [Signup](https://api.copyleaks.com/?register=true) and make sure to confirm your account with the activation email.
 
-As a registered user you can generate your personal API key. You can do so at your [dashboard home](https://api.copyleaks.com/dashboard/:product) under 'API Access Credentials'.
+As a registered user you can generate your personal API key. You can do so at your [dashboard home](https://api.copyleaks.com/dashboard) under 'API Access Credentials'.
 
 For more information check out our [API guide](https://api.copyleaks.com/documentation/v3).
 
 ## Examples
 See the [Example.java](https://github.com/Copyleaks/Java-Plagiarism-Checker/blob/master/src/main/java/example/Example.java) file.
 
+* (Option) To change the Identity server URI (default:"https://id.copyleaks.com"):
+```rb
+Copyleaks.setIdentityUri("<your identity server uri>");
+```
+* (Option) To change the API server URI (default:"https://api.copyleaks.com"):
+```rb
+Copyleaks.setApiUri("<your api server uri>");
+```
 ## Dependency
 * [Gson](https://github.com/google/gson)
 

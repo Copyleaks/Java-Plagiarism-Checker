@@ -26,7 +26,6 @@ import models.exceptions.AuthExpiredException;
 import models.exceptions.CommandException;
 import models.exceptions.RateLimitException;
 import models.exceptions.UnderMaintenanceException;
-import models.misc.Products;
 import models.response.CopyleaksAuthToken;
 import models.submissions.CopyleaksFileSubmissionModel;
 import models.submissions.properties.SubmissionProperties;
@@ -43,7 +42,6 @@ public class Example {
     // Register on https://api.copyleaks.com and grab your secret key (from the dashboard page).
     private static final String EMAIL_ADDRESS = "YOUR@EMAIL.HERE";
     private static final String KEY = "00000000-0000-0000-0000-000000000000";
-    private static final String PRODUCT = Products.EDUCATION; // BUSINESSES or EDUCATION, depending on your Copyleaks account type.
 
     public static void main(String[] args) {
         CopyleaksAuthToken token;
@@ -85,7 +83,7 @@ public class Example {
         CopyleaksFileSubmissionModel model = new CopyleaksFileSubmissionModel(BASE64_FILE_CONTENT, FILENAME, submissionProperties);
 
         try {
-            Copyleaks.submitFile(PRODUCT, token, scanId, model);
+            Copyleaks.submitFile(token, scanId, model);
         } catch (ParseException e) {
             System.out.println(e.getMessage() + "\n");
             e.printStackTrace();

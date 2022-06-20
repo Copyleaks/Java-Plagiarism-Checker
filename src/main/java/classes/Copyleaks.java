@@ -47,13 +47,22 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Semaphore;
 
 public class Copyleaks {
+    private static Semaphore semaphore = new Semaphore(20); // To limit the number of httpClient connections.
 
     private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
             .build();
 
     private static final Gson gson = new Gson();
+
+    public static void setIdentityUri(String uri){
+        Consts.IDENTITY_SERVER_URI = uri;
+    }
+    public static void setApiUri(String uri){
+        Consts.API_SERVER_URI = uri;
+    }
 
     /**
      * Login to Copyleaks authentication server.
@@ -72,7 +81,7 @@ public class Copyleaks {
      */
     public static CopyleaksAuthToken login(String email, String key)
             throws ExecutionException, UnderMaintenanceException, RateLimitException, CommandException, InterruptedException {
-        assert email != null : "Email is null";
+        assert email != null : "email is null";
         assert key != null : "key is null";
 
         Map<String, String> object = new HashMap<>();
@@ -85,27 +94,33 @@ public class Copyleaks {
                 .setHeader("Content-Type", "application/json")
                 .setHeader("User-Agent", Consts.USER_AGENT)
                 .build();
+        
+        semaphore.acquire();
+        try{
+            CompletableFuture<HttpResponse<String>> response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
 
-        CompletableFuture<HttpResponse<String>> response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+            String body = response.thenApply(HttpResponse::body).get();
+            int statusCode = response.thenApply(HttpResponse::statusCode).get();
 
-        String body = response.thenApply(HttpResponse::body).get();
-        int statusCode = response.thenApply(HttpResponse::statusCode).get();
-
-        if (ensureHttpSuccess(statusCode)) {
-            CopyleaksAuthToken token = gson.fromJson(body, CopyleaksAuthToken.class);
-            return token;
-        } else if (statusCode == 503) {
-            throw new UnderMaintenanceException();
-        } else {
-            throw new CommandException(response.toString());
+            if (ensureHttpSuccess(statusCode)) {
+                CopyleaksAuthToken token = gson.fromJson(body, CopyleaksAuthToken.class);
+                return token;
+            } else if (statusCode == 503) {
+                throw new UnderMaintenanceException();
+            } else {
+                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
+            }
         }
+        finally{
+            semaphore.release();
+        }
+
     }
 
     /**
      * Starting a new process by providing a file to scan.
      * For more info:
-     * https://api.copyleaks.com/documentation/v3/education/submit/file
-     * https://api.copyleaks.com/documentation/v3/businesses/submit/file
+     * https://api.copyleaks.com/documentation/v3/scans/submit/file
      * * Exceptions:
      * * CommandExceptions: Server reject the request. See response status code,
      * headers and content for more info.
@@ -113,14 +128,12 @@ public class Copyleaks {
      * We recommend to implement exponential backoff algorithm as described here:
      * https://api.copyleaks.com/documentation/v3/exponential-backoff
      *
-     * @param product    Which product (education or business) is being use.
      * @param authToken  Copyleaks authentication token
      * @param scanId     Attach your own scan Id
      * @param submission Submission properties
      */
-    public static void submitFile(String product, CopyleaksAuthToken authToken, String scanId, CopyleaksFileSubmissionModel submission)
+    public static void submitFile(CopyleaksAuthToken authToken, String scanId, CopyleaksFileSubmissionModel submission)
             throws ParseException, AuthExpiredException, UnderMaintenanceException, CommandException, ExecutionException, InterruptedException {
-        assert product != null : "Product is null";
         assert authToken != null : "token is null";
         assert scanId != null : "scanId is null";
         assert submission != null : "submission is null";
@@ -129,29 +142,36 @@ public class Copyleaks {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .PUT(HttpRequest.BodyPublishers.ofString(gson.toJson(submission)))
-                .uri(URI.create(Consts.API_SERVER_URI + "/v3/" + product + "/submit/file/" + scanId))
+                .uri(URI.create(Consts.API_SERVER_URI + "/v3/scans/submit/file/" + scanId))
                 .setHeader("Content-Type", "application/json")
                 .setHeader("User-Agent", Consts.USER_AGENT)
                 .setHeader("Authorization", "Bearer " + authToken.getAccessToken())
                 .build();
 
         CompletableFuture<HttpResponse<String>> response;
-        response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-        int statusCode = response.thenApply(HttpResponse::statusCode).get();
-        if (ensureHttpSuccess(statusCode)) {
-            return;
-        } else if (statusCode == 503) {
-            throw new UnderMaintenanceException();
-        } else {
-            throw new CommandException(response.toString());
+        semaphore.acquire();
+        try{
+            
+            
+            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+            int statusCode = response.thenApply(HttpResponse::statusCode).get();
+            if (ensureHttpSuccess(statusCode)) {
+                return;
+            } else if (statusCode == 503) {
+                throw new UnderMaintenanceException();
+            } else {
+                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
+            }
+        }
+        finally{
+            semaphore.release();
         }
     }
 
     /**
      * Starting a new process by providing a OCR image file to scan.
      * For more info:
-     * https://api.copyleaks.com/documentation/v3/education/submit/ocr
-     * https://api.copyleaks.com/documentation/v3/businesses/submit/ocr
+     * https://api.copyleaks.com/documentation/v3/scans/submit/ocr
      * * Exceptions:
      * * CommandExceptions: Server reject the request. See response status code,
      * headers and content for more info.
@@ -159,13 +179,11 @@ public class Copyleaks {
      * We recommend to implement exponential backoff algorithm as described here:
      * https://api.copyleaks.com/documentation/v3/exponential-backoff
      *
-     * @param product    Which product (education or business) is being use.
      * @param authToken  Copyleaks authentication token
      * @param scanId     Attach your own scan Id
      * @param submission Submission properties
      */
-    public static void submitFileOcr(String product, CopyleaksAuthToken authToken, String scanId, CopyleaksFileOcrSubmissionModel submission) throws ParseException, AuthExpiredException, UnderMaintenanceException, CommandException, ExecutionException, InterruptedException {
-        assert product != null : "Product is null";
+    public static void submitFileOcr(CopyleaksAuthToken authToken, String scanId, CopyleaksFileOcrSubmissionModel submission) throws ParseException, AuthExpiredException, UnderMaintenanceException, CommandException, ExecutionException, InterruptedException {
         assert authToken != null : "token is null";
         assert scanId != null : "scanId is null";
         assert submission != null : "submission is null";
@@ -174,30 +192,35 @@ public class Copyleaks {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .PUT(HttpRequest.BodyPublishers.ofString(gson.toJson(submission)))
-                .uri(URI.create(Consts.API_SERVER_URI + "/v3/" + product + "/submit/ocr/" + scanId))
+                .uri(URI.create(Consts.API_SERVER_URI + "/v3/scans/submit/ocr/" + scanId))
                 .setHeader("Content-Type", "application/json")
                 .setHeader("User-Agent", Consts.USER_AGENT)
                 .setHeader("Authorization", "Bearer " + authToken.getAccessToken())
                 .build();
 
         CompletableFuture<HttpResponse<String>> response;
-        response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-        int statusCode = response.thenApply(HttpResponse::statusCode).get();
-
-        if (ensureHttpSuccess(statusCode)) {
-            return;
-        } else if (statusCode == 503) {
-            throw new UnderMaintenanceException();
-        } else {
-            throw new CommandException(response.toString());
+        semaphore.acquire();
+        try{
+            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+            int statusCode = response.thenApply(HttpResponse::statusCode).get();
+    
+            if (ensureHttpSuccess(statusCode)) {
+                return;
+            } else if (statusCode == 503) {
+                throw new UnderMaintenanceException();
+            } else {
+                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
+            }
+        }
+        finally{
+            semaphore.release();
         }
     }
 
     /**
      * Starting a new process by providing a URL to scan.
      * For more info:
-     * https://api.copyleaks.com/documentation/v3/education/submit/url
-     * https://api.copyleaks.com/documentation/v3/businesses/submit/url
+     * https://api.copyleaks.com/documentation/v3/scans/submit/url
      * * Exceptions:
      * * CommandExceptions: Server reject the request. See response status code,
      * headers and content for more info.
@@ -205,15 +228,13 @@ public class Copyleaks {
      * We recommend to implement exponential backoff algorithm as described here:
      * https://api.copyleaks.com/documentation/v3/exponential-backoff
      *
-     * @param product    Which product (education or business) is being use.
      * @param authToken  Copyleaks authentication token
      * @param scanId     Attach your own scan Id
      * @param submission Submission properties
      */
 
-    public static void submitUrl(String product, CopyleaksAuthToken authToken, String scanId, CopyleaksURLSubmissionModel submission)
+    public static void submitUrl(CopyleaksAuthToken authToken, String scanId, CopyleaksURLSubmissionModel submission)
             throws ParseException, AuthExpiredException, UnderMaintenanceException, CommandException, ExecutionException, InterruptedException {
-        assert product != null : "Product is null";
         assert authToken != null : "token is null";
         assert scanId != null : "scanId is null";
         assert submission != null : "submission is null";
@@ -222,22 +243,28 @@ public class Copyleaks {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .PUT(HttpRequest.BodyPublishers.ofString(gson.toJson(submission)))
-                .uri(URI.create(Consts.API_SERVER_URI + "/v3/" + product + "/submit/url/" + scanId))
+                .uri(URI.create(Consts.API_SERVER_URI + "/v3/scans/submit/url/" + scanId))
                 .setHeader("Content-Type", "application/json")
                 .setHeader("User-Agent", Consts.USER_AGENT)
                 .setHeader("Authorization", "Bearer " + authToken.getAccessToken())
                 .build();
 
         CompletableFuture<HttpResponse<String>> response;
-        response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-        int statusCode = response.thenApply(HttpResponse::statusCode).get();
-
-        if (ensureHttpSuccess(statusCode)) {
-            return;
-        } else if (statusCode == 503) {
-            throw new UnderMaintenanceException();
-        } else {
-            throw new CommandException(response.toString());
+        semaphore.acquire();
+        try{
+            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+            int statusCode = response.thenApply(HttpResponse::statusCode).get();
+    
+            if (ensureHttpSuccess(statusCode)) {
+                return;
+            } else if (statusCode == 503) {
+                throw new UnderMaintenanceException();
+            } else {
+                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
+            }
+        }
+        finally{
+            semaphore.release();
         }
     }
 
@@ -259,10 +286,10 @@ public class Copyleaks {
      */
     public static void export(CopyleaksAuthToken authToken, String scanId, String exportId, CopyleaksExportModel model)
             throws ParseException, AuthExpiredException, UnderMaintenanceException, RateLimitException, CommandException, ExecutionException, InterruptedException {
-        assert exportId != null : "Product is null";
+        assert exportId != null : "exportId is null";
         assert authToken != null : "token is null";
         assert scanId != null : "scanId is null";
-        assert model != null : "submission is null";
+        assert model != null : "model is null";
         verifyAuthToken(authToken);
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -274,23 +301,28 @@ public class Copyleaks {
                 .build();
 
         CompletableFuture<HttpResponse<String>> response;
-        response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-        int statusCode = response.thenApply(HttpResponse::statusCode).get();
-
-        if (ensureHttpSuccess(statusCode)) {
-            return;
-        } else if (statusCode == 503) {
-            throw new UnderMaintenanceException();
-        } else {
-            throw new CommandException(response.toString());
+        semaphore.acquire();
+        try{
+            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+            int statusCode = response.thenApply(HttpResponse::statusCode).get();
+    
+            if (ensureHttpSuccess(statusCode)) {
+                return;
+            } else if (statusCode == 503) {
+                throw new UnderMaintenanceException();
+            } else {
+                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
+            }
+        }
+        finally{
+            semaphore.release();
         }
     }
 
     /**
      * Start scanning all the files you submitted for a price-check.
      * For more info:
-     * https://api.copyleaks.com/documentation/v3/education/start
-     * https://api.copyleaks.com/documentation/v3/businesses/start
+     * https://api.copyleaks.com/documentation/v3/scans/start
      * * Exceptions:
      * * CommandExceptions: Server reject the request. See response status code,
      * headers and content for more info.
@@ -298,21 +330,19 @@ public class Copyleaks {
      * We recommend to implement exponential backoff algorithm as described here:
      * https://api.copyleaks.com/documentation/v3/exponential-backoff
      *
-     * @param product   Which product (education or business) is being use.
      * @param authToken Your login token to Copyleaks server.
      * @param model     Include information about which scans should be started.
      * @return
      */
-    public static CopyleaksStartResponse start(String product, CopyleaksAuthToken authToken, CopyleaksStartRequest model) throws ParseException, AuthExpiredException, ExecutionException, InterruptedException, UnderMaintenanceException, RateLimitException, CommandException {
+    public static CopyleaksStartResponse start(CopyleaksAuthToken authToken, CopyleaksStartRequest model) throws ParseException, AuthExpiredException, ExecutionException, InterruptedException, UnderMaintenanceException, RateLimitException, CommandException {
 
-        assert product != null : "Product is null";
         assert authToken != null : "token is null";
-        assert model != null : "scanId is null";
+        assert model != null : "model is null";
 
         verifyAuthToken(authToken);
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(Consts.API_SERVER_URI + "/v3/" + product + "/start"))
+                .uri(URI.create(Consts.API_SERVER_URI + "/v3/scans/start"))
                 .method("PATCH", HttpRequest.BodyPublishers.ofString(gson.toJson(model)))
                 .setHeader("Content-Type", "application/json")
                 .setHeader("User-Agent", Consts.USER_AGENT)
@@ -320,26 +350,31 @@ public class Copyleaks {
                 .build();
 
         CompletableFuture<HttpResponse<String>> response;
-        response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-
-        String body = response.thenApply(HttpResponse::body).get();
-        int statusCode = response.thenApply(HttpResponse::statusCode).get();
-
-        if (ensureHttpSuccess(statusCode)) {
-            CopyleaksStartResponse startResponse = gson.fromJson(body, CopyleaksStartResponse.class);
-            return startResponse;
-        } else if (statusCode == 503) {
-            throw new UnderMaintenanceException();
-        } else {
-            throw new CommandException(response.toString());
+        semaphore.acquire();
+        try{
+            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+    
+            String body = response.thenApply(HttpResponse::body).get();
+            int statusCode = response.thenApply(HttpResponse::statusCode).get();
+    
+            if (ensureHttpSuccess(statusCode)) {
+                CopyleaksStartResponse startResponse = gson.fromJson(body, CopyleaksStartResponse.class);
+                return startResponse;
+            } else if (statusCode == 503) {
+                throw new UnderMaintenanceException();
+            } else {
+                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
+            }
+        }
+        finally{
+            semaphore.release();
         }
     }
 
     /**
      * Delete the specific process from the server.
      * For more info:
-     * https://api.copyleaks.com/documentation/v3/education/delete
-     * https://api.copyleaks.com/documentation/v3/businesses/delete
+     * https://api.copyleaks.com/documentation/v3/scans/delete
      * * Exceptions:
      * * CommandExceptions: Server reject the request. See response status code,
      * headers and content for more info.
@@ -347,20 +382,18 @@ public class Copyleaks {
      * We recommend to implement exponential backoff algorithm as described here:
      * https://api.copyleaks.com/documentation/v3/exponential-backoff
      *
-     * @param product   Which product (education or business) is being use.
      * @param authToken Copyleaks authentication token
      * @param payloads
      */
-    public static void delete(String product, CopyleaksAuthToken authToken, CopyleaksDeleteRequest payloads) throws ParseException, AuthExpiredException, ExecutionException, InterruptedException, UnderMaintenanceException, RateLimitException, CommandException {
+    public static void delete(CopyleaksAuthToken authToken, CopyleaksDeleteRequest payloads) throws ParseException, AuthExpiredException, ExecutionException, InterruptedException, UnderMaintenanceException, RateLimitException, CommandException {
 
-        assert product != null : "Product is null";
         assert authToken != null : "token is null";
-        assert payloads != null : "scanId is null";
+        assert payloads != null : "payloads is null";
 
         verifyAuthToken(authToken);
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(Consts.API_SERVER_URI + "/v3.1/" + product + "/delete"))
+                .uri(URI.create(Consts.API_SERVER_URI + "/v3.1/scans/delete"))
                 .method("PATCH", HttpRequest.BodyPublishers.ofString(gson.toJson(payloads)))
                 .setHeader("Content-Type", "application/json")
                 .setHeader("User-Agent", Consts.USER_AGENT)
@@ -368,27 +401,32 @@ public class Copyleaks {
                 .build();
 
         CompletableFuture<HttpResponse<String>> response;
-        response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-
-        String body = response.thenApply(HttpResponse::body).get();
-        int statusCode = response.thenApply(HttpResponse::statusCode).get();
-
-        if (ensureHttpSuccess(statusCode)) {
-            return;
-        } else if (statusCode == 503) {
-            throw new UnderMaintenanceException();
-        } else if (statusCode == 429) {
-            throw new RateLimitException();
-        } else {
-            throw new CommandException(response.toString());
+        semaphore.acquire();
+        try{
+            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+            
+            String body = response.thenApply(HttpResponse::body).get();
+            int statusCode = response.thenApply(HttpResponse::statusCode).get();
+    
+            if (ensureHttpSuccess(statusCode)) {
+                return;
+            } else if (statusCode == 503) {
+                throw new UnderMaintenanceException();
+            } else if (statusCode == 429) {
+                throw new RateLimitException();
+            } else {
+                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
+            }
+        }
+        finally{
+            semaphore.release();
         }
     }
 
     /**
      * Resend status webhooks for existing scans.
      * For more info:
-     * https://api.copyleaks.com/documentation/v3/education/webhook-resend
-     * https://api.copyleaks.com/documentation/v3/businesses/webhook-resend
+     * https://api.copyleaks.com/documentation/v3/scans/webhook-resend
      * * Exceptions:
      * * CommandExceptions: Server reject the request. See response status code,
      * headers and content for more info.
@@ -396,12 +434,10 @@ public class Copyleaks {
      * We recommend to implement exponential backoff algorithm as described here:
      * https://api.copyleaks.com/documentation/v3/exponential-backoff
      *
-     * @param product   Which product (education or business) is being use.
      * @param authToken Copyleaks authentication token
      * @param scanId    Copyleaks scan Id
      */
-    public static void resendWebhook(String product, CopyleaksAuthToken authToken, String scanId) throws ParseException, AuthExpiredException, UnderMaintenanceException, RateLimitException, CommandException, ExecutionException, InterruptedException {
-        assert product != null : "Product is null";
+    public static void resendWebhook(CopyleaksAuthToken authToken, String scanId) throws ParseException, AuthExpiredException, UnderMaintenanceException, RateLimitException, CommandException, ExecutionException, InterruptedException {
         assert authToken != null : "token is null";
         assert scanId != null : "scanId is null";
 
@@ -409,32 +445,37 @@ public class Copyleaks {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(""))
-                .uri(URI.create(Consts.API_SERVER_URI + "/v3/" + product + "/scans/" + scanId + "/webhooks/resend"))
+                .uri(URI.create(Consts.API_SERVER_URI + "/v3/scans/" + scanId + "/webhooks/resend"))
                 .setHeader("Content-Type", "application/json")
                 .setHeader("User-Agent", Consts.USER_AGENT)
                 .setHeader("Authorization", "Bearer " + authToken.getAccessToken())
                 .build();
 
         CompletableFuture<HttpResponse<String>> response;
-        response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-        int statusCode = response.thenApply(HttpResponse::statusCode).get();
-
-        if (ensureHttpSuccess(statusCode)) {
-            return;
-        } else if (statusCode == 503) {
-            throw new UnderMaintenanceException();
-        } else if (statusCode == 429) {
-            throw new RateLimitException();
-        } else {
-            throw new CommandException(response.toString());
+        semaphore.acquire();
+        try{
+            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+            int statusCode = response.thenApply(HttpResponse::statusCode).get();
+    
+            if (ensureHttpSuccess(statusCode)) {
+                return;
+            } else if (statusCode == 503) {
+                throw new UnderMaintenanceException();
+            } else if (statusCode == 429) {
+                throw new RateLimitException();
+            } else {
+                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
+            }
+        }
+        finally{
+            semaphore.release();
         }
     }
 
     /**
      * Get current credits balance for the Copyleaks account.
      * For more info:
-     * https://api.copyleaks.com/documentation/v3/education/credits
-     * https://api.copyleaks.com/documentation/v3/businesses/credits
+     * https://api.copyleaks.com/documentation/v3/scans/credits
      * * Exceptions:
      * * CommandExceptions: Server reject the request. See response status code,
      * headers and content for more info.
@@ -443,38 +484,42 @@ public class Copyleaks {
      * https://api.copyleaks.com/documentation/v3/exponential-backoff
      * * RateLimitException: Too many requests. Please wait before calling again.
      *
-     * @param product   Which product (education or business) is being use.
      * @param authToken Copyleaks authentication token
      * @return
      */
-    public static CreditsBalanceResponse getCreditsBalance(String product, CopyleaksAuthToken authToken) throws ExecutionException, InterruptedException, UnderMaintenanceException, RateLimitException, CommandException, ParseException, AuthExpiredException {
-        assert product != null : "Product is null";
+    public static CreditsBalanceResponse getCreditsBalance(CopyleaksAuthToken authToken) throws ExecutionException, InterruptedException, UnderMaintenanceException, RateLimitException, CommandException, ParseException, AuthExpiredException {
         assert authToken != null : "token is null";
 
         verifyAuthToken(authToken);
 
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
-                .uri(URI.create(Consts.API_SERVER_URI + "/v3/" + product + "/credits"))
+                .uri(URI.create(Consts.API_SERVER_URI + "/v3/scans/credits"))
                 .setHeader("User-Agent", Consts.USER_AGENT)
                 .setHeader("Authorization", "Bearer " + authToken.getAccessToken())
                 .build();
 
         CompletableFuture<HttpResponse<String>> response;
-        response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-
-        String body = response.thenApply(HttpResponse::body).get();
-        int statusCode = response.thenApply(HttpResponse::statusCode).get();
-
-        if (ensureHttpSuccess(statusCode)) {
-            CreditsBalanceResponse creditsBalance = gson.fromJson(body, CreditsBalanceResponse.class);
-            return creditsBalance;
-        } else if (statusCode == 503) {
-            throw new UnderMaintenanceException();
-        } else if (statusCode == 429) {
-            throw new RateLimitException();
-        } else {
-            throw new CommandException(response.toString());
+        semaphore.acquire();
+        try{
+            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+    
+            String body = response.thenApply(HttpResponse::body).get();
+            int statusCode = response.thenApply(HttpResponse::statusCode).get();
+    
+            if (ensureHttpSuccess(statusCode)) {
+                CreditsBalanceResponse creditsBalance = gson.fromJson(body, CreditsBalanceResponse.class);
+                return creditsBalance;
+            } else if (statusCode == 503) {
+                throw new UnderMaintenanceException();
+            } else if (statusCode == 429) {
+                throw new RateLimitException();
+            } else {
+                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
+            }
+        }
+        finally{
+            semaphore.release();
         }
     }
 
@@ -503,8 +548,7 @@ public class Copyleaks {
      * This endpoint allows you to export your usage history between two dates.
      * The output results will be exported to a csv file and it will be attached to the response.
      * For more info:
-     * https://api.copyleaks.com/documentation/v3/education/usages/history
-     * https://api.copyleaks.com/documentation/v3/businesses/usages/history
+     * https://api.copyleaks.com/documentation/v3/scans/usages/history
      * * Exceptions:
      * * CommandExceptions: Server reject the request. See response status code,
      * headers and content for more info.
@@ -513,42 +557,46 @@ public class Copyleaks {
      * https://api.copyleaks.com/documentation/v3/exponential-backoff
      * * RateLimitException: Too many requests. Please wait before calling again.
      *
-     * @param product   Which product (education or business) is being use.
      * @param authToken Copyleaks authentication token.
      * @param startDate The start date to collect usage history from. Date Format: `dd-MM-yyyy`.
      * @param endDate   The end date to collect usage history from. Date Format: `dd-MM-yyyy`.
      * @return
      */
-    public static String getUsagesHistoryCsv(String product, CopyleaksAuthToken authToken, String startDate, String endDate) throws ExecutionException, InterruptedException, UnderMaintenanceException, RateLimitException, CommandException, ParseException, AuthExpiredException {
-        assert product != null : "Product is null";
+    public static String getUsagesHistoryCsv(CopyleaksAuthToken authToken, String startDate, String endDate) throws ExecutionException, InterruptedException, UnderMaintenanceException, RateLimitException, CommandException, ParseException, AuthExpiredException {
         assert authToken != null : "token is null";
-        assert startDate != null : "scanId is null";
-        assert endDate != null : "submission is null";
+        assert startDate != null : "startDate is null";
+        assert endDate != null : "endDate is null";
 
         verifyAuthToken(authToken);
 
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
-                .uri(URI.create(Consts.API_SERVER_URI + "/v3/" + product + "/usages/history?start=" + startDate + "&end=" + endDate))
+                .uri(URI.create(Consts.API_SERVER_URI + "/v3/scans/usages/history?start=" + startDate + "&end=" + endDate))
                 .setHeader("Content-Type", "application/json")
                 .setHeader("User-Agent", Consts.USER_AGENT)
                 .setHeader("Authorization", "Bearer " + authToken.getAccessToken())
                 .build();
 
         CompletableFuture<HttpResponse<String>> response;
-        response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-
-        String body = response.thenApply(HttpResponse::body).get();
-        int statusCode = response.thenApply(HttpResponse::statusCode).get();
-
-        if (ensureHttpSuccess(statusCode)) {
-            return body;
-        } else if (statusCode == 503) {
-            throw new UnderMaintenanceException();
-        } else if (statusCode == 429) {
-            throw new RateLimitException();
-        } else {
-            throw new CommandException(response.toString());
+        semaphore.acquire();
+        try{
+            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+    
+            String body = response.thenApply(HttpResponse::body).get();
+            int statusCode = response.thenApply(HttpResponse::statusCode).get();
+    
+            if (ensureHttpSuccess(statusCode)) {
+                return body;
+            } else if (statusCode == 503) {
+                throw new UnderMaintenanceException();
+            } else if (statusCode == 429) {
+                throw new RateLimitException();
+            } else {
+                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
+            }
+        }
+        finally{
+            semaphore.release();
         }
     }
 
@@ -574,19 +622,25 @@ public class Copyleaks {
                 .build();
 
         CompletableFuture<HttpResponse<String>> response;
-        response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-
-        String body = response.thenApply(HttpResponse::body).get();
-        int statusCode = response.thenApply(HttpResponse::statusCode).get();
-
-        if (ensureHttpSuccess(statusCode)) {
-            return gson.fromJson(body, ReleaseNotesResponse.class);
-        } else if (statusCode == 503) {
-            throw new UnderMaintenanceException();
-        } else if (statusCode == 429) {
-            throw new RateLimitException();
-        } else {
-            throw new CommandException(response.toString());
+        semaphore.acquire();
+        try{
+            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+    
+            String body = response.thenApply(HttpResponse::body).get();
+            int statusCode = response.thenApply(HttpResponse::statusCode).get();
+    
+            if (ensureHttpSuccess(statusCode)) {
+                return gson.fromJson(body, ReleaseNotesResponse.class);
+            } else if (statusCode == 503) {
+                throw new UnderMaintenanceException();
+            } else if (statusCode == 429) {
+                throw new RateLimitException();
+            } else {
+                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
+            }
+        }
+        finally{
+            semaphore.release();
         }
     }
 
@@ -613,20 +667,26 @@ public class Copyleaks {
                 .build();
 
         CompletableFuture<HttpResponse<String>> response;
-        response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-
-        String body = response.thenApply(HttpResponse::body).get();
-        int statusCode = response.thenApply(HttpResponse::statusCode).get();
-
-        if (ensureHttpSuccess(statusCode)) {
-            SupportedFileTypesResponse supportedFileTypes = gson.fromJson(body, SupportedFileTypesResponse.class);
-            return supportedFileTypes;
-        } else if (statusCode == 503) {
-            throw new UnderMaintenanceException();
-        } else if (statusCode == 429) {
-            throw new RateLimitException();
-        } else {
-            throw new CommandException(response.toString());
+        semaphore.acquire();
+        try{
+            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+    
+            String body = response.thenApply(HttpResponse::body).get();
+            int statusCode = response.thenApply(HttpResponse::statusCode).get();
+    
+            if (ensureHttpSuccess(statusCode)) {
+                SupportedFileTypesResponse supportedFileTypes = gson.fromJson(body, SupportedFileTypesResponse.class);
+                return supportedFileTypes;
+            } else if (statusCode == 503) {
+                throw new UnderMaintenanceException();
+            } else if (statusCode == 429) {
+                throw new RateLimitException();
+            } else {
+                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
+            }
+        }
+        finally{
+            semaphore.release();
         }
     }
 
@@ -653,20 +713,26 @@ public class Copyleaks {
                 .build();
 
         CompletableFuture<HttpResponse<String>> response;
-        response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-
-        String body = response.thenApply(HttpResponse::body).get();
-        int statusCode = response.thenApply(HttpResponse::statusCode).get();
-
-        if (ensureHttpSuccess(statusCode)) {
-            String[] languages = gson.fromJson(body, String[].class);
-            return languages;
-        } else if (statusCode == 503) {
-            throw new UnderMaintenanceException();
-        } else if (statusCode == 429) {
-            throw new RateLimitException();
-        } else {
-            throw new CommandException(response.toString());
+        semaphore.acquire();
+        try{
+            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+    
+            String body = response.thenApply(HttpResponse::body).get();
+            int statusCode = response.thenApply(HttpResponse::statusCode).get();
+    
+            if (ensureHttpSuccess(statusCode)) {
+                String[] languages = gson.fromJson(body, String[].class);
+                return languages;
+            } else if (statusCode == 503) {
+                throw new UnderMaintenanceException();
+            } else if (statusCode == 429) {
+                throw new RateLimitException();
+            } else {
+                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
+            }
+        }
+        finally{
+            semaphore.release();
         }
     }
 }
