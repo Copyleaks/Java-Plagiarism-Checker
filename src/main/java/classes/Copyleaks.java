@@ -47,8 +47,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Semaphore;
 
 public class Copyleaks {
+    private static Semaphore semaphore = new Semaphore(20); // To limit the number of httpClient connections.
 
     private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
             .build();
@@ -92,20 +94,27 @@ public class Copyleaks {
                 .setHeader("Content-Type", "application/json")
                 .setHeader("User-Agent", Consts.USER_AGENT)
                 .build();
+        
+        semaphore.acquire();
+        try{
+            CompletableFuture<HttpResponse<String>> response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
 
-        CompletableFuture<HttpResponse<String>> response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+            String body = response.thenApply(HttpResponse::body).get();
+            int statusCode = response.thenApply(HttpResponse::statusCode).get();
 
-        String body = response.thenApply(HttpResponse::body).get();
-        int statusCode = response.thenApply(HttpResponse::statusCode).get();
-
-        if (ensureHttpSuccess(statusCode)) {
-            CopyleaksAuthToken token = gson.fromJson(body, CopyleaksAuthToken.class);
-            return token;
-        } else if (statusCode == 503) {
-            throw new UnderMaintenanceException();
-        } else {
-            throw new CommandException(response.toString());
+            if (ensureHttpSuccess(statusCode)) {
+                CopyleaksAuthToken token = gson.fromJson(body, CopyleaksAuthToken.class);
+                return token;
+            } else if (statusCode == 503) {
+                throw new UnderMaintenanceException();
+            } else {
+                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
+            }
         }
+        finally{
+            semaphore.release();
+        }
+
     }
 
     /**
@@ -140,14 +149,22 @@ public class Copyleaks {
                 .build();
 
         CompletableFuture<HttpResponse<String>> response;
-        response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-        int statusCode = response.thenApply(HttpResponse::statusCode).get();
-        if (ensureHttpSuccess(statusCode)) {
-            return;
-        } else if (statusCode == 503) {
-            throw new UnderMaintenanceException();
-        } else {
-            throw new CommandException(response.toString());
+        semaphore.acquire();
+        try{
+            
+            
+            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+            int statusCode = response.thenApply(HttpResponse::statusCode).get();
+            if (ensureHttpSuccess(statusCode)) {
+                return;
+            } else if (statusCode == 503) {
+                throw new UnderMaintenanceException();
+            } else {
+                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
+            }
+        }
+        finally{
+            semaphore.release();
         }
     }
 
@@ -182,15 +199,21 @@ public class Copyleaks {
                 .build();
 
         CompletableFuture<HttpResponse<String>> response;
-        response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-        int statusCode = response.thenApply(HttpResponse::statusCode).get();
-
-        if (ensureHttpSuccess(statusCode)) {
-            return;
-        } else if (statusCode == 503) {
-            throw new UnderMaintenanceException();
-        } else {
-            throw new CommandException(response.toString());
+        semaphore.acquire();
+        try{
+            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+            int statusCode = response.thenApply(HttpResponse::statusCode).get();
+    
+            if (ensureHttpSuccess(statusCode)) {
+                return;
+            } else if (statusCode == 503) {
+                throw new UnderMaintenanceException();
+            } else {
+                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
+            }
+        }
+        finally{
+            semaphore.release();
         }
     }
 
@@ -227,15 +250,21 @@ public class Copyleaks {
                 .build();
 
         CompletableFuture<HttpResponse<String>> response;
-        response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-        int statusCode = response.thenApply(HttpResponse::statusCode).get();
-
-        if (ensureHttpSuccess(statusCode)) {
-            return;
-        } else if (statusCode == 503) {
-            throw new UnderMaintenanceException();
-        } else {
-            throw new CommandException(response.toString());
+        semaphore.acquire();
+        try{
+            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+            int statusCode = response.thenApply(HttpResponse::statusCode).get();
+    
+            if (ensureHttpSuccess(statusCode)) {
+                return;
+            } else if (statusCode == 503) {
+                throw new UnderMaintenanceException();
+            } else {
+                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
+            }
+        }
+        finally{
+            semaphore.release();
         }
     }
 
@@ -272,15 +301,21 @@ public class Copyleaks {
                 .build();
 
         CompletableFuture<HttpResponse<String>> response;
-        response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-        int statusCode = response.thenApply(HttpResponse::statusCode).get();
-
-        if (ensureHttpSuccess(statusCode)) {
-            return;
-        } else if (statusCode == 503) {
-            throw new UnderMaintenanceException();
-        } else {
-            throw new CommandException(response.toString());
+        semaphore.acquire();
+        try{
+            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+            int statusCode = response.thenApply(HttpResponse::statusCode).get();
+    
+            if (ensureHttpSuccess(statusCode)) {
+                return;
+            } else if (statusCode == 503) {
+                throw new UnderMaintenanceException();
+            } else {
+                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
+            }
+        }
+        finally{
+            semaphore.release();
         }
     }
 
@@ -315,18 +350,24 @@ public class Copyleaks {
                 .build();
 
         CompletableFuture<HttpResponse<String>> response;
-        response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-
-        String body = response.thenApply(HttpResponse::body).get();
-        int statusCode = response.thenApply(HttpResponse::statusCode).get();
-
-        if (ensureHttpSuccess(statusCode)) {
-            CopyleaksStartResponse startResponse = gson.fromJson(body, CopyleaksStartResponse.class);
-            return startResponse;
-        } else if (statusCode == 503) {
-            throw new UnderMaintenanceException();
-        } else {
-            throw new CommandException(response.toString());
+        semaphore.acquire();
+        try{
+            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+    
+            String body = response.thenApply(HttpResponse::body).get();
+            int statusCode = response.thenApply(HttpResponse::statusCode).get();
+    
+            if (ensureHttpSuccess(statusCode)) {
+                CopyleaksStartResponse startResponse = gson.fromJson(body, CopyleaksStartResponse.class);
+                return startResponse;
+            } else if (statusCode == 503) {
+                throw new UnderMaintenanceException();
+            } else {
+                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
+            }
+        }
+        finally{
+            semaphore.release();
         }
     }
 
@@ -360,19 +401,25 @@ public class Copyleaks {
                 .build();
 
         CompletableFuture<HttpResponse<String>> response;
-        response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-
-        String body = response.thenApply(HttpResponse::body).get();
-        int statusCode = response.thenApply(HttpResponse::statusCode).get();
-
-        if (ensureHttpSuccess(statusCode)) {
-            return;
-        } else if (statusCode == 503) {
-            throw new UnderMaintenanceException();
-        } else if (statusCode == 429) {
-            throw new RateLimitException();
-        } else {
-            throw new CommandException(response.toString());
+        semaphore.acquire();
+        try{
+            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+            
+            String body = response.thenApply(HttpResponse::body).get();
+            int statusCode = response.thenApply(HttpResponse::statusCode).get();
+    
+            if (ensureHttpSuccess(statusCode)) {
+                return;
+            } else if (statusCode == 503) {
+                throw new UnderMaintenanceException();
+            } else if (statusCode == 429) {
+                throw new RateLimitException();
+            } else {
+                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
+            }
+        }
+        finally{
+            semaphore.release();
         }
     }
 
@@ -405,17 +452,23 @@ public class Copyleaks {
                 .build();
 
         CompletableFuture<HttpResponse<String>> response;
-        response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-        int statusCode = response.thenApply(HttpResponse::statusCode).get();
-
-        if (ensureHttpSuccess(statusCode)) {
-            return;
-        } else if (statusCode == 503) {
-            throw new UnderMaintenanceException();
-        } else if (statusCode == 429) {
-            throw new RateLimitException();
-        } else {
-            throw new CommandException(response.toString());
+        semaphore.acquire();
+        try{
+            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+            int statusCode = response.thenApply(HttpResponse::statusCode).get();
+    
+            if (ensureHttpSuccess(statusCode)) {
+                return;
+            } else if (statusCode == 503) {
+                throw new UnderMaintenanceException();
+            } else if (statusCode == 429) {
+                throw new RateLimitException();
+            } else {
+                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
+            }
+        }
+        finally{
+            semaphore.release();
         }
     }
 
@@ -447,20 +500,26 @@ public class Copyleaks {
                 .build();
 
         CompletableFuture<HttpResponse<String>> response;
-        response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-
-        String body = response.thenApply(HttpResponse::body).get();
-        int statusCode = response.thenApply(HttpResponse::statusCode).get();
-
-        if (ensureHttpSuccess(statusCode)) {
-            CreditsBalanceResponse creditsBalance = gson.fromJson(body, CreditsBalanceResponse.class);
-            return creditsBalance;
-        } else if (statusCode == 503) {
-            throw new UnderMaintenanceException();
-        } else if (statusCode == 429) {
-            throw new RateLimitException();
-        } else {
-            throw new CommandException(response.toString());
+        semaphore.acquire();
+        try{
+            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+    
+            String body = response.thenApply(HttpResponse::body).get();
+            int statusCode = response.thenApply(HttpResponse::statusCode).get();
+    
+            if (ensureHttpSuccess(statusCode)) {
+                CreditsBalanceResponse creditsBalance = gson.fromJson(body, CreditsBalanceResponse.class);
+                return creditsBalance;
+            } else if (statusCode == 503) {
+                throw new UnderMaintenanceException();
+            } else if (statusCode == 429) {
+                throw new RateLimitException();
+            } else {
+                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
+            }
+        }
+        finally{
+            semaphore.release();
         }
     }
 
@@ -519,19 +578,25 @@ public class Copyleaks {
                 .build();
 
         CompletableFuture<HttpResponse<String>> response;
-        response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-
-        String body = response.thenApply(HttpResponse::body).get();
-        int statusCode = response.thenApply(HttpResponse::statusCode).get();
-
-        if (ensureHttpSuccess(statusCode)) {
-            return body;
-        } else if (statusCode == 503) {
-            throw new UnderMaintenanceException();
-        } else if (statusCode == 429) {
-            throw new RateLimitException();
-        } else {
-            throw new CommandException(response.toString());
+        semaphore.acquire();
+        try{
+            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+    
+            String body = response.thenApply(HttpResponse::body).get();
+            int statusCode = response.thenApply(HttpResponse::statusCode).get();
+    
+            if (ensureHttpSuccess(statusCode)) {
+                return body;
+            } else if (statusCode == 503) {
+                throw new UnderMaintenanceException();
+            } else if (statusCode == 429) {
+                throw new RateLimitException();
+            } else {
+                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
+            }
+        }
+        finally{
+            semaphore.release();
         }
     }
 
@@ -557,19 +622,25 @@ public class Copyleaks {
                 .build();
 
         CompletableFuture<HttpResponse<String>> response;
-        response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-
-        String body = response.thenApply(HttpResponse::body).get();
-        int statusCode = response.thenApply(HttpResponse::statusCode).get();
-
-        if (ensureHttpSuccess(statusCode)) {
-            return gson.fromJson(body, ReleaseNotesResponse.class);
-        } else if (statusCode == 503) {
-            throw new UnderMaintenanceException();
-        } else if (statusCode == 429) {
-            throw new RateLimitException();
-        } else {
-            throw new CommandException(response.toString());
+        semaphore.acquire();
+        try{
+            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+    
+            String body = response.thenApply(HttpResponse::body).get();
+            int statusCode = response.thenApply(HttpResponse::statusCode).get();
+    
+            if (ensureHttpSuccess(statusCode)) {
+                return gson.fromJson(body, ReleaseNotesResponse.class);
+            } else if (statusCode == 503) {
+                throw new UnderMaintenanceException();
+            } else if (statusCode == 429) {
+                throw new RateLimitException();
+            } else {
+                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
+            }
+        }
+        finally{
+            semaphore.release();
         }
     }
 
@@ -596,20 +667,26 @@ public class Copyleaks {
                 .build();
 
         CompletableFuture<HttpResponse<String>> response;
-        response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-
-        String body = response.thenApply(HttpResponse::body).get();
-        int statusCode = response.thenApply(HttpResponse::statusCode).get();
-
-        if (ensureHttpSuccess(statusCode)) {
-            SupportedFileTypesResponse supportedFileTypes = gson.fromJson(body, SupportedFileTypesResponse.class);
-            return supportedFileTypes;
-        } else if (statusCode == 503) {
-            throw new UnderMaintenanceException();
-        } else if (statusCode == 429) {
-            throw new RateLimitException();
-        } else {
-            throw new CommandException(response.toString());
+        semaphore.acquire();
+        try{
+            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+    
+            String body = response.thenApply(HttpResponse::body).get();
+            int statusCode = response.thenApply(HttpResponse::statusCode).get();
+    
+            if (ensureHttpSuccess(statusCode)) {
+                SupportedFileTypesResponse supportedFileTypes = gson.fromJson(body, SupportedFileTypesResponse.class);
+                return supportedFileTypes;
+            } else if (statusCode == 503) {
+                throw new UnderMaintenanceException();
+            } else if (statusCode == 429) {
+                throw new RateLimitException();
+            } else {
+                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
+            }
+        }
+        finally{
+            semaphore.release();
         }
     }
 
@@ -636,20 +713,26 @@ public class Copyleaks {
                 .build();
 
         CompletableFuture<HttpResponse<String>> response;
-        response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-
-        String body = response.thenApply(HttpResponse::body).get();
-        int statusCode = response.thenApply(HttpResponse::statusCode).get();
-
-        if (ensureHttpSuccess(statusCode)) {
-            String[] languages = gson.fromJson(body, String[].class);
-            return languages;
-        } else if (statusCode == 503) {
-            throw new UnderMaintenanceException();
-        } else if (statusCode == 429) {
-            throw new RateLimitException();
-        } else {
-            throw new CommandException(response.toString());
+        semaphore.acquire();
+        try{
+            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+    
+            String body = response.thenApply(HttpResponse::body).get();
+            int statusCode = response.thenApply(HttpResponse::statusCode).get();
+    
+            if (ensureHttpSuccess(statusCode)) {
+                String[] languages = gson.fromJson(body, String[].class);
+                return languages;
+            } else if (statusCode == 503) {
+                throw new UnderMaintenanceException();
+            } else if (statusCode == 429) {
+                throw new RateLimitException();
+            } else {
+                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
+            }
+        }
+        finally{
+            semaphore.release();
         }
     }
 }
