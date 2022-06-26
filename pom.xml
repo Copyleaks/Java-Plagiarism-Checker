@@ -63,6 +63,7 @@
                 </executions>
                 <configuration>
                     <additionalparam>-Xdoclint:none</additionalparam>
+                    <source>8</source>
                 </configuration>
             </plugin>
             <plugin>
@@ -137,8 +138,8 @@
     </developers>
 
     <scm>
-        <connection>scm:git:https://github.com/Copyleaks/Java-Plagiarism-Checker.git</connection>
-        <developerConnection>scm:git:https://github.com/Copyleaks/Java-Plagiarism-Checker.git</developerConnection>
+        <connection>scm:git:git://https://github.com/Copyleaks/Java-Plagiarism-Checker.git</connection>
+        <developerConnection>scm:git:ssh://https://github.com/Copyleaks/Java-Plagiarism-Checker.git</developerConnection>
         <url>https://github.com/Copyleaks/Java-Plagiarism-Checker</url>
       <tag>copyleaks-java-sdk-3.1.0</tag>
   </scm>
@@ -146,6 +147,8 @@
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
     
 </project>
