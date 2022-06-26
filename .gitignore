@@ -4,4 +4,3 @@ target/
 *.class
 release.properties
 pom.xml.releaseBackup
-private.key
