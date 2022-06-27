@@ -294,7 +294,7 @@ public class Copyleaks {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(model)))
-                .uri(URI.create(Consts.API_SERVER_URI + "/v3/downloads" + scanId + "/export/" + exportId))
+                .uri(URI.create(Consts.API_SERVER_URI + "/v3/downloads/" + scanId + "/export/" + exportId))
                 .setHeader("Content-Type", "application/json")
                 .setHeader("User-Agent", Consts.USER_AGENT)
                 .setHeader("Authorization", "Bearer " + authToken.getAccessToken())
