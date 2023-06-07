@@ -93,6 +93,27 @@ public class SubmissionProperties {
      */
     private SubmissionSensitiveData sensitiveDataProtection = null;
 
+    private SubmissionScanMethodAlgorithm scanMethodAlgorithm;
+
+    private SubmissionCustomMetadata customMetadata;
+
+
+    public SubmissionCustomMetadata getCustomMetadata() {
+        return customMetadata;
+    }
+
+    public void setCustomMetadata(SubmissionCustomMetadata customMetadata) {
+        this.customMetadata = customMetadata;
+    }
+
+    public SubmissionScanMethodAlgorithm getScanMethodAlgorithm() {
+        return scanMethodAlgorithm;
+    }
+
+    public void setScanMethodAlgorithm(SubmissionScanMethodAlgorithm scanMethodAlgorithm) {
+        this.scanMethodAlgorithm = scanMethodAlgorithm;
+    }
+
     public SubmissionProperties(SubmissionWebhooks webhooks) {
         this.webhooks = webhooks;
     }

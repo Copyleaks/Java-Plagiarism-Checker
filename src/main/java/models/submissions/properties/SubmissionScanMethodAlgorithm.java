@@ -20,50 +20,11 @@
 
 package models.submissions.properties;
 
-public class SubmissionPDF {
-    /**
-     * Add a request to generate a customizable export of the scan report, in a pdf format.
-     * Set to true in order to generate a pdf report for this scan.
-     */
-    private boolean create;
-    /**
-     * Customize the title for the PDF report.
-     */
-    private String title;
-    /**
-     * Customize the logo image in the PDF report.
-     */
-    private String largeLogo;
-    /**
-     * When set to true the text in the report will be aligned from right to left.
-     */
-    private boolean rtl;
 
-    private SubmissionPdfVersion version;
+public enum SubmissionScanMethodAlgorithm {
 
-    private SubmissionPdfColors colors;
+    MaximumCoverage,
 
-    public SubmissionPdfVersion getVersion() {
-        return version;
-    }
+    MaximumResults,
 
-    public void setVersion(SubmissionPdfVersion version) {
-        this.version = version;
-    }
-
-    public boolean isCreate() {
-        return create;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getLargeLogo() {
-        return largeLogo;
-    }
-
-    public boolean isRtl() {
-        return rtl;
-    }
 }
