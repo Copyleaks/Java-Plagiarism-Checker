@@ -106,7 +106,19 @@ public class SubmissionProperties {
      * Upon detection a scan alert of type "suspected-ai-text" will be added to the scan completion webhook.
      */
     private SubmissionAIGeneratedText aiGeneratedText;
+    /**
+     * Scan priority
+     */
+    private SubmissionPriority priority;
 
+
+    public SubmissionPriority getPriority() {
+        return priority;
+    }
+
+    public void setPriority(SubmissionPriority priority) {
+        this.priority = priority;
+    }
 
     public SubmissionAIGeneratedText getAiGeneratedText() {
         return aiGeneratedText;
