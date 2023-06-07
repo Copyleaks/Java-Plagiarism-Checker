@@ -38,10 +38,24 @@ public class SubmissionPDF {
      * When set to true the text in the report will be aligned from right to left.
      */
     private boolean rtl;
-
+    /**
+     * 	PDF version to generate. 
+	 *  By default version 1 will be generated as it our current stable version. 
+	 *  Version 2 is our latest iteration of our PDF report.
+     */
     private SubmissionPdfVersion version;
-
+    /**
+     * Customizable colors
+     */
     private SubmissionPdfColors colors;
+
+    public SubmissionPdfColors getColors() {
+        return colors;
+    }
+
+    public void setColors(SubmissionPdfColors colors) {
+        this.colors = colors;
+    }
 
     public SubmissionPdfVersion getVersion() {
         return version;

@@ -92,11 +92,29 @@ public class SubmissionProperties {
      * Check inner properties for more details.
      */
     private SubmissionSensitiveData sensitiveDataProtection = null;
-
+    /**
+     * Choose the algorithm goal. You can set this value depending on your use-case.
+     */
     private SubmissionScanMethodAlgorithm scanMethodAlgorithm;
-
+    /**
+     * Add custom properties that will be attached to your document in a Copyleaks repository.
+     */
     private SubmissionCustomMetadata customMetadata;
+    /**
+     * Detects whether the text was written by an AI.
+     * 
+     * Upon detection a scan alert of type "suspected-ai-text" will be added to the scan completion webhook.
+     */
+    private SubmissionAIGeneratedText aiGeneratedText;
 
+
+    public SubmissionAIGeneratedText getAiGeneratedText() {
+        return aiGeneratedText;
+    }
+
+    public void setAiGeneratedText(SubmissionAIGeneratedText aiGeneratedText) {
+        this.aiGeneratedText = aiGeneratedText;
+    }
 
     public SubmissionCustomMetadata getCustomMetadata() {
         return customMetadata;

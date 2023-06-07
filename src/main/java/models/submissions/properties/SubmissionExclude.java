@@ -46,11 +46,19 @@ public class SubmissionExclude {
      */
     private Boolean htmlTemplate = null;
 
-
+    /**
+     * Exclude citations from the scan.
+     */
     private Boolean citations;
 
+    /**
+     * Exclude text based on text found within other documents
+     */
     private String[] documentTemplateIds;
 
+    /**
+     * Exclude sections of source code
+     */
     private SubmissionExcludeCode code;
 
     public SubmissionExcludeCode getCode() {

@@ -22,6 +22,9 @@ package models.submissions.properties;
 
 public class SubmissionAIGeneratedText {
 
+    /**
+     * Detects whether the text was written by an AI.
+     */
     private Boolean detect;
 
     public Boolean getDetect() {
