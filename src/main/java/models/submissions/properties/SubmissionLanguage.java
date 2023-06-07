@@ -26,7 +26,7 @@ public class SubmissionLanguage {
 
     SubmissionLanguage(){}
 
-    SubmissionLanguage(String code){
+    public SubmissionLanguage(String code){
         this.code = code;
     }
 
