@@ -42,6 +42,7 @@ public class SubmissionPdfColors {
      * The highlight color for related meaning matches
      */
     private String relatedMeaning;
+    
 
     public String getMainStrip() {
         return mainStrip;

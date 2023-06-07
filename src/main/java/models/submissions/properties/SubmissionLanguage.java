@@ -24,6 +24,12 @@ public class SubmissionLanguage {
 
     private String code;
 
+    SubmissionLanguage(){}
+
+    SubmissionLanguage(String code){
+        this.code = code;
+    }
+
     public String getCode() {
         return code;
     }

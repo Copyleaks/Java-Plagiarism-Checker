@@ -27,6 +27,12 @@ public class SubmissionExcludeCode {
      */
     private Boolean comments;
 
+    public SubmissionExcludeCode(){}
+
+    public SubmissionExcludeCode(Boolean comments){
+        this.comments = comments;
+    }
+
     public Boolean getComments() {
         return comments;
     }

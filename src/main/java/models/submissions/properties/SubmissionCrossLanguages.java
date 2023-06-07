@@ -27,6 +27,12 @@ public class SubmissionCrossLanguages {
      */
     private SubmissionLanguage[] languages;
 
+    public SubmissionCrossLanguages(){}
+
+    public SubmissionCrossLanguages(SubmissionLanguage[] languages){
+        this.languages = languages;
+    }
+
     public SubmissionLanguage[] getLanguages() {
         return languages;
     }

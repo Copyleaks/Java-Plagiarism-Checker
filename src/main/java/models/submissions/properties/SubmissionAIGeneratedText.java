@@ -27,6 +27,12 @@ public class SubmissionAIGeneratedText {
      */
     private Boolean detect;
 
+    public SubmissionAIGeneratedText(){}
+
+    public SubmissionAIGeneratedText(Boolean detect){
+        this.detect = detect;
+    }
+
     public Boolean getDetect() {
         return detect;
     }
