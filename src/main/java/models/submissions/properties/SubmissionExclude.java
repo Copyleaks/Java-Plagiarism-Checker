@@ -46,6 +46,45 @@ public class SubmissionExclude {
      */
     private Boolean htmlTemplate = null;
 
+    /**
+     * Exclude citations from the scan.
+     */
+    private Boolean citations;
+
+    /**
+     * Exclude text based on text found within other documents
+     */
+    private String[] documentTemplateIds;
+
+    /**
+     * Exclude sections of source code
+     */
+    private SubmissionExcludeCode code;
+
+    public SubmissionExcludeCode getCode() {
+        return code;
+    }
+
+    public void setCode(SubmissionExcludeCode code) {
+        this.code = code;
+    }
+
+    public String[] getDocumentTemplateIds() {
+        return documentTemplateIds;
+    }
+
+    public void setDocumentTemplateIds(String[] documentTemplateIds) {
+        this.documentTemplateIds = documentTemplateIds;
+    }
+
+    public Boolean isCitations() {
+        return citations;
+    }
+
+    public void setCitations(Boolean citations) {
+        this.citations = citations;
+    }
+
     public Boolean isQuotes() {
         return quotes;
     }

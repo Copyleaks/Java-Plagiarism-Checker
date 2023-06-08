@@ -41,6 +41,16 @@ public class SubmissionScanning {
      */
     private SubmissionScanningCopyleaksDB copyleaksDb = null;
 
+    private SubmissionCrossLanguages crossLanguages;
+
+    public SubmissionCrossLanguages getCrossLanguages() {
+        return crossLanguages;
+    }
+
+    public void setCrossLanguages(SubmissionCrossLanguages crossLanguages) {
+        this.crossLanguages = crossLanguages;
+    }
+
     public Boolean isInternet() {
         return internet;
     }

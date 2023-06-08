@@ -20,28 +20,25 @@
 
 package models.submissions.properties;
 
-public class SubmissionScanningCopyleaksDB {
-    /**
-     * When set to true: Copyleaks will also compare against content which was uploaded by YOU to the Copyleaks internal database.
-     * If true, it will also index the scan in the Copyleaks internal database.
-     */
-    private boolean includeMySubmissions;
-    /**
-     * When set to true: Copyleaks will also compare against content which was uploaded by OTHERS to the Copyleaks internal database.
-     * If true, it will also index the scan in the Copyleaks internal database.
-     */
-    private boolean includeOthersSubmissions;
+public class SubmissionExcludeCode {
 
-    public boolean isIncludeMySubmissions() {
-        return includeMySubmissions;
+    /**
+     * Exclude comments
+     */
+    private Boolean comments;
+
+    public SubmissionExcludeCode(){}
+
+    public SubmissionExcludeCode(Boolean comments){
+        this.comments = comments;
     }
-    public void setIncludeMySubmissions(boolean includeMySubmissions) {
-        this.includeMySubmissions = includeMySubmissions;
+
+    public Boolean getComments() {
+        return comments;
     }
-    public boolean isIncludeOthersSubmissions() {
-        return includeOthersSubmissions;
+
+    public void setComments(Boolean comments) {
+        this.comments = comments;
     }
-    public void setIncludeOthersSubmissions(boolean includeOthersSubmissions) {
-        this.includeOthersSubmissions = includeOthersSubmissions;
-    }
+    
 }

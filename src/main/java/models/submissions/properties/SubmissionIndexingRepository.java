@@ -20,28 +20,19 @@
 
 package models.submissions.properties;
 
-public class SubmissionScanningCopyleaksDB {
-    /**
-     * When set to true: Copyleaks will also compare against content which was uploaded by YOU to the Copyleaks internal database.
-     * If true, it will also index the scan in the Copyleaks internal database.
-     */
-    private boolean includeMySubmissions;
-    /**
-     * When set to true: Copyleaks will also compare against content which was uploaded by OTHERS to the Copyleaks internal database.
-     * If true, it will also index the scan in the Copyleaks internal database.
-     */
-    private boolean includeOthersSubmissions;
+public class SubmissionIndexingRepository extends SubmissionRepository {
 
-    public boolean isIncludeMySubmissions() {
-        return includeMySubmissions;
+    /**
+     * specify the document masking policy
+     */
+    private SubmissionMaskingPolicy maskingPolicy;
+
+    public SubmissionMaskingPolicy getMaskingPolicy() {
+        return maskingPolicy;
     }
-    public void setIncludeMySubmissions(boolean includeMySubmissions) {
-        this.includeMySubmissions = includeMySubmissions;
+
+    public void setMaskingPolicy(SubmissionMaskingPolicy maskingPolicy) {
+        this.maskingPolicy = maskingPolicy;
     }
-    public boolean isIncludeOthersSubmissions() {
-        return includeOthersSubmissions;
-    }
-    public void setIncludeOthersSubmissions(boolean includeOthersSubmissions) {
-        this.includeOthersSubmissions = includeOthersSubmissions;
-    }
+    
 }

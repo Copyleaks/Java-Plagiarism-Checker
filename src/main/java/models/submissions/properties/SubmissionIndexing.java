@@ -21,9 +21,9 @@
 package models.submissions.properties;
 
 public class SubmissionIndexing {
-    private SubmissionRepository[] repositories = null;
+    private SubmissionIndexingRepository[] repositories = null;
 
-    public SubmissionRepository[] getRepositories() {
+    public SubmissionIndexingRepository[] getRepositories() {
         return repositories;
     }
 }

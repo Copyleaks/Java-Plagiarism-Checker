@@ -20,28 +20,25 @@
 
 package models.submissions.properties;
 
-public class SubmissionScanningCopyleaksDB {
-    /**
-     * When set to true: Copyleaks will also compare against content which was uploaded by YOU to the Copyleaks internal database.
-     * If true, it will also index the scan in the Copyleaks internal database.
-     */
-    private boolean includeMySubmissions;
-    /**
-     * When set to true: Copyleaks will also compare against content which was uploaded by OTHERS to the Copyleaks internal database.
-     * If true, it will also index the scan in the Copyleaks internal database.
-     */
-    private boolean includeOthersSubmissions;
+public class SubmissionCrossLanguages {
 
-    public boolean isIncludeMySubmissions() {
-        return includeMySubmissions;
+    /**
+     * Cross language plagiarism detection. Choose which languages to scan your content against.
+     */
+    private SubmissionLanguage[] languages;
+
+    public SubmissionCrossLanguages(){}
+
+    public SubmissionCrossLanguages(SubmissionLanguage[] languages){
+        this.languages = languages;
     }
-    public void setIncludeMySubmissions(boolean includeMySubmissions) {
-        this.includeMySubmissions = includeMySubmissions;
+
+    public SubmissionLanguage[] getLanguages() {
+        return languages;
     }
-    public boolean isIncludeOthersSubmissions() {
-        return includeOthersSubmissions;
+
+    public void setLanguages(SubmissionLanguage[] languages) {
+        this.languages = languages;
     }
-    public void setIncludeOthersSubmissions(boolean includeOthersSubmissions) {
-        this.includeOthersSubmissions = includeOthersSubmissions;
-    }
+
 }
