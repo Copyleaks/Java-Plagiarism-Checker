@@ -117,7 +117,6 @@ public class WritingAssistantClient {
      *
      * @param authToken Copyleaks authentication token
      * @param languageCode The language for the returned texts to be in. Language codes are in ISO 639-1 standard. Supported Values: en - English
-     * @return
      */
     public CorrectionTypesResponse getCorrectionTypes(CopyleaksAuthToken authToken, String languageCode) throws ExecutionException, InterruptedException, UnderMaintenanceException, RateLimitException, CommandException, ParseException, AuthExpiredException {
         assert authToken != null : "token is null";

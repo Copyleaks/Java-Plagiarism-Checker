@@ -36,7 +36,6 @@ import models.exceptions.CommandException;
 import models.exceptions.UnderMaintenanceException;
 import models.response.CopyleaksAuthToken;
 import models.response.aidetection.AIDetectionResponse;
-import models.response.writingassitant.WritingAssistantResponse;
 import models.submissions.aidetection.CopyleaksNaturalLanguageSubmissionModel;
 import models.submissions.aidetection.CopyleaksSourceCodeSubmissionModel;
 
