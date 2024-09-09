@@ -20,8 +20,6 @@
 
 package models.submissions.writingassistant;
 
-import com.google.gson.annotations.SerializedName;
-
 public class CopyleaksWritingAssistantSubmissionModel {
     /**
      * Text to produce Writing Assistant report for. 1 >= characters <= 25000
