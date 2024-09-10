@@ -60,6 +60,11 @@ public class SubmissionFilter {
      */
     private SubmissionFilterDomainsMode domainsMode = null;
 
+    /**
+     * when set to true it will allow results from the same domain as the submitted url.
+     */
+    private Boolean allowSameDomain = false;
+
     public Boolean isIdenticalEnabled() {
         return identicalEnabled;
     }
@@ -114,5 +119,13 @@ public class SubmissionFilter {
 
     public void setSafeSearch(Boolean safeSearch) {
         this.safeSearch = safeSearch;
+    }
+
+    public Boolean getAllowSameDomain() {
+        return allowSameDomain;
+    }
+
+    public void setAllowSameDomain(Boolean allowSameDomain) {
+        this.allowSameDomain = allowSameDomain;
     }
 }
