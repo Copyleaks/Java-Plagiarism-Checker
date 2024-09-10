@@ -22,6 +22,9 @@
 package classes;
 
 import com.google.gson.Gson;
+
+import classes.clients.AIDetectionClient;
+import classes.clients.WritingAssistantClient;
 import models.exceptions.AuthExpiredException;
 import models.exceptions.CommandException;
 import models.exceptions.RateLimitException;
@@ -56,6 +59,9 @@ public class Copyleaks {
             .build();
 
     private static final Gson gson = new Gson();
+
+    public final static AIDetectionClient aiDetectionClient = new AIDetectionClient(HTTP_CLIENT, semaphore);
+    public final static WritingAssistantClient writingAssistantClient = new WritingAssistantClient(HTTP_CLIENT, semaphore);
 
     public static void setIdentityUri(String uri){
         Consts.IDENTITY_SERVER_URI = uri;

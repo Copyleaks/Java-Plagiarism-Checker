@@ -27,9 +27,15 @@ import models.exceptions.CommandException;
 import models.exceptions.RateLimitException;
 import models.exceptions.UnderMaintenanceException;
 import models.response.CopyleaksAuthToken;
+import models.response.aidetection.AIDetectionResponse;
+import models.response.writingassitant.WritingAssistantResponse;
 import models.submissions.CopyleaksFileSubmissionModel;
+import models.submissions.aidetection.CopyleaksNaturalLanguageSubmissionModel;
+import models.submissions.aidetection.CopyleaksSourceCodeSubmissionModel;
 import models.submissions.properties.SubmissionProperties;
 import models.submissions.properties.SubmissionWebhooks;
+import models.submissions.writingassistant.CopyleaksWritingAssistantSubmissionModel;
+import models.submissions.writingassistant.ScoreWeights;
 
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
@@ -111,6 +117,136 @@ public class Example {
         }
         System.out.println("Send to scanning");
         System.out.printf("You will be notified, using your webhook, once the scan was completed.");
+
+        // This example is going to scan text for natural language AI detection.
+        String sampleText = "Lions are social animals, living in groups called prides, typically consisting of several females, their offspring, and a few males. Female lions are the primary hunters, working together to catch prey. Lions are known for their strength, teamwork, and complex social structures.";
+        CopyleaksNaturalLanguageSubmissionModel naturalLanguageSubmissionModel = new CopyleaksNaturalLanguageSubmissionModel(sampleText);
+        naturalLanguageSubmissionModel.setSandbox(true);
+        AIDetectionResponse naturalLanguageAiDetectionResponse;
+        try {
+            naturalLanguageAiDetectionResponse = Copyleaks.aiDetectionClient.submitNaturalLanguage(token, scanId, naturalLanguageSubmissionModel);
+        } catch (ParseException e) {
+            System.out.println(e.getMessage() + "\n");
+            e.printStackTrace();
+            return;
+        } catch (AuthExpiredException e) {
+            System.out.println(e.getMessage() + "\n");
+            e.printStackTrace();
+            return;
+        } catch (UnderMaintenanceException e) {
+            System.out.println(e.getMessage() + "\n");
+            e.printStackTrace();
+            return;
+        } catch (CommandException e) {
+            System.out.println(e.getMessage() + "\n");
+            e.printStackTrace();
+            return;
+        } catch (ExecutionException e) {
+            System.out.println(e.getMessage() + "\n");
+            e.printStackTrace();
+            return;
+        } catch (InterruptedException e) {
+            System.out.println(e.getMessage() + "\n");
+            e.printStackTrace();
+            return;
+        }
+        System.out.println("\nText scanned for AI detection.");
+        System.out.println("AI Score: " + naturalLanguageAiDetectionResponse.getSummary().getAi());
+
+
+        // This example is going to scan source code for AI detection.
+        String sampleCode = "def add(a, b):\n" +
+        "    return a + b\n" +
+        "\n" +
+        "def multiply(a, b):\n" +
+        "    return a * b\n" +
+        "\n" +
+        "def main():\n" +
+        "    x = 5\n" +
+        "    y = 10\n" +
+        "    sum_result = add(x, y)\n" +
+        "    product_result = multiply(x, y)\n" +
+        "    print(f'Sum: {sum_result}')\n" +
+        "    print(f'Product: {product_result}')\n" +
+        "\n" +
+        "if __name__ == '__main__':\n" +
+        "    main()";
+
+        CopyleaksSourceCodeSubmissionModel sourceCodeSubmissionModel = new CopyleaksSourceCodeSubmissionModel(sampleCode, "sampleFile.py");
+        sourceCodeSubmissionModel.setSandbox(true);
+        AIDetectionResponse sourceCodeAiDetectionResponse;
+        try {
+            sourceCodeAiDetectionResponse = Copyleaks.aiDetectionClient.submitSourceCode(token, scanId, sourceCodeSubmissionModel);
+        } catch (ParseException e) {
+            System.out.println(e.getMessage() + "\n");
+            e.printStackTrace();
+            return;
+        } catch (AuthExpiredException e) {
+            System.out.println(e.getMessage() + "\n");
+            e.printStackTrace();
+            return;
+        } catch (UnderMaintenanceException e) {
+            System.out.println(e.getMessage() + "\n");
+            e.printStackTrace();
+            return;
+        } catch (CommandException e) {
+            System.out.println(e.getMessage() + "\n");
+            e.printStackTrace();
+            return;
+        } catch (ExecutionException e) {
+            System.out.println(e.getMessage() + "\n");
+            e.printStackTrace();
+            return;
+        } catch (InterruptedException e) {
+            System.out.println(e.getMessage() + "\n");
+            e.printStackTrace();
+            return;
+        }
+        System.out.println("\nText scanned for AI detection.");
+        System.out.println("AI Score: " + sourceCodeAiDetectionResponse.getSummary().getAi());
+
+
+        // This example is going to text for writing feedback.
+        String writingFeedbackText = "Lions are the only cat that live in groups, called pride. A prides typically consists of a few adult males, several feales, and their offspring. This social structure is essential for hunting and raising young cubs. Female lions, or lionesses are the primary hunters of the prid. They work together in cordinated groups to take down prey usually targeting large herbiores like zbras, wildebeest and buffalo. Their teamwork and strategy during hunts highlight the intelligence and coperation that are key to their survival.";
+        ScoreWeights scoreWeights = new ScoreWeights();
+        scoreWeights.setGrammarScoreWeight(0.1);
+        scoreWeights.setMechanicsScoreWeight(0.2);
+        scoreWeights.setSentenceStructureScoreWeight(0.3);
+        scoreWeights.setWordChoiceScoreWeight(0.4);
+        CopyleaksWritingAssistantSubmissionModel writingAssistantSubmissionModel = new CopyleaksWritingAssistantSubmissionModel(writingFeedbackText);
+        writingAssistantSubmissionModel.setScore(scoreWeights);
+        writingAssistantSubmissionModel.setSandbox(true);
+
+        WritingAssistantResponse writingAssistantResponse;
+        try {
+            writingAssistantResponse = Copyleaks.writingAssistantClient.submitText(token, scanId, writingAssistantSubmissionModel);
+        } catch (ParseException e) {
+            System.out.println(e.getMessage() + "\n");
+            e.printStackTrace();
+            return;
+        } catch (AuthExpiredException e) {
+            System.out.println(e.getMessage() + "\n");
+            e.printStackTrace();
+            return;
+        } catch (UnderMaintenanceException e) {
+            System.out.println(e.getMessage() + "\n");
+            e.printStackTrace();
+            return;
+        } catch (CommandException e) {
+            System.out.println(e.getMessage() + "\n");
+            e.printStackTrace();
+            return;
+        } catch (ExecutionException e) {
+            System.out.println(e.getMessage() + "\n");
+            e.printStackTrace();
+            return;
+        } catch (InterruptedException e) {
+            System.out.println(e.getMessage() + "\n");
+            e.printStackTrace();
+            return;
+        }
+        System.out.println("\nText scanned for AI detection.");
+        System.out.println("Grammer Score: " + writingAssistantResponse.getScore().getCorrections().getGrammarCorrectionsScore());
 
         // Wait for completion webhook arrival...
         // Read more: https://api.copyleaks.com/documentation/v3/webhooks
