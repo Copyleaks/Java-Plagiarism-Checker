@@ -20,22 +20,11 @@
 
 package models.exports;
 
-public class ExportPdfReport {
-    /**
-     * The HTTP url to upload the data.
-     */
-    private String endpoint;
+public class ExportPdfReport extends ExportOptions {
 
-    /**
-     * The HTTP verb (also called "HTTP Methods") to upload the data to your specified endpoint.
-     */
-    private String verb;
+    public ExportPdfReport() {}
 
-    /**
-     * List of headers to be submitted with the upload request. You may use this field to provide additional request headers, such as "Authorization" header.
-     * <p>
-     * Example: [["header-key1", "header-value1"], ["header-key2", "header-value2"]]
-     */
-    private String[][] headers = null;
-
+    public ExportPdfReport(String endpoint, String verb, String[][] headers) {
+        super(endpoint, verb, headers);
+    }
 }

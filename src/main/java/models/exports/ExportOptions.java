@@ -20,24 +20,51 @@
 
 package models.exports;
 
-public class ExportResults extends ExportOptions {
+public class ExportOptions {
     /**
-     * Result identification to be downloaded.
+     * The HTTP url to upload the data.
      */
-    private String id;
+    private String endpoint;
 
-    public ExportResults() {}
+    /**
+     * The HTTP verb (also called "HTTP Methods") to upload the data to your specified endpoint.
+     */
+    private String verb;
 
-    public ExportResults(String id, String endpoint, String verb, String[][] headers) {
-        super(endpoint, verb, headers);
-        this.id = id;
+    /**
+     * List of headers to be submitted with the upload request.
+     */
+    private String[][] headers = null;
+
+    public ExportOptions() {}
+
+    public ExportOptions(String endpoint, String verb, String[][] headers) {
+        this.endpoint = endpoint;
+        this.verb = verb;
+        this.headers = headers;
     }
 
-    public String getId() {
-        return id;
+    public String getEndpoint() {
+        return endpoint;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
+    }
+
+    public String getVerb() {
+        return verb;
+    }
+
+    public void setVerb(String verb) {
+        this.verb = verb;
+    }
+
+    public String[][] getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(String[][] headers) {
+        this.headers = headers;
     }
 }

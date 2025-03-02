@@ -20,24 +20,11 @@
 
 package models.exports;
 
-public class ExportResults extends ExportOptions {
-    /**
-     * Result identification to be downloaded.
-     */
-    private String id;
+public class ExportWritingFeedback extends ExportOptions {
 
-    public ExportResults() {}
+    public ExportWritingFeedback() {}
 
-    public ExportResults(String id, String endpoint, String verb, String[][] headers) {
+    public ExportWritingFeedback(String endpoint, String verb, String[][] headers) {
         super(endpoint, verb, headers);
-        this.id = id;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

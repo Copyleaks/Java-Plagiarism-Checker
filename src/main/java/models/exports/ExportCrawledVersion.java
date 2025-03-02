@@ -20,38 +20,11 @@
 
 package models.exports;
 
-public class ExportCrawledVersion {
-    /**
-     * List of headers to be submitted with the upload request. You may use this field to provide additional request headers, such as "Authorization" header.
-     * <p>
-     * Example: [["header-key1", "header-value1"], ["header-key2", "header-value2"]]
-     */
-    public String[][] headers;
-    /**
-     * The HTTP url to upload the data.
-     */
-    private String endpoint;
-    /**
-     * The HTTP verb (also called "HTTP Methods") to upload the data to your specified endpoint.
-     */
-    private String verb;
+public class ExportCrawledVersion extends ExportOptions {
+
+    public ExportCrawledVersion() {}
 
     public ExportCrawledVersion(String endpoint, String verb, String[][] headers) {
-        this.endpoint = endpoint;
-        this.verb = verb;
-        this.headers = headers;
+        super(endpoint, verb, headers);
     }
-
-    public String getEndpoint() {
-        return endpoint;
-    }
-
-    public String getVerb() {
-        return verb;
-    }
-
-    public String[][] getHeaders() {
-        return headers;
-    }
-
 }
