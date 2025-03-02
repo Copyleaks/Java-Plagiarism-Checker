@@ -106,6 +106,10 @@ public class SubmissionProperties {
      * Upon detection a scan alert of type "suspected-ai-text" will be added to the scan completion webhook.
      */
     private SubmissionAIGeneratedText aiGeneratedText;
+    /**
+     * Enable automated Writing Assistant . This feature includes grammar checking, spell checking and sentence structure corrections.
+     */
+    private SubmissionWritingFeedback writingFeedback;
 
 
     public SubmissionAIGeneratedText getAiGeneratedText() {
@@ -114,6 +118,14 @@ public class SubmissionProperties {
 
     public void setAiGeneratedText(SubmissionAIGeneratedText aiGeneratedText) {
         this.aiGeneratedText = aiGeneratedText;
+    }
+
+    public SubmissionWritingFeedback getWritingFeedback() {
+        return writingFeedback;
+    }
+
+    public void setWritingFeedback(SubmissionWritingFeedback writingFeedback) {
+        this.writingFeedback = writingFeedback;
     }
 
     public SubmissionCustomMetadata getCustomMetadata() {
