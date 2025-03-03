@@ -20,24 +20,50 @@
 
 package models.exports;
 
-public class ExportResults extends ExportOptions {
+public class ExportResults {
     /**
-     * Result identification to be downloaded.
+     * Result identification to be downloaded. You get these identifications from the completed webhook.
+     * https://api.copyleaks.com/documentation/v3/webhooks/completed
      */
     private String id;
 
-    public ExportResults() {}
+    /**
+     * The HTTP url to upload the data.
+     */
+    private String endpoint;
+
+    /**
+     * The HTTP verb (also called "HTTP Methods") to upload the data to your specified endpoint.
+     */
+    private String verb;
+
+    /**
+     * List of headers to be submitted with the upload request. You may use this field to provide additional request headers, such as "Authorization" header.
+     * <p>
+     * Example: [["header-key1", "header-value1"], ["header-key2", "header-value2"]]
+     */
+    private String[][] headers = null;
 
     public ExportResults(String id, String endpoint, String verb, String[][] headers) {
-        super(endpoint, verb, headers);
         this.id = id;
+        this.endpoint = endpoint;
+        this.verb = verb;
+        this.headers = headers;
     }
 
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public String getEndpoint() {
+        return endpoint;
+    }
+
+    public String getVerb() {
+        return verb;
+    }
+
+    public String[][] getHeaders() {
+        return headers;
     }
 }
