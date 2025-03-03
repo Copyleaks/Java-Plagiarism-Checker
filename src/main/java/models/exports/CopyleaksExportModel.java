@@ -28,6 +28,8 @@ public class CopyleaksExportModel {
      * @param maxRetries How many retries to send before giving up. Using high value (12) may lead to a longer time until the completionWebhook being executed. A low value (1) may lead to errors while your service is temporary having problems.
      * @param developerPayload Add a custom developer payload that will then be provided on the Export-Completed webhook. https://api.copyleaks.com/documentation/v3/webhooks/export-completed
      * @param pdfReport Download the PDF report. Allowed only when `properties.pdf.create` was set to true on the scan submittion.
+     * @param aiDetection Export the AI Content detection report. Allowed only when properties.aiGeneratedText.detect was set to true on the scan submission.
+     * @param writingFeedback Export the Writing Assistant report. Allowed only when properties.writingFeedback.enable was set to true on the scan submission.
      */
     private String completionWebhook;
     private ExportResults[] results;
@@ -35,6 +37,8 @@ public class CopyleaksExportModel {
     private Integer maxRetries = null;
     private String developerPayload = null;
     private ExportPdfReport pdfReport = null;
+    private ExportAiDetection aiDetection = null;
+    private ExportWritingFeedback writingFeedback = null;
 
     public CopyleaksExportModel(String completionWebhook, ExportResults[] results, ExportCrawledVersion crawledVersion) {
         this.completionWebhook = completionWebhook;
@@ -80,5 +84,21 @@ public class CopyleaksExportModel {
 
     public void setPdfReport(ExportPdfReport pdfReport) {
         this.pdfReport = pdfReport;
+    }
+    
+    public ExportAiDetection getAiDetection() {
+        return aiDetection;
+    }
+
+    public void setAiDetection(ExportAiDetection aiDetection) {
+        this.aiDetection = aiDetection;
+    }
+
+    public ExportWritingFeedback getWritingFeedback() {
+        return writingFeedback;
+    }
+
+    public void setWritingFeedback(ExportWritingFeedback writingFeedback) {
+        this.writingFeedback = writingFeedback;
     }
 }
