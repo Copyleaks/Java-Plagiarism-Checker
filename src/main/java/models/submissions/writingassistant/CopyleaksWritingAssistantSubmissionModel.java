@@ -27,13 +27,16 @@ public class CopyleaksWritingAssistantSubmissionModel {
     private String text;
 
     /**
-     * Use sandbox mode to test your integration with the Copyleaks API without consuming any credits.
+     * Use sandbox mode to test your integration with the Copyleaks API without
+     * consuming any credits.
      */
     private boolean sandbox = false;
 
     /**
-     * The language code of your content. The selected language should be on the Supported Languages list above.
-     * If the 'language' field is not supplied , our system will automatically detect the language of the content.
+     * The language code of your content. The selected language should be on the
+     * Supported Languages list above.
+     * If the 'language' field is not supplied , our system will automatically
+     * detect the language of the content.
      */
     private String language;
 
@@ -43,7 +46,8 @@ public class CopyleaksWritingAssistantSubmissionModel {
         this.text = text;
     }
 
-    public CopyleaksWritingAssistantSubmissionModel(String text, boolean sandbox, String language, ScoreWeights scoreWeight) {
+    public CopyleaksWritingAssistantSubmissionModel(String text, boolean sandbox, String language,
+            ScoreWeights scoreWeight) {
         this.text = text;
         this.sandbox = sandbox;
         this.language = language;
