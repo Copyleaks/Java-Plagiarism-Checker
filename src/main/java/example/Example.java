@@ -26,8 +26,10 @@ import models.exceptions.AuthExpiredException;
 import models.exceptions.CommandException;
 import models.exceptions.RateLimitException;
 import models.exceptions.UnderMaintenanceException;
+import models.request.TextModeration.CopyleaksTextModerationRequest;
 import models.response.CopyleaksAuthToken;
 import models.response.aidetection.AIDetectionResponse;
+import models.response.textModeration.CopyleaksTextModerationResponseModel;
 import models.response.writingassitant.WritingAssistantResponse;
 import models.submissions.CopyleaksFileSubmissionModel;
 import models.submissions.aidetection.CopyleaksNaturalLanguageSubmissionModel;
@@ -48,7 +50,7 @@ public class Example {
     // Register on https://api.copyleaks.com and grab your secret key (from the dashboard page).
     private static final String EMAIL_ADDRESS = "YOUR@EMAIL.HERE";
     private static final String KEY = "00000000-0000-0000-0000-000000000000";
-
+    private static Gson gson=new Gson();
     public static void main(String[] args) {
         CopyleaksAuthToken token;
         try {
@@ -307,6 +309,42 @@ public class Example {
         // Wait while Copyleaks servers exporting artifacts...
         // Once process completed, you will get the "Export Completed" webhook.
         // Read more: https://api.copyleaks.com/documentation/v3/webhooks/export-completed
+        CopyleaksTextModerationRequest request = new CopyleaksTextModerationRequest(
+                /* text */ "This is some text to moderate.",
+                /* sandbox */ true,
+                /* language */ "en",
+                /* labels */ new Object[] { "HateSpeech", "Violence" });
+
+        CopyleaksTextModerationResponseModel textModerationResponse;
+        try {
+            textModerationResponse = Copyleaks.textModerationClient.submitText(token, scanId, request);
+        } catch (ParseException e) {
+            System.out.println(e.getMessage() + "\n");
+            e.printStackTrace();
+            return;
+        } catch (AuthExpiredException e) {
+            System.out.println(e.getMessage() + "\n");
+            e.printStackTrace();
+            return;
+        } catch (UnderMaintenanceException e) {
+            System.out.println(e.getMessage() + "\n");
+            e.printStackTrace();
+            return;
+        } catch (CommandException e) {
+            System.out.println(e.getMessage() + "\n");
+            e.printStackTrace();
+            return;
+        } catch (ExecutionException e) {
+            System.out.println(e.getMessage() + "\n");
+            e.printStackTrace();
+            return;
+        } catch (InterruptedException e) {
+            System.out.println(e.getMessage() + "\n");
+            e.printStackTrace();
+            return;
+        }
+        System.out.println("\nText scanned for Text Moderation.");
+        System.out.println("Text Moderation Response: " + gson.toJson(textModerationResponse));
     }
 
 
