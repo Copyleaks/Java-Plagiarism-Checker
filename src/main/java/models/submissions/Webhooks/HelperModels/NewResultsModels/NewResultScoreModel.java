@@ -21,6 +21,7 @@ package models.submissions.Webhooks.HelperModels.NewResultsModels;
 
 public class NewResultScoreModel {
 
+    /*The percentage of similar words from all results. The calculation does not include excluded references, quotations, etc... */
     private double aggregatedScore;
 
     public double getAggregatedScore() {

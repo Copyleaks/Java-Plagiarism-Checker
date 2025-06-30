@@ -21,6 +21,7 @@ package models.submissions.Webhooks.HelperModels.ResultsModels;
 
 public class BatchModel extends SharedResultsModel {
 
+    /*Tags object array*/
     private TagsModel[] tags;
 
     public TagsModel[] getTags() {

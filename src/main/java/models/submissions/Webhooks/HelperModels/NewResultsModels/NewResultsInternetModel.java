@@ -26,7 +26,6 @@ public class NewResultsInternetModel {
     private String title;
     private String introduction;
     private int matchedWords;
-    private String scanId;
     private MetadataModel metadata;
     private String url;
 
@@ -44,10 +43,6 @@ public class NewResultsInternetModel {
 
     public int getMatchedWords() {
         return matchedWords;
-    }
-
-    public String getScanId() {
-        return scanId;
     }
 
     public MetadataModel getMetadata() {

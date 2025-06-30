@@ -21,6 +21,7 @@ package models.submissions.Webhooks.HelperModels.BaseModels;
 
 public class WebhookModel {
 
+    /*The developer payload that was provided in the submit method. */
     private String developerPayload;
 
     public String getDeveloperPayload() {

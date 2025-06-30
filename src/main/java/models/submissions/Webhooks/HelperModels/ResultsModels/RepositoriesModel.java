@@ -21,7 +21,10 @@ package models.submissions.Webhooks.HelperModels.ResultsModels;
 
 public class RepositoriesModel extends SharedResultsModel {
 
+    /*The repository Id that has the result.*/
     private String repositoryId;
+
+    /*Tags object array*/
     private TagsModel[] tags;
 
     public String getRepositoryId() {

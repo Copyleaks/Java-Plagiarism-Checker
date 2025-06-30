@@ -21,15 +21,28 @@ package models.submissions.Webhooks.HelperModels.NotificationsModels;
 
 public class AlertsModel {
 
-    private String category;
+    /*Scan alert category. */
+    private int category;
+
+    /*Scan alert code. The code is unique for each scan alert. */
     private String code;
+    
+    /*Scan alert human-readable title. */
     private String title;
+    
+    /*Provides human-readable information about the scan alert. */
     private String message;
+    
+    /*Url to a resource describing the specific scan alert. */
     private String helpLink;
-    private String severity;
+    
+    /*Specifies the importance of the scan alert. */
+    private int severity;
+    
+    /*Additional data about the scan alert. Supplied as a json string. */
     private String additionalData;
 
-    public String getCategory() {
+    public int getCategory() {
         return category;
     }
 
@@ -49,7 +62,7 @@ public class AlertsModel {
         return helpLink;
     }
 
-    public String getSeverity() {
+    public int getSeverity() {
         return severity;
     }
 

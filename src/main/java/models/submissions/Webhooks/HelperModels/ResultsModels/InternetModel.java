@@ -23,6 +23,7 @@ import models.submissions.Webhooks.HelperModels.NewResultsModels.NewResultsInter
 
 public class InternetModel extends NewResultsInternetModel {
 
+    /*Tags object array*/
     private TagsModel[] tags;
 
     public TagsModel[] getTags() {

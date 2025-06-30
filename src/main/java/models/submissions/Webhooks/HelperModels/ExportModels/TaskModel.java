@@ -21,8 +21,13 @@ package models.submissions.Webhooks.HelperModels.ExportModels;
 
 public class TaskModel {
 
+    /*The endpoint address of the export task. */
     private String endpont;
+
+    /*This flag gives an indication whether the scan was completed without internal errors on the Copyleaks side. */
     private boolean isHealthy;
+
+    /*The status code reported by the customer servers. If the tasks.isHealthy is equal to false - this field will be null. */
     private int httpStatusCode;
 
     public String getEndpont() {

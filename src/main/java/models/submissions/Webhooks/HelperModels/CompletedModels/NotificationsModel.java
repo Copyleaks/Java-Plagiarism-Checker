@@ -24,6 +24,7 @@ import models.submissions.Webhooks.HelperModels.NotificationsModels.AlertsModel;
 
 public class NotificationsModel {
 
+    /*An array of scan alerts that were detected in the scan. */
     private AlertsModel[] alerts;
 
     public AlertsModel[] getAlerts() {

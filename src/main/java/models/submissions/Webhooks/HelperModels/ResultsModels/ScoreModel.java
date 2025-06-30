@@ -21,9 +21,16 @@ package models.submissions.Webhooks.HelperModels.ResultsModels;
 
 public class ScoreModel {
 
+    /*Number of words which matched exactly */
     private int identicalWords;
+
+    /*Number of nearly identical words with small differences like 'slow' and 'slowly'.*/
     private int minorChangedWords;
+    
+    /*Number of paraphrased words showing similar ideas with different words. */
     private int relatedMeaningWords;
+    
+    /*The percentage of similar words from all results. The calculation does not include excluded references, quotations, etc... */
     private float aggregatedScore;
 
     public int getIdenticalWords() {

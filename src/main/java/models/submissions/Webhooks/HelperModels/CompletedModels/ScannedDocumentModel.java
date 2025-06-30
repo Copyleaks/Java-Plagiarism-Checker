@@ -23,11 +23,22 @@ import models.submissions.Webhooks.HelperModels.BaseModels.MetadataModel;
 
 public class ScannedDocumentModel {
 
+     /*The unique scan id provided by you.*/
     private String scanId;
+
+    /*Total number of words found in the scanned text. */
     private int totalWords;
+
+    /*Number of excluded words in the submitted content. */
     private int totalExcluded;
+
+     /*Overall credits used for the scan. */
     private int credits;
+
+    /*The creation time of the scan. */
     private String creationTime;
+
+    /*Metadata object */
     private MetadataModel metadata;
 
     public String getScanId() {

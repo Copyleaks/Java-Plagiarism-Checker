@@ -23,6 +23,8 @@ import models.submissions.Webhooks.HelperModels.ResultsModels.RepositoryMetadata
 import models.submissions.Webhooks.HelperModels.ResultsModels.SharedResultsModel;
 
 public class NewResultsRepositoriesModel extends SharedResultsModel {
+    
+    /*The repository Id that has the result. */
     private String repositoryId;
 
     public String getRepositoryId() {

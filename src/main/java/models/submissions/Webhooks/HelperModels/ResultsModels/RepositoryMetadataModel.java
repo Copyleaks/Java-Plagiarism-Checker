@@ -22,6 +22,8 @@ package models.submissions.Webhooks.HelperModels.ResultsModels;
 import models.submissions.Webhooks.HelperModels.BaseModels.MetadataModel;
 
 public class RepositoryMetadataModel extends MetadataModel {
+    
+    /*Email of the user which added this document to the repository. */
     private String submittedBy;
 
     public String getSubmittedBy() {

@@ -21,6 +21,9 @@ package models.submissions.Webhooks.HelperModels.BaseModels;
 
 public class StatusWebhookModel extends WebhookModel {
 
+    /**
+     * The current status of the scan.
+     */
     private int status;
 
     public int getStatus() {

@@ -21,13 +21,45 @@ package models.submissions.Webhooks.HelperModels.BaseModels;
 
 public class MetadataModel {
 
+
+    /**
+     * The submitted URL after all HTTP redirects.
+     */
     private String finalUrl;
+
+    /**
+     * Extracted canonical URL from the scanned document.
+     */
     private String canonicalUrl;
+
+    /**
+     * Publication date of the scanned document.
+     */
     private String publishDate;
+
+    /**
+     * Creation date of the scanned document.
+     */
     private String creationDate;
+
+    /**
+     * Last modification date of the scanned document.
+     */
     private String lastModificationDate;
+
+    /**
+     * Scanned document author.
+     */
     private String author;
+
+    /**
+     * Scanned document organization.
+     */
     private String organization;
+
+    /**
+     * Scanned document filename.
+     */
     private String filename;
 
     public String getFinalUrl() {

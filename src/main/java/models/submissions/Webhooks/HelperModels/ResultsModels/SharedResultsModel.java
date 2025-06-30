@@ -23,11 +23,23 @@ import models.submissions.Webhooks.HelperModels.BaseModels.MetadataModel;
 
 public class SharedResultsModel {
 
+    /*Unique result ID to identify this result.*/
     private String id;
+    
+    /*Document title. Mostly extracted from the document content. */
     private String title;
+    
+    /*Document brief introduction. Mostly extracted from the document content. */
     private String introduction;
+    
+    /*Total matched words between this result and the scanned document. */
     private int matchedWords;
+    
+    /*In case a result was found in the Copyleaks internal database, and was submitted by you, this will show the scan id of the specific result. 
+    Otherwise, this field will remain empty. */
     private String scanId;
+    
+     /*Metdata object */
     private MetadataModel metadata;
 
     public String getId() {

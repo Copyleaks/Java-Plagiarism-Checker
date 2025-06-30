@@ -21,7 +21,10 @@ package models.submissions.Webhooks.HelperModels.ErrorModels;
 
 public class ErrorModel {
 
+    /*Error code that represents the reason for failure. See below the full error table. */
     private int code;
+    
+    /*Error message that represents the reason for failure. */
     private String message;
 
     public int getCode() {
