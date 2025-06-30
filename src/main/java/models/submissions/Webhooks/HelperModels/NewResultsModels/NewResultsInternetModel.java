@@ -22,11 +22,23 @@ package models.submissions.Webhooks.HelperModels.NewResultsModels;
 import models.submissions.Webhooks.HelperModels.BaseModels.MetadataModel;
 
 public class NewResultsInternetModel {
+
+    /*Unique result ID to identify the result. */
     private String id;
+
+    /*Document title. Mostly extracted from the document content. */
     private String title;
+
+    /*Document brief introduction. Mostly extracted from the document content. */
     private String introduction;
+
+    /*Total matched words between this result and the scanned document. */
     private int matchedWords;
+
+    /*Metadata object */
     private MetadataModel metadata;
+
+    /*Public URL of the resource. */
     private String url;
 
     public String getId() {
