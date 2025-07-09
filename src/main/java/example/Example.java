@@ -315,7 +315,18 @@ public class Example {
                 /* text */ "This is some text to moderate.",
                 /* sandbox */ true,
                 /* language */ "en",
-                /* labels */ new Object[] { "HateSpeech", "Violence" });
+                /* labels */ new Object[] {
+                            "other-v1" ,
+                            "adult-v1" ,
+                            "toxic-v1" ,
+                            "violent-v1" ,
+                            "profanity-v1", 
+                            "self-harm-v1", 
+                            "harassment-v1", 
+                            "hate-speech-v1", 
+                            "drugs-v1" ,
+                            "firearms-v1" ,
+                            "cybersecurity-v1" });
 
         CopyleaksTextModerationResponseModel textModerationResponse;
         try {
