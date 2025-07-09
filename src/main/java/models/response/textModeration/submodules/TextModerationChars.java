@@ -3,13 +3,24 @@ package models.response.textModeration.submodules;
 import java.util.Arrays;
 
 public class TextModerationChars {
-     private final int[] labels;
+    /**
+     * Predicted label index for the corresponding segment.
+     * The index can be resolved to its ID using the supplied legend.
+     */
+    private final int[] labels;
+
+    /**
+     * Start character position of the labelled segment.
+     */
     private final int[] starts;
+
+    /**
+     * Labelled segment character length.
+     */
     private final int[] lengths;
 
     public TextModerationChars(int[] labels,int[] starts,int[] lengths) {
         
-        // It's good practice to make defensive copies of arrays passed into an immutable object
         this.labels = (labels != null) ? Arrays.copyOf(labels, labels.length) : null;
         this.starts = (starts != null) ? Arrays.copyOf(starts, starts.length) : null;
         this.lengths = (lengths != null) ? Arrays.copyOf(lengths, lengths.length) : null;

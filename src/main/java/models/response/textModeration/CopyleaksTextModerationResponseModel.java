@@ -9,8 +9,20 @@ import models.response.textModeration.submodules.TextModerationScannedDocument;
 import models.response.textModeration.submodules.TextModerationsLegend;
 
 public class CopyleaksTextModerationResponseModel {
+    /**
+     * Moderated text segments detected in the input text.
+     */
     private final ModerationsModel moderations;
+
+    /**
+     * An array that provides a lookup for the labels referenced by their numerical indices in the text.chars.labels array.
+     * Each object within this legend array defines a specific label that was used in the scan.
+     */
     private final TextModerationsLegend[] legend;
+
+    /**
+     * General information about the scanned document.
+     */
     private final TextModerationScannedDocument scannedDocument;
 
     public CopyleaksTextModerationResponseModel(

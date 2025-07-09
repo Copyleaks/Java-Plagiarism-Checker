@@ -1,9 +1,12 @@
 package models.response.textModeration.submodules;
 
 public class ModerationsModel {
-      private final Text text; 
 
-    // Constructor to initialize the 'text' property
+    /**
+     * Moderated text segments corresponding to the submitted text. Each position in the inner arrays corresponds to a single segment in the textual version
+     */
+    private final Text text; 
+
     public ModerationsModel( Text text) {
 
         if (text == null) {
@@ -12,7 +15,6 @@ public class ModerationsModel {
         this.text = text;
     }
 
-    // Getter for the 'text' property
     public Text getText() {
         return text;
     }

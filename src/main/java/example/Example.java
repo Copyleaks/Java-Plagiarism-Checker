@@ -45,6 +45,8 @@ import java.util.Base64;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
+import com.google.gson.Gson;
+
 public class Example {
 
     // Register on https://api.copyleaks.com and grab your secret key (from the dashboard page).
