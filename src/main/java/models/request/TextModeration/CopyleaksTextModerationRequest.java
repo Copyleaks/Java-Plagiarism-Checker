@@ -61,6 +61,11 @@ public class CopyleaksTextModerationRequest {
         if (labels == null) {
             throw new IllegalArgumentException("Labels array must have at least 1 element");
         }
+        
+        if (labels.length > 32) {
+        throw new IllegalArgumentException("Labels array must not contain more than 32 elements");
+        }
+
         this.labels = labels;
     }
 
