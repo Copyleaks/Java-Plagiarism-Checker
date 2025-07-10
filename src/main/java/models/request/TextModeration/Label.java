@@ -18,24 +18,20 @@
  SOFTWARE.
 */
 
-package models.response.textModeration.submodules;
+package models.request.TextModeration;
 
-public class ModerationsModel {
-
+public class Label {
     /**
-     * Moderated text segments corresponding to the submitted text. Each position in the inner arrays corresponds to a single segment in the textual version
+     * Id of the label
      */
-    private final Text text; 
+    private String id;
 
-    public ModerationsModel( Text text) {
-
-        if (text == null) {
-            throw new IllegalArgumentException("Text cannot be null in ModerationsModel");
-        }
-        this.text = text;
+    public Label(String id) {
+        this.id = id;
     }
 
-    public Text getText() {
-        return text;
+    public String getId() {
+        return id;
     }
+
 }

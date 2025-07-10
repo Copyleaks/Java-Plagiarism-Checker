@@ -27,6 +27,8 @@ import models.exceptions.CommandException;
 import models.exceptions.RateLimitException;
 import models.exceptions.UnderMaintenanceException;
 import models.request.TextModeration.CopyleaksTextModerationRequest;
+import models.request.TextModeration.Label;
+import models.request.TextModeration.Label;
 import models.response.CopyleaksAuthToken;
 import models.response.aidetection.AIDetectionResponse;
 import models.response.textModeration.CopyleaksTextModerationResponseModel;
@@ -315,18 +317,19 @@ public class Example {
                 /* text */ "This is some text to moderate.",
                 /* sandbox */ true,
                 /* language */ "en",
-                /* labels */ new Object[] {
-                            "other-v1" ,
-                            "adult-v1" ,
-                            "toxic-v1" ,
-                            "violent-v1" ,
-                            "profanity-v1", 
-                            "self-harm-v1", 
-                            "harassment-v1", 
-                            "hate-speech-v1", 
-                            "drugs-v1" ,
-                            "firearms-v1" ,
-                            "cybersecurity-v1" });
+                        new Label[] {
+                            new Label("other-v1"),
+                            new Label("adult-v1"),
+                            new Label("toxic-v1"),
+                            new Label("violent-v1"),
+                            new Label("profanity-v1"),
+                            new Label("self-harm-v1"),
+                            new Label("harassment-v1"),
+                            new Label("hate-speech-v1"),
+                            new Label("drugs-v1"),
+                            new Label("firearms-v1"),
+                            new Label("cybersecurity-v1")
+                        });
 
         CopyleaksTextModerationResponseModel textModerationResponse;
         try {

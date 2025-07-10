@@ -20,26 +20,15 @@
 
 package classes.clients;
 
-import java.io.Console;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.security.KeyStore;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateFactory;
 import java.text.ParseException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManagerFactory;
-
 import com.google.gson.Gson;
-
 import classes.Consts;
 import helpers.CopyleaksClientHelper;
 import models.exceptions.AuthExpiredException;
