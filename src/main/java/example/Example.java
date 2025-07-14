@@ -56,6 +56,10 @@ public class Example {
     private static final String KEY = "00000000-0000-0000-0000-000000000000";
     private static Gson gson=new Gson();
     public static void main(String[] args) {
+
+        new Thread(() -> WebhookApplication.main(new String[] {})).start();
+        System.out.println("Press Ctrl+C to shutdown the server");
+        
         CopyleaksAuthToken token;
         try {
             token = Copyleaks.login(EMAIL_ADDRESS, KEY);
@@ -90,7 +94,9 @@ public class Example {
         String BASE64_FILE_CONTENT = Base64.getEncoder().encodeToString("Hello world".getBytes(StandardCharsets.UTF_8));
         String FILENAME = "hello.txt";
         String scanId = Integer.toString(getRandomNumberInRange(100, 100000));
-        SubmissionProperties submissionProperties = new SubmissionProperties(new SubmissionWebhooks("https://your.server/webhook?event={{STATUS}}"));
+        SubmissionWebhooks webhooks = new SubmissionWebhooks("https://your.server/webhook/{STATUS}");
+        webhooks.setNewResult("https://your.server/webhook/new-results");
+        SubmissionProperties submissionProperties = new SubmissionProperties(webhooks);
         submissionProperties.setSandbox(true); //Turn on sandbox mode. Turn off on production.
         CopyleaksFileSubmissionModel model = new CopyleaksFileSubmissionModel(BASE64_FILE_CONTENT, FILENAME, submissionProperties);
 

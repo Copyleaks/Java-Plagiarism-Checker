@@ -4,3 +4,4 @@ target/
 *.class
 release.properties
 pom.xml.releaseBackup
+.vs/
