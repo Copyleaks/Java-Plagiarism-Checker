@@ -144,7 +144,7 @@ public class Example {
         submissionProperties.setPdf(pdf);
 
         // Additional configuration options
-        submissionProperties.setAction(SubmissionActions.Scan); // 0 = Scan immediately
+        submissionProperties.setAction(SubmissionActions.Scan); 
         submissionProperties.setIncludeHtml(true); // Include HTML format in results
         submissionProperties.setSensitivityLevel(3); // Set plagiarism sensitivity (1-5)
         submissionProperties.setCheatDetection(true); // Enable cheat detection
