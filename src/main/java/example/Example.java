@@ -35,6 +35,13 @@ import models.response.writingassitant.WritingAssistantResponse;
 import models.submissions.CopyleaksFileSubmissionModel;
 import models.submissions.aidetection.CopyleaksNaturalLanguageSubmissionModel;
 import models.submissions.aidetection.CopyleaksSourceCodeSubmissionModel;
+import models.submissions.properties.SubmissionAIGeneratedText;
+import models.submissions.properties.SubmissionActions;
+import models.submissions.properties.SubmissionAiSourceMatch;
+import models.submissions.properties.SubmissionExplain;
+import models.submissions.properties.SubmissionIndexing;
+import models.submissions.properties.SubmissionOverview;
+import models.submissions.properties.SubmissionPDF;
 import models.submissions.properties.SubmissionProperties;
 import models.submissions.properties.SubmissionWebhooks;
 import models.submissions.writingassistant.CopyleaksWritingAssistantSubmissionModel;
@@ -87,17 +94,65 @@ public class Example {
         System.out.println("Logged successfully!\nToken:");
         System.out.print(token);
 
-        // This example is going to scan a FILE for plagiarism.
-        // Alternatively, you can scan a URL using the class `UrlDocument`.
-        System.out.println("Submitting a new file...");
         String BASE64_FILE_CONTENT = Base64.getEncoder().encodeToString("Hello world".getBytes(StandardCharsets.UTF_8));
         String FILENAME = "hello.txt";
         String scanId = Integer.toString(getRandomNumberInRange(100, 100000));
+
+        // Configure webhooks
         SubmissionWebhooks webhooks = new SubmissionWebhooks("https://your.server/webhook/{STATUS}");
         webhooks.setNewResult("https://your.server/webhook/new-results");
+
+        // Create submission properties with enhanced configuration
         SubmissionProperties submissionProperties = new SubmissionProperties(webhooks);
-        submissionProperties.setSandbox(true); //Turn on sandbox mode. Turn off on production.
+        submissionProperties.setSandbox(true); // Turn on sandbox mode. Turn off on production.
+
+        // Configure AI-generated text detection with new properties
+        SubmissionAIGeneratedText aiGeneratedText = new SubmissionAIGeneratedText();
+        aiGeneratedText.setDetect(true); // Enable AI detection
+        aiGeneratedText.setSensitivity(2); // Set sensitivity level (1-3, where 2 is default)
+
+        // Configure AI Logic feature (BETA)
+        SubmissionExplain explain = new SubmissionExplain();
+        explain.setEnable(true); // Enable AI Logic for detailed AI detection breakdown
+        aiGeneratedText.setExplain(explain);
+
+        submissionProperties.setAiGeneratedText(aiGeneratedText);
+
+        // Configure AI Source Match feature
+        SubmissionAiSourceMatch aiSourceMatch = new SubmissionAiSourceMatch();
+        aiSourceMatch.setEnable(true); // Enable AI Source Match to identify AI-generated sources
+        submissionProperties.setAiSourceMatch(aiSourceMatch);
+
+        // Configure Gen-AI Overview feature (BETA)
+        SubmissionOverview overview = new SubmissionOverview();
+        overview.setEnable(true); // Enable Gen-AI Overview for key insights
+        overview.setIgnoreAIDetection(false); // Include AI detection in overview
+        overview.setIgnorePlagiarismDetection(false); // Include plagiarism detection in overview
+        overview.setIgnoreWritingFeedback(false); // Include writing feedback in overview
+        overview.setIgnoreAuthorData(false); // Include author historical data in overview
+        submissionProperties.setOverview(overview);
+
+        // Configure indexing with Copyleaks database
+        SubmissionIndexing indexing = new SubmissionIndexing();
+        indexing.setCopyleaksDb(true);
+        submissionProperties.setIndexing(indexing);
+
+        // Configure PDF report settings
+        SubmissionPDF pdf = new SubmissionPDF();
+        pdf.setCreate(true); // Generate PDF report
+        pdf.setReportVersion("v2"); // Specify report version
+        submissionProperties.setPdf(pdf);
+
+        // Additional configuration options
+        submissionProperties.setAction(SubmissionActions.Scan); // 0 = Scan immediately
+        submissionProperties.setIncludeHtml(true); // Include HTML format in results
+        submissionProperties.setSensitivityLevel(3); // Set plagiarism sensitivity (1-5)
+        submissionProperties.setCheatDetection(true); // Enable cheat detection
+        submissionProperties.setDisplayLanguage("en"); // Set display language to English
+
+        // Create the submission model
         CopyleaksFileSubmissionModel model = new CopyleaksFileSubmissionModel(BASE64_FILE_CONTENT, FILENAME, submissionProperties);
+
 
         try {
             Copyleaks.submitFile(token, scanId, model);
