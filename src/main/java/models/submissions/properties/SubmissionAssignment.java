@@ -20,19 +20,13 @@
 
 package models.submissions.properties;
 
-public class SubmissionIndexing {
-    private SubmissionIndexingRepository[] repositories = null;
-    private Boolean copyleaksDb=false;
-    
-    public Boolean getCopyleaksDb() {
-        return copyleaksDb;
-    }
-    
-    public void setCopyleaksDb(Boolean copyleaksDb) {
-        this.copyleaksDb = copyleaksDb;
-    }
-    
-    public SubmissionIndexingRepository[] getRepositories() {
-        return repositories;
+public class SubmissionAssignment {
+    /**
+        A unique assignment identifier. Use the same ID to track analytics and gain insights at the assignment level.
+     */
+    private String id;
+
+    public String getId() {
+        return id;
     }
 }

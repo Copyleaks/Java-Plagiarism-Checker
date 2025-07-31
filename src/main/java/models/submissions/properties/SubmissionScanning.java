@@ -30,7 +30,11 @@ public class SubmissionScanning {
      * Check inner properties for more details.
      */
     private SubmissionScanningExclude exclude = null;
-
+    
+    /**
+     * Check inner properties for more details.
+     */
+    private SubmissionScanningInclude include = null;
     /**
      * Check inner properties for more details.
      */
@@ -63,6 +67,14 @@ public class SubmissionScanning {
         this.exclude = exclude;
     }
 
+    public SubmissionScanningInclude getInclude() {
+        return include;
+    }
+
+    public void setInclude(SubmissionScanningInclude include) {
+        this.include = include;
+    }
+    
     public SubmissionScanningRepository[] getRepositories() {
         return repositories;
     }

@@ -71,6 +71,18 @@ public class SubmissionProperties {
     /**
      * Check inner properties for more details.
      */
+    private SubmissionCourse course = null;
+    /**
+     * Check inner properties for more details.
+     */
+    private SubmissionAssignment assignment= null;
+    /**
+     * Check inner properties for more details.
+     */
+    private SubmissionInstitution institution= null;
+    /**
+     * Check inner properties for more details.
+     */
     private SubmissionFilter filters = null;
     /**
      * Check inner properties for more details.
@@ -93,6 +105,11 @@ public class SubmissionProperties {
      */
     private SubmissionSensitiveData sensitiveDataProtection = null;
     /**
+     * Specify the maximum life span of a scan in hours on the Copyleaks servers. When expired, the scan will be deleted and will no longer be accessible. 
+     * */
+    private Integer expiration = null; 
+
+    /**
      * Choose the algorithm goal. You can set this value depending on your use-case.
      */
     private SubmissionScanMethodAlgorithm scanMethodAlgorithm;
@@ -110,7 +127,45 @@ public class SubmissionProperties {
      * Enable automated Writing Assistant . This feature includes grammar checking, spell checking and sentence structure corrections.
      */
     private SubmissionWritingFeedback writingFeedback;
+    /**
+     * When specified, the PDF report will be generated in the selected language. 
+     * Future updates may also apply this setting to the overview and other components
+     */
+    private String displayLanguage;   
+    /**
+     * BETA - Enable Gen-AI Overview feature to extract key insights from the scan data.
+     * For further information, please check the Overview for a detailed breakdown of its structure and usage.
+     */
+    private SubmissionOverview overview;
+    /**
+     * The AI Source Match feature enhances plagiarism detection by identifying online sources that are suspected of containing AI-generated text. 
+     * This allows you to find instances of potential plagiarism and understand if the matched source content itself might have been created by an AI.
+     */
+    private SubmissionAiSourceMatch aiSourceMatch;
 
+        public SubmissionAiSourceMatch getAiSourceMatch() {
+        return aiSourceMatch;
+    }
+
+    public void setAiSourceMatch(SubmissionAiSourceMatch aiSourceMatch) {
+        this.aiSourceMatch = aiSourceMatch;
+    }
+
+    public SubmissionOverview getOverview() {
+        return overview;
+    }
+
+    public void setOverview(SubmissionOverview overview) {
+        this.overview = overview;
+    }
+
+    public String getDisplayLanguage() {
+        return displayLanguage;
+    }
+
+    public void setDisplayLanguage(String displayLanguage) {
+        this.displayLanguage = displayLanguage;
+    }
 
     public SubmissionAIGeneratedText getAiGeneratedText() {
         return aiGeneratedText;
@@ -143,7 +198,13 @@ public class SubmissionProperties {
     public void setScanMethodAlgorithm(SubmissionScanMethodAlgorithm scanMethodAlgorithm) {
         this.scanMethodAlgorithm = scanMethodAlgorithm;
     }
+    public Integer getExpiration() {
+        return expiration;
+    }
 
+    public void setExpiration(Integer expiration) {
+        this.expiration = expiration;
+    }
     public SubmissionProperties(SubmissionWebhooks webhooks) {
         this.webhooks = webhooks;
     }
@@ -218,6 +279,29 @@ public class SubmissionProperties {
 
     public void setAuthor(SubmissionAuthor author) {
         this.author = author;
+    }
+    public SubmissionCourse getCourse() {
+        return course;
+    }
+
+    public SubmissionAssignment getAssignment() {
+        return assignment;
+    }
+
+    public void setAssignment(SubmissionAssignment assignment) {
+        this.assignment = assignment;
+    }
+
+    public SubmissionInstitution getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(SubmissionInstitution institution) {
+        this.institution = institution;
+    }
+    
+    public void setCourse(SubmissionCourse course) {
+        this.course = course;
     }
 
     public SubmissionFilter getFilters() {

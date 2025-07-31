@@ -28,7 +28,6 @@ import models.exceptions.RateLimitException;
 import models.exceptions.UnderMaintenanceException;
 import models.request.TextModeration.CopyleaksTextModerationRequest;
 import models.request.TextModeration.Label;
-import models.request.TextModeration.Label;
 import models.response.CopyleaksAuthToken;
 import models.response.aidetection.AIDetectionResponse;
 import models.response.textModeration.CopyleaksTextModerationResponseModel;
