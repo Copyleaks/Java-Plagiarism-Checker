@@ -48,6 +48,10 @@ public class SubmissionPDF {
      * Customizable colors
      */
     private SubmissionPdfColors colors;
+    /**
+     * Specifies which version of the PDF report to generate. This property overrides the legacy version property if both are provided.
+     */
+    private String reportVersion;
 
     public boolean isCreate() {
         return create;
@@ -85,5 +89,12 @@ public class SubmissionPDF {
     public void setColors(SubmissionPdfColors colors) {
         this.colors = colors;
     }
-
+    public String getReportVersion() {
+        return reportVersion;
+    }
+    
+    public void setReportVersion(String reportVersion) {
+        this.reportVersion = reportVersion;
+    }
+  
 }

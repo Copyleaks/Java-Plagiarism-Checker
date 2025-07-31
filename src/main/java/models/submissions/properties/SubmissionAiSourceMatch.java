@@ -17,22 +17,20 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  SOFTWARE.
 */
-
 package models.submissions.properties;
 
-public class SubmissionIndexing {
-    private SubmissionIndexingRepository[] repositories = null;
-    private Boolean copyleaksDb=false;
-    
-    public Boolean getCopyleaksDb() {
-        return copyleaksDb;
+public class SubmissionAiSourceMatch {
+    /**
+     * Activates or deactivates the AI Source Match functionality.
+     */
+    private Boolean enable;
+
+    public Boolean getEnable() {
+        return enable;
     }
-    
-    public void setCopyleaksDb(Boolean copyleaksDb) {
-        this.copyleaksDb = copyleaksDb;
+
+    public void setEnable(Boolean enable) {
+        this.enable = enable;
     }
-    
-    public SubmissionIndexingRepository[] getRepositories() {
-        return repositories;
-    }
+
 }

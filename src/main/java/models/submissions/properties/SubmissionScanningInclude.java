@@ -20,19 +20,17 @@
 
 package models.submissions.properties;
 
-public class SubmissionIndexing {
-    private SubmissionIndexingRepository[] repositories = null;
-    private Boolean copyleaksDb=false;
-    
-    public Boolean getCopyleaksDb() {
-        return copyleaksDb;
-    }
-    
-    public void setCopyleaksDb(Boolean copyleaksDb) {
-        this.copyleaksDb = copyleaksDb;
-    }
-    
-    public SubmissionIndexingRepository[] getRepositories() {
-        return repositories;
+public class SubmissionScanningInclude {
+    /**
+    Includes results only if their scan id matches the supplied pattern. 
+    Matched submissions will be the only submissions Included from internal database and repositories results.
+    Supported pattern wildcards:
+    * : Matches any, zero or more, characters.
+    . : Matches a single (non whitespace) character.
+     */
+    private String idPattern = null;
+
+    public String getIdPattern() {
+        return idPattern;
     }
 }
