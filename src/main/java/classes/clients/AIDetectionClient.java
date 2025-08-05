@@ -30,6 +30,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
 import com.google.gson.Gson;
 import classes.Consts;
+import classes.DeprecationService;
 import helpers.CopyleaksClientHelper;
 import models.exceptions.AuthExpiredException;
 import models.exceptions.CommandException;
@@ -119,6 +120,8 @@ public class AIDetectionClient {
         assert authToken != null : "token is null";
         assert scanId != null : "scanId is null";
         assert submission != null : "submission is null";
+        
+        DeprecationService.showDeprecationMessage();
 
         CopyleaksClientHelper.verifyAuthToken(authToken);
 

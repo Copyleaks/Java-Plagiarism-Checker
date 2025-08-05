@@ -26,6 +26,7 @@ import com.google.gson.Gson;
 import classes.clients.AIDetectionClient;
 import classes.clients.TextModerationClient;
 import classes.clients.WritingAssistantClient;
+import models.constants.SupportedFilesTypes;
 import models.exceptions.AuthExpiredException;
 import models.exceptions.CommandException;
 import models.exceptions.RateLimitException;
@@ -45,6 +46,7 @@ import java.net.http.HttpResponse;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -145,6 +147,13 @@ public class Copyleaks {
         assert authToken != null : "token is null";
         assert scanId != null : "scanId is null";
         assert submission != null : "submission is null";
+        
+        // get file extension
+        String fileExtension = getFileExtension(submission.getFilename());
+        
+        if (Arrays.asList(SupportedFilesTypes.SUPPORTED_CODE_EXTENSIONS).contains(fileExtension)) {
+            DeprecationService.showDeprecationMessage();
+        }
 
         verifyAuthToken(authToken);
 
@@ -174,6 +183,32 @@ public class Copyleaks {
         finally{
             semaphore.release();
         }
+    }
+
+    /**
+     * Extracts the file extension from a given filename.
+     * 
+     * <p>This method returns the file extension without the dot separator,
+     * converted to lowercase for consistent comparison. If no extension is found
+     * or the filename is invalid, an empty string is returned.</p>
+     * 
+     * @param fileName the name of the file from which to extract the extension.
+     *                 Can be a simple filename or a full file path.
+     * @return the file extension in lowercase without the dot (e.g., "txt", "java", "pdf"),
+     *         or an empty string if no extension exists or the filename is null/empty
+     * 
+     * @throws NullPointerException if fileName is null (handled gracefully by returning empty string)
+     * **/
+    private static String getFileExtension(String fileName) {
+        if (fileName == null || fileName.isEmpty()) {
+            return "";
+        }
+        
+        int lastDotIndex = fileName.lastIndexOf('.');
+        if (lastDotIndex > 0 && lastDotIndex < fileName.length() - 1) {
+            return fileName.substring(lastDotIndex + 1).toLowerCase();
+        }
+        return "";
     }
 
     /**
