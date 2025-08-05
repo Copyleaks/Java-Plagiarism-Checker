@@ -150,6 +150,7 @@ public class Copyleaks {
         
         // get file extension
         String fileExtension = getFileExtension(submission.getFilename());
+        assert fileExtension != null : "fileExtension is null";
         
         if (Arrays.asList(SupportedFilesTypes.SUPPORTED_CODE_EXTENSIONS).contains(fileExtension)) {
             DeprecationService.showDeprecationMessage();
