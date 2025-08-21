@@ -4,7 +4,7 @@
 
     <groupId>com.copyleaks.sdk</groupId>
     <artifactId>copyleaks-java-sdk</artifactId>
-    <version>4.3.1</version>
+    <version>4.5.0</version>
     <dependencies>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -107,34 +107,6 @@
                     </checkModificationExcludes>
                 </configuration>
             </plugin>
-<plugin>
-    <groupId>org.codehaus.mojo</groupId>
-    <artifactId>exec-maven-plugin</artifactId>
-    <version>3.0.0</version>
-    <executions>
-        <execution>
-            <id>show-deprecation-notice</id>
-            <phase>validate</phase>
-            <goals>
-                <goal>exec</goal>
-            </goals>
-            <configuration>
-                <executable>bash</executable>
-                <arguments>
-                    <argument>-c</argument>
-                    <argument>
-                      echo -e "\033[33m================================================================"
-                      echo -e "\033[31m DEPRECATION NOTICE: ${project.artifactId} v${project.version}\033[33m"
-                      echo -e "================================================================"
-                      echo -e "AI Code Detection will be discontinued on August 29, 2025."
-                      echo -e "Please remove AI code detection integrations before the sunset date."
-                      echo -e "================================================================\033[0m"
-                    </argument>
-                </arguments>
-            </configuration>
-        </execution>
-    </executions>
-</plugin>
         </plugins>
     </build>
 
