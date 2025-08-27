@@ -34,7 +34,6 @@ import models.response.textModeration.CopyleaksTextModerationResponseModel;
 import models.response.writingassitant.WritingAssistantResponse;
 import models.submissions.CopyleaksFileSubmissionModel;
 import models.submissions.aidetection.CopyleaksNaturalLanguageSubmissionModel;
-import models.submissions.aidetection.CopyleaksSourceCodeSubmissionModel;
 import models.submissions.properties.SubmissionAIGeneratedText;
 import models.submissions.properties.SubmissionActions;
 import models.submissions.properties.SubmissionAiSourceMatch;
@@ -218,59 +217,6 @@ public class Example {
         }
         System.out.println("\nText scanned for AI detection.");
         System.out.println("AI Score: " + naturalLanguageAiDetectionResponse.getSummary().getAi());
-
-
-        // This example is going to scan source code for AI detection.
-        String sampleCode = "def add(a, b):\n" +
-        "    return a + b\n" +
-        "\n" +
-        "def multiply(a, b):\n" +
-        "    return a * b\n" +
-        "\n" +
-        "def main():\n" +
-        "    x = 5\n" +
-        "    y = 10\n" +
-        "    sum_result = add(x, y)\n" +
-        "    product_result = multiply(x, y)\n" +
-        "    print(f'Sum: {sum_result}')\n" +
-        "    print(f'Product: {product_result}')\n" +
-        "\n" +
-        "if __name__ == '__main__':\n" +
-        "    main()";
-
-        CopyleaksSourceCodeSubmissionModel sourceCodeSubmissionModel = new CopyleaksSourceCodeSubmissionModel(sampleCode, "sampleFile.py");
-        sourceCodeSubmissionModel.setSandbox(true);
-        AIDetectionResponse sourceCodeAiDetectionResponse;
-        try {
-            sourceCodeAiDetectionResponse = Copyleaks.aiDetectionClient.submitSourceCode(token, scanId, sourceCodeSubmissionModel);
-        } catch (ParseException e) {
-            System.out.println(e.getMessage() + "\n");
-            e.printStackTrace();
-            return;
-        } catch (AuthExpiredException e) {
-            System.out.println(e.getMessage() + "\n");
-            e.printStackTrace();
-            return;
-        } catch (UnderMaintenanceException e) {
-            System.out.println(e.getMessage() + "\n");
-            e.printStackTrace();
-            return;
-        } catch (CommandException e) {
-            System.out.println(e.getMessage() + "\n");
-            e.printStackTrace();
-            return;
-        } catch (ExecutionException e) {
-            System.out.println(e.getMessage() + "\n");
-            e.printStackTrace();
-            return;
-        } catch (InterruptedException e) {
-            System.out.println(e.getMessage() + "\n");
-            e.printStackTrace();
-            return;
-        }
-        System.out.println("\nText scanned for AI detection.");
-        System.out.println("AI Score: " + sourceCodeAiDetectionResponse.getSummary().getAi());
-
 
         // This example is going to text for writing feedback.
         String writingFeedbackText = "Lions are the only cat that live in groups, called pride. A prides typically consists of a few adult males, several feales, and their offspring. This social structure is essential for hunting and raising young cubs. Female lions, or lionesses are the primary hunters of the prid. They work together in cordinated groups to take down prey usually targeting large herbiores like zbras, wildebeest and buffalo. Their teamwork and strategy during hunts highlight the intelligence and coperation that are key to their survival.";
