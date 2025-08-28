@@ -22,6 +22,8 @@
 package example;
 
 import classes.Copyleaks;
+import models.constants.CopyleaksTextModerationConstants;
+import models.constants.CopyleaksTextModerationLanguages;
 import models.exceptions.AuthExpiredException;
 import models.exceptions.CommandException;
 import models.exceptions.RateLimitException;
@@ -322,19 +324,18 @@ public class Example {
         CopyleaksTextModerationRequest request = new CopyleaksTextModerationRequest(
                 /* text */ "This is some text to moderate.",
                 /* sandbox */ true,
-                /* language */ "en",
+                /* language */ CopyleaksTextModerationLanguages.ENGLISH,
                         new Label[] {
-                            new Label("other-v1"),
-                            new Label("adult-v1"),
-                            new Label("toxic-v1"),
-                            new Label("violent-v1"),
-                            new Label("profanity-v1"),
-                            new Label("self-harm-v1"),
-                            new Label("harassment-v1"),
-                            new Label("hate-speech-v1"),
-                            new Label("drugs-v1"),
-                            new Label("firearms-v1"),
-                            new Label("cybersecurity-v1")
+                            new Label(CopyleaksTextModerationConstants.ADULT_V1),
+                            new Label(CopyleaksTextModerationConstants.TOXIC_V1),
+                            new Label(CopyleaksTextModerationConstants.VIOLENT_V1),
+                            new Label(CopyleaksTextModerationConstants.PROFANITY_V1),
+                            new Label(CopyleaksTextModerationConstants.SELF_HARM_V1),
+                            new Label(CopyleaksTextModerationConstants.HARASSMENT_V1),
+                            new Label(CopyleaksTextModerationConstants.HATE_SPEECH_V1),
+                            new Label(CopyleaksTextModerationConstants.DRUGS_V1),
+                            new Label(CopyleaksTextModerationConstants.FIREARMS_V1),
+                            new Label(CopyleaksTextModerationConstants.CYBERSECURITY_V1)
                         });
 
         CopyleaksTextModerationResponseModel textModerationResponse;
