@@ -20,7 +20,7 @@
 
 package models.constants;
 /*
- * list of constants that can be sent as the language parameter at CopyleaksTextModerationRequest
+ * Supported languages for text moderation.
  */
 public final class CopyleaksTextModerationLanguages {
     public static final String ENGLISH = "en";

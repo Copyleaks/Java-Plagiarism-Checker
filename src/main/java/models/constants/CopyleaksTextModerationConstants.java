@@ -20,7 +20,7 @@
 
 package models.constants;
 /*
- * list of constants that can be sent in the labels array at CopyleaksTextModerationRequest
+ * Provides a collection of constants representing different text moderation categories supported by the CopyleaksText Moderation API.
  */
 public final class CopyleaksTextModerationConstants {
     public static final String ADULT_V1 = "adult-v1";
