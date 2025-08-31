@@ -174,23 +174,25 @@ public class ScanExample {
 
     public static void main(String[] args) {
 
-       CopyleaksTextModerationRequest request = new CopyleaksTextModerationRequest(
+        CopyleaksTextModerationLabel[] labelsArray = new CopyleaksTextModerationLabel[] {
+                            new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.ADULT_V1),
+                            new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.TOXIC_V1),
+                            new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.VIOLENT_V1),
+                            new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.PROFANITY_V1),
+                            new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.SELF_HARM_V1),
+                            new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.HARASSMENT_V1),
+                            new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.HATE_SPEECH_V1),
+                            new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.DRUGS_V1),
+                            new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.FIREARMS_V1),
+                            new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.CYBERSECURITY_V1)
+                        };
+
+        CopyleaksTextModerationRequest request = new CopyleaksTextModerationRequest(
                 /* text */ "This is some text to moderate.",
                 /* sandbox */ true,
-                /* language */ "en",
-                        new Label[] {
-                            new Label("adult-v1"),
-                            new Label("toxic-v1"),
-                            new Label("violent-v1"),
-                            new Label("profanity-v1"),
-                            new Label("self-harm-v1"),
-                            new Label("harassment-v1"),
-                            new Label("hate-speech-v1"),
-                            new Label("drugs-v1"),
-                            new Label("firearms-v1"),
-                            new Label("cybersecurity-v1")
-                        });
-
+                /* language */ CopyleaksTextModerationLanguages.ENGLISH,
+                /* labels */ labelsArray
+        );
         CopyleaksTextModerationResponseModel    textModerationResponse = Copyleaks.textModerationClient.submitText(token, scanId, request);
 
         System.out.println("\nText scanned for Text Moderation.");
