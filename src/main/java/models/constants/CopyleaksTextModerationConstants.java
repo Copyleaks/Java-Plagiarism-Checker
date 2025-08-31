@@ -18,29 +18,19 @@
  SOFTWARE.
 */
 
-package models.submissions.aidetection;
-
-public class CopyleaksSourceCodeSubmissionModel extends CopyleaksAIDetectionSubmissionModel {
-
-    /**
-     * The name of the file. Make sure to include the right extension for your file type.
-     */
-    private String filename;
-
-    public CopyleaksSourceCodeSubmissionModel(String text, String filename) {
-        this(text, false, filename);
-    }
-
-    public CopyleaksSourceCodeSubmissionModel(String text, boolean sandbox, String filename) {
-        super(text, sandbox);
-        this.filename = filename;
-    }
-
-    public String getFilename() {
-        return filename;
-    }
-
-    public void setFilename(String filename) {
-        this.filename = filename;
-    }
+package models.constants;
+/*
+ * Provides a collection of constants representing different text moderation categories supported by the CopyleaksText Moderation API.
+ */
+public final class CopyleaksTextModerationConstants {
+    public static final String ADULT_V1 = "adult-v1";
+    public static final String TOXIC_V1 = "toxic-v1";
+    public static final String VIOLENT_V1 = "violent-v1";
+    public static final String PROFANITY_V1 = "profanity-v1";
+    public static final String SELF_HARM_V1 = "self-harm-v1";
+    public static final String HARASSMENT_V1 = "harassment-v1";
+    public static final String HATE_SPEECH_V1 = "hate-speech-v1";
+    public static final String DRUGS_V1 = "drugs-v1";
+    public static final String FIREARMS_V1 = "firearms-v1";
+    public static final String CYBERSECURITY_V1 = "cybersecurity-v1";
 }

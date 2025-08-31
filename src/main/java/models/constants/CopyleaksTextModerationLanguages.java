@@ -11,7 +11,7 @@
  copies or substantial portions of the Software.
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
@@ -19,32 +19,9 @@
 */
 
 package models.constants;
-public class SupportedFilesTypes {
-    public static final String[] SUPPORTED_CODE_EXTENSIONS = new String[] {
-        "ts",
-        "py",
-        "go",
-        "cs",
-        "c",
-        "h",
-        "idc",
-        "cpp",
-        "hpp",
-        "c++",
-        "h++",
-        "cc",
-        "hh",
-        "java",
-        "js",
-        "swift",
-        "rb",
-        "pl",
-        "php",
-        "sh",
-        "m",
-        "scala",
-        "rs",
-        "vbs",
-        "css"
-    };
+/*
+ * Supported languages for text moderation.
+ */
+public final class CopyleaksTextModerationLanguages {
+    public static final String ENGLISH = "en";
 }

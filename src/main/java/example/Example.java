@@ -22,19 +22,20 @@
 package example;
 
 import classes.Copyleaks;
+import models.constants.CopyleaksTextModerationConstants;
+import models.constants.CopyleaksTextModerationLanguages;
 import models.exceptions.AuthExpiredException;
 import models.exceptions.CommandException;
 import models.exceptions.RateLimitException;
 import models.exceptions.UnderMaintenanceException;
 import models.request.TextModeration.CopyleaksTextModerationRequest;
-import models.request.TextModeration.Label;
+import models.request.TextModeration.CopyleaksTextModerationLabel;
 import models.response.CopyleaksAuthToken;
 import models.response.aidetection.AIDetectionResponse;
 import models.response.textModeration.CopyleaksTextModerationResponseModel;
 import models.response.writingassitant.WritingAssistantResponse;
 import models.submissions.CopyleaksFileSubmissionModel;
 import models.submissions.aidetection.CopyleaksNaturalLanguageSubmissionModel;
-import models.submissions.aidetection.CopyleaksSourceCodeSubmissionModel;
 import models.submissions.properties.SubmissionAIGeneratedText;
 import models.submissions.properties.SubmissionActions;
 import models.submissions.properties.SubmissionAiSourceMatch;
@@ -219,59 +220,6 @@ public class Example {
         System.out.println("\nText scanned for AI detection.");
         System.out.println("AI Score: " + naturalLanguageAiDetectionResponse.getSummary().getAi());
 
-
-        // This example is going to scan source code for AI detection.
-        String sampleCode = "def add(a, b):\n" +
-        "    return a + b\n" +
-        "\n" +
-        "def multiply(a, b):\n" +
-        "    return a * b\n" +
-        "\n" +
-        "def main():\n" +
-        "    x = 5\n" +
-        "    y = 10\n" +
-        "    sum_result = add(x, y)\n" +
-        "    product_result = multiply(x, y)\n" +
-        "    print(f'Sum: {sum_result}')\n" +
-        "    print(f'Product: {product_result}')\n" +
-        "\n" +
-        "if __name__ == '__main__':\n" +
-        "    main()";
-
-        CopyleaksSourceCodeSubmissionModel sourceCodeSubmissionModel = new CopyleaksSourceCodeSubmissionModel(sampleCode, "sampleFile.py");
-        sourceCodeSubmissionModel.setSandbox(true);
-        AIDetectionResponse sourceCodeAiDetectionResponse;
-        try {
-            sourceCodeAiDetectionResponse = Copyleaks.aiDetectionClient.submitSourceCode(token, scanId, sourceCodeSubmissionModel);
-        } catch (ParseException e) {
-            System.out.println(e.getMessage() + "\n");
-            e.printStackTrace();
-            return;
-        } catch (AuthExpiredException e) {
-            System.out.println(e.getMessage() + "\n");
-            e.printStackTrace();
-            return;
-        } catch (UnderMaintenanceException e) {
-            System.out.println(e.getMessage() + "\n");
-            e.printStackTrace();
-            return;
-        } catch (CommandException e) {
-            System.out.println(e.getMessage() + "\n");
-            e.printStackTrace();
-            return;
-        } catch (ExecutionException e) {
-            System.out.println(e.getMessage() + "\n");
-            e.printStackTrace();
-            return;
-        } catch (InterruptedException e) {
-            System.out.println(e.getMessage() + "\n");
-            e.printStackTrace();
-            return;
-        }
-        System.out.println("\nText scanned for AI detection.");
-        System.out.println("AI Score: " + sourceCodeAiDetectionResponse.getSummary().getAi());
-
-
         // This example is going to text for writing feedback.
         String writingFeedbackText = "Lions are the only cat that live in groups, called pride. A prides typically consists of a few adult males, several feales, and their offspring. This social structure is essential for hunting and raising young cubs. Female lions, or lionesses are the primary hunters of the prid. They work together in cordinated groups to take down prey usually targeting large herbiores like zbras, wildebeest and buffalo. Their teamwork and strategy during hunts highlight the intelligence and coperation that are key to their survival.";
         ScoreWeights scoreWeights = new ScoreWeights();
@@ -373,23 +321,25 @@ public class Example {
         // Wait while Copyleaks servers exporting artifacts...
         // Once process completed, you will get the "Export Completed" webhook.
         // Read more: https://api.copyleaks.com/documentation/v3/webhooks/export-completed
+        CopyleaksTextModerationLabel[] labelsArray = new CopyleaksTextModerationLabel[] {
+                            new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.ADULT_V1),
+                            new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.TOXIC_V1),
+                            new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.VIOLENT_V1),
+                            new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.PROFANITY_V1),
+                            new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.SELF_HARM_V1),
+                            new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.HARASSMENT_V1),
+                            new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.HATE_SPEECH_V1),
+                            new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.DRUGS_V1),
+                            new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.FIREARMS_V1),
+                            new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.CYBERSECURITY_V1)
+                        };
+
         CopyleaksTextModerationRequest request = new CopyleaksTextModerationRequest(
                 /* text */ "This is some text to moderate.",
                 /* sandbox */ true,
-                /* language */ "en",
-                        new Label[] {
-                            new Label("other-v1"),
-                            new Label("adult-v1"),
-                            new Label("toxic-v1"),
-                            new Label("violent-v1"),
-                            new Label("profanity-v1"),
-                            new Label("self-harm-v1"),
-                            new Label("harassment-v1"),
-                            new Label("hate-speech-v1"),
-                            new Label("drugs-v1"),
-                            new Label("firearms-v1"),
-                            new Label("cybersecurity-v1")
-                        });
+                /* language */ CopyleaksTextModerationLanguages.ENGLISH,
+                /* labels */ labelsArray
+        );
 
         CopyleaksTextModerationResponseModel textModerationResponse;
         try {

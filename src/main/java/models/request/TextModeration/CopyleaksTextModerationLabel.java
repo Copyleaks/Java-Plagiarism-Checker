@@ -20,13 +20,13 @@
 
 package models.request.TextModeration;
 
-public class Label {
+public class CopyleaksTextModerationLabel {
     /**
      * Id of the label
      */
     private String id;
 
-    public Label(String id) {
+    public CopyleaksTextModerationLabel(String id) {
         this.id = id;
     }
 
