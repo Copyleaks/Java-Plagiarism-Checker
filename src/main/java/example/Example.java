@@ -321,11 +321,7 @@ public class Example {
         // Wait while Copyleaks servers exporting artifacts...
         // Once process completed, you will get the "Export Completed" webhook.
         // Read more: https://api.copyleaks.com/documentation/v3/webhooks/export-completed
-        CopyleaksTextModerationRequest request = new CopyleaksTextModerationRequest(
-                /* text */ "This is some text to moderate.",
-                /* sandbox */ true,
-                /* language */ CopyleaksTextModerationLanguages.ENGLISH,
-                        new CopyleaksTextModerationLabel[] {
+        CopyleaksTextModerationLabel[] labelsArray = new CopyleaksTextModerationLabel[] {
                             new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.ADULT_V1),
                             new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.TOXIC_V1),
                             new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.VIOLENT_V1),
@@ -336,7 +332,14 @@ public class Example {
                             new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.DRUGS_V1),
                             new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.FIREARMS_V1),
                             new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.CYBERSECURITY_V1)
-                        });
+                        };
+
+        CopyleaksTextModerationRequest request = new CopyleaksTextModerationRequest(
+                /* text */ "This is some text to moderate.",
+                /* sandbox */ true,
+                /* language */ CopyleaksTextModerationLanguages.ENGLISH,
+                /* labels */ labelsArray
+        );
 
         CopyleaksTextModerationResponseModel textModerationResponse;
         try {
