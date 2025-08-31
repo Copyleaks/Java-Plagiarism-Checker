@@ -1,46 +1,213 @@
-# Copyleaks Java SDK
+# Copyleaks SDK
+The official [Copyleaks](https://copyleaks.com/) Java library, supporting Java versions:Java 11 or higher.
 
-Copyleaks SDK enables you to scan text for plagiarism and detect content distribution online, using the Copyleaks plagiarism checker API.
+## 🚀 Getting Started
+Before you start, ensure you have the following:
 
-Using Copyleaks SDK you can check for plagiarism in:
-* Online content and webpages
-* Local and cloud files (see [supported files](https://api.copyleaks.com/documentation/specifications#2-supported-file-types))
-* Free text
-* OCR (Optical Character Recognition) - scanning pictures with textual content (see [supported files](https://api.copyleaks.com/documentation/specifications#6-supported-image-types-ocr))
+*   An active Copyleaks account. If you don’t have one, [Sign up for free](https://copyleaks.com/signup).
+*   You can find your API key on the [API Dashboard](https://api.copyleaks.com/dashboard).
 
-## Installation
+Once you have your account and API key:
 
-Supported Java version: 11 and above.
+**Install the SDK**: 
 
-Download the code from this repository and add it to your project.
+Download the latest version from [Maven Central Repository](https://search.maven.org/artifact/com.copyleaks.sdk/copyleaks-java-sdk)
 
-OR
+## 📚 Documentation
+To learn more about how to use Copyleaks API please check out our [Documentation](https://docs.copyleaks.com/resources/sdks/java/). 
 
-Download the latest version from Maven Central Repository:
-https://search.maven.org/artifact/com.copyleaks.sdk/copyleaks-java-sdk
+## 💡 Usage Examples
+Here are some common usage examples for the Copyleaks SDK. You can also see a comprehensive code example in the `example.java` file on our GitHub repository: [example.java](https://github.com/Copyleaks/Java-Plagiarism-Checker/blob/master/src/main/java/example/Example.java).
 
-## Register and Get Your API Key
-To use the Copyleaks API you need to first be a registered user. Creating a Copyleaks account takes a minute and is free of charge. [Signup](https://api.copyleaks.com/?register=true) and make sure to confirm your account with the activation email.
+### Get Authentication Token
+This example demonstrates how to log in to the Copyleaks API and obtain an authentication token.
 
-As a registered user you can generate your personal API key. You can do so at your [dashboard home](https://api.copyleaks.com/dashboard) under 'API Access Credentials'.
+```java
+import classes.Copyleaks;
+import models.response.CopyleaksAuthToken;
 
-For more information check out our [API guide](https://api.copyleaks.com/documentation/v3).
+public class ScanExample {
+    // --- Your Credentials ---
+    private static final String EMAIL_ADDRESS = "YOUR_EMAIL_ADDRESS";
+    private static final String KEY = "YOUR_API_KEY";
+    private static final String WEBHOOK_URL = "[https://your-server.com/webhook/](https://your-server.com/webhook/){STATUS}";
+    // --------------------
 
-## Examples
-See the [Example.java](https://github.com/Copyleaks/Java-Plagiarism-Checker/blob/master/src/main/java/example/Example.java) file.
+    public static void main(String[] args) {
+        CopyleaksAuthToken token;
 
-* (Option) To change the Identity server URI (default:"https://id.copyleaks.com"):
-```rb
-Copyleaks.setIdentityUri("<your identity server uri>");
+        // Log in to the Copyleaks API
+        System.out.println("Authenticating...");
+        token = Copyleaks.login(EMAIL_ADDRESS, KEY);
+        System.out.println("✅ Logged in successfully!");
+    }
+}
 ```
-* (Option) To change the API server URI (default:"https://api.copyleaks.com"):
-```rb
-Copyleaks.setApiUri("<your api server uri>");
-```
-## Dependency
-* [Gson](https://github.com/google/gson)
+For a detailed understanding of the authentication process, refer to the Copyleaks Login Endpoint [Documentation](https://docs.copyleaks.com/reference/actions/account/login).
+##
+### Submit Text for Plagiarism Scan
+This example shows how to prepare and submit raw text content for a plagiarism scan.
 
-## Read More
-* [API Homepage](https://api.copyleaks.com/)
-* [API Documentation](https://api.copyleaks.com/documentation)
-* [Plagiarism Report](https://github.com/Copyleaks/plagiarism-report)
+```java
+import classes.Copyleaks;
+import models.submissions.CopyleaksFileSubmissionModel;
+import models.submissions.properties.SubmissionProperties;
+import models.submissions.properties.SubmissionWebhooks;
+
+public class ScanExample {
+    // --- Your Credentials ---
+    private static final String EMAIL_ADDRESS = "YOUR_EMAIL_ADDRESS";
+    private static final String KEY = "YOUR_API_KEY";
+    private static final String WEBHOOK_URL = "[https://your-server.com/webhook/](https://your-server.com/webhook/){STATUS}";
+    // --------------------
+
+    public static void main(String[] args) {
+        String BASE64_FILE_CONTENT = Base64.getEncoder().encodeToString("Hello world".getBytes(StandardCharsets.UTF_8));
+        String FILENAME = "hello.txt";
+        String scanId = Integer.toString(getRandomNumberInRange(100, 100000));
+
+        // Configure webhooks
+        SubmissionWebhooks webhooks = new SubmissionWebhooks("https://your.server/webhook/{STATUS}");
+        webhooks.setNewResult("https://your.server/webhook/new-results");
+
+        // Create submission properties with enhanced configuration
+        SubmissionProperties submissionProperties = new SubmissionProperties(webhooks);
+        submissionProperties.setSandbox(true); // Turn on sandbox mode. Turn off on production.
+
+        // Create the submission model
+        CopyleaksFileSubmissionModel model = new CopyleaksFileSubmissionModel(BASE64_FILE_CONTENT, FILENAME, submissionProperties);
+        Copyleaks.submitFile(token, scanId, model);
+       
+    }
+}
+```
+For a full guide please refer to our step by step [Guide](https://docs.copyleaks.com/guides/authenticity/detect-plagiarism-text)
+
+For a detailed understanding of the plagiarism detection process, refer to the Copyleaks Submit Endpoint [Documentation](https://docs.copyleaks.com/reference/actions/scans/submit-file)
+##
+### AI-Generated Text Detection
+Use the AI detection client to determine if content was generated by artificial intelligence.
+
+```java
+import classes.Copyleaks;
+import models.submissions.aidetection.CopyleaksNaturalLanguageSubmissionModel;
+import models.response.aidetection.AIDetectionResponse;
+
+public class ScanExample {
+    // --- Your Credentials ---
+    private static final String EMAIL_ADDRESS = "YOUR_EMAIL_ADDRESS";
+    private static final String KEY = "YOUR_API_KEY";
+    // --------------------
+
+    public static void main(String[] args) {
+        // This example is going to scan text for natural language AI detection.
+        String sampleText = "Lions are social animals, living in groups called prides, typically consisting of several females, their offspring, and a few males. Female lions are the primary hunters, working together to catch prey. Lions are known for their strength, teamwork, and complex social structures.";
+        
+        CopyleaksNaturalLanguageSubmissionModel naturalLanguageSubmissionModel = new CopyleaksNaturalLanguageSubmissionModel(sampleText);
+        naturalLanguageSubmissionModel.setSandbox(true);
+
+        AIDetectionResponse naturalLanguageAiDetectionResponse = Copyleaks.aiDetectionClient.submitNaturalLanguage(token, scanId, naturalLanguageSubmissionModel);
+
+        System.out.println("\nText scanned for AI detection.");
+        System.out.println("AI Score: " + naturalLanguageAiDetectionResponse.getSummary().getAi());
+    }
+}
+```
+For a full guide please refer to our step by step [Guide](https://docs.copyleaks.com/guides/ai-detector/ai-text-detection/)
+
+For a detailed understanding of the Ai detection process, refer to the Copyleaks detect natural language Endpoint [Documentation](https://docs.copyleaks.com/reference/actions/writer-detector/check/)
+##
+### Writing Assistant
+Get intelligent suggestions for improving grammar, spelling, style, and overall writing quality.
+
+```java
+import classes.Copyleaks;
+import models.submissions.writingassistant.ScoreWeights;
+import models.submissions.writingassistant.CopyleaksWritingAssistantSubmissionModel;
+import models.response.writingassitant.WritingAssistantResponse;
+
+public class ScanExample {
+    // --- Your Credentials ---
+    private static final String EMAIL_ADDRESS = "YOUR_EMAIL_ADDRESS";
+    private static final String KEY = "YOUR_API_KEY";
+    // --------------------
+
+    public static void main(String[] args) {
+        // This example is going to text for writing feedback.
+        String writingFeedbackText = "Lions are the only cat that live in groups, called pride. A prides typically consists of a few adult males, several feales, and their offspring. This social structure is essential for hunting and raising young cubs. Female lions, or lionesses are the primary hunters of the prid. They work together in cordinated groups to take down prey usually targeting large herbiores like zbras, wildebeest and buffalo. Their teamwork and strategy during hunts highlight the intelligence and coperation that are key to their survival.";
+        
+        ScoreWeights scoreWeights = new ScoreWeights();
+        scoreWeights.setGrammarScoreWeight(0.1);
+        scoreWeights.setMechanicsScoreWeight(0.2);
+        scoreWeights.setSentenceStructureScoreWeight(0.3);
+        scoreWeights.setWordChoiceScoreWeight(0.4);
+        
+        CopyleaksWritingAssistantSubmissionModel writingAssistantSubmissionModel = new CopyleaksWritingAssistantSubmissionModel(writingFeedbackText);
+        writingAssistantSubmissionModel.setScore(scoreWeights);
+        writingAssistantSubmissionModel.setSandbox(true);
+
+
+        WritingAssistantResponse writingAssistantResponse = Copyleaks.writingAssistantClient.submitText(token, scanId, writingAssistantSubmissionModel);
+
+        System.out.println("\nText scanned for AI detection.");
+        System.out.println("Grammer Score: " + writingAssistantResponse.getScore().getCorrections().getGrammarCorrectionsScore());
+    }
+}
+```
+For a full guide please refer to our step by step [Guide](https://docs.copyleaks.com/guides/writing/check-grammar/)
+
+For a detailed understanding of the Writing assistant process, refer to the Copyleaks writing feedback Endpoint [Documentation](https://docs.copyleaks.com/reference/actions/writing-assistant/check/)
+##
+### Text Moderation
+Scan and moderate text content for unsafe, inappropriate, or policy-violating material across various categories.
+
+```java
+import classes.Copyleaks;
+import models.request.TextModeration.CopyleaksTextModerationRequest;
+import models.response.textModeration.CopyleaksTextModerationResponseModel;
+
+public class ScanExample {
+    // --- Your Credentials ---
+    private static final String EMAIL_ADDRESS = "YOUR_EMAIL_ADDRESS";
+    private static final String KEY = "YOUR_API_KEY";
+    // --------------------
+
+    public static void main(String[] args) {
+
+       CopyleaksTextModerationRequest request = new CopyleaksTextModerationRequest(
+                /* text */ "This is some text to moderate.",
+                /* sandbox */ true,
+                /* language */ "en",
+                        new Label[] {
+                            new Label("adult-v1"),
+                            new Label("toxic-v1"),
+                            new Label("violent-v1"),
+                            new Label("profanity-v1"),
+                            new Label("self-harm-v1"),
+                            new Label("harassment-v1"),
+                            new Label("hate-speech-v1"),
+                            new Label("drugs-v1"),
+                            new Label("firearms-v1"),
+                            new Label("cybersecurity-v1")
+                        });
+
+        CopyleaksTextModerationResponseModel    textModerationResponse = Copyleaks.textModerationClient.submitText(token, scanId, request);
+
+        System.out.println("\nText scanned for Text Moderation.");
+        System.out.println("Text Moderation Response: " + gson.toJson(textModerationResponse));
+    }
+}
+```
+For a full guide please refer to our step by step [Guide](https://docs.copyleaks.com/guides/moderation/moderate-text/)
+
+For a detailed understanding of the Text moderation process, refer to the Copyleaks text moderation Endpoint [Documentation](https://docs.copyleaks.com/reference/actions/text-moderation/check/)
+##
+## Further Resources
+
+*   **Copyleaks API Dashboard:** Manage your API keys, monitor usage, and view analytics from your personalized dashboard. [Access Dashboard](https://api.copyleaks.com/dashboard)
+*   **Copyleaks SDK Documentation:** Explore comprehensive guides, API references, and code examples for seamless integration. [Read Documentation](https://docs.copyleaks.com/resources/sdks/overview/)
+
+
+## Support
+* If you need assistance, please contact Copyleaks Support via our support portal: Contact Copyleaks [Support](https://help.copyleaks.com/s/contactsupport).
+* To arrange a product demonstration, book a demo here: [Booking Link](https://copyleaks.com/book-a-demo).
