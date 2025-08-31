@@ -29,7 +29,7 @@ import models.exceptions.CommandException;
 import models.exceptions.RateLimitException;
 import models.exceptions.UnderMaintenanceException;
 import models.request.TextModeration.CopyleaksTextModerationRequest;
-import models.request.TextModeration.Label;
+import models.request.TextModeration.CopyleaksTextModerationLabel;
 import models.response.CopyleaksAuthToken;
 import models.response.aidetection.AIDetectionResponse;
 import models.response.textModeration.CopyleaksTextModerationResponseModel;
@@ -325,17 +325,17 @@ public class Example {
                 /* text */ "This is some text to moderate.",
                 /* sandbox */ true,
                 /* language */ CopyleaksTextModerationLanguages.ENGLISH,
-                        new Label[] {
-                            new Label(CopyleaksTextModerationConstants.ADULT_V1),
-                            new Label(CopyleaksTextModerationConstants.TOXIC_V1),
-                            new Label(CopyleaksTextModerationConstants.VIOLENT_V1),
-                            new Label(CopyleaksTextModerationConstants.PROFANITY_V1),
-                            new Label(CopyleaksTextModerationConstants.SELF_HARM_V1),
-                            new Label(CopyleaksTextModerationConstants.HARASSMENT_V1),
-                            new Label(CopyleaksTextModerationConstants.HATE_SPEECH_V1),
-                            new Label(CopyleaksTextModerationConstants.DRUGS_V1),
-                            new Label(CopyleaksTextModerationConstants.FIREARMS_V1),
-                            new Label(CopyleaksTextModerationConstants.CYBERSECURITY_V1)
+                        new CopyleaksTextModerationLabel[] {
+                            new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.ADULT_V1),
+                            new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.TOXIC_V1),
+                            new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.VIOLENT_V1),
+                            new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.PROFANITY_V1),
+                            new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.SELF_HARM_V1),
+                            new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.HARASSMENT_V1),
+                            new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.HATE_SPEECH_V1),
+                            new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.DRUGS_V1),
+                            new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.FIREARMS_V1),
+                            new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.CYBERSECURITY_V1)
                         });
 
         CopyleaksTextModerationResponseModel textModerationResponse;

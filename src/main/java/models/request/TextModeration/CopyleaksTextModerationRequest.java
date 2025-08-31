@@ -48,7 +48,7 @@ public class CopyleaksTextModerationRequest {
             String text,
             Boolean sandbox,
             String language,
-            Label[] labels) {
+            CopyleaksTextModerationLabel[] labels) {
 
         if (text == null) {
             throw new IllegalArgumentException("Text field is required!");
