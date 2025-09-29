@@ -6,7 +6,10 @@ import models.request.AiImageDetection.CopyleaksAiImageDetectionRequestModel;
 import models.response.CopyleaksAuthToken;
 import models.response.AiImageDetection.CopyleaksAiImageDetectionResponseModel;
 import com.google.gson.Gson;
-
+import static java.nio.file.Files.readAllBytes;
+import java.nio.file.Paths;
+import java.util.Base64;
+import java.io.IOException;
 /**
  * Example for submitting an image to Copyleaks AI Image Detection API.
  */
@@ -26,15 +29,15 @@ public class AiImageDetectionExample {
 
         // Read the image file into a byte array
         try {
-            imageBytes = java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(imagePath));
-        } catch (java.io.IOException e) {
+            imageBytes = readAllBytes(Paths.get(imagePath));
+        } catch (IOException e) {
             System.out.println("Failed to read image file: " + e.getMessage());
             e.printStackTrace();
             return;
         }
 
         // Encode the image as Base64
-        String base64Image = java.util.Base64.getEncoder().encodeToString(imageBytes);
+        String base64Image = Base64.getEncoder().encodeToString(imageBytes);
 
         // Create the image detection request model
         CopyleaksAiImageDetectionRequestModel imageDetectionRequest = new CopyleaksAiImageDetectionRequestModel(
