@@ -30,7 +30,6 @@ public class ScanExample {
     // --- Your Credentials ---
     private static final String EMAIL_ADDRESS = "YOUR_EMAIL_ADDRESS";
     private static final String KEY = "YOUR_API_KEY";
-    private static final String WEBHOOK_URL = "[https://your-server.com/webhook/](https://your-server.com/webhook/){STATUS}";
     // --------------------
 
     public static void main(String[] args) {
@@ -58,7 +57,7 @@ public class ScanExample {
     // --- Your Credentials ---
     private static final String EMAIL_ADDRESS = "YOUR_EMAIL_ADDRESS";
     private static final String KEY = "YOUR_API_KEY";
-    private static final String WEBHOOK_URL = "[https://your-server.com/webhook/](https://your-server.com/webhook/){STATUS}";
+    private static final String WEBHOOK_URL = "https://your-server.com/webhook/{STATUS}";
     // --------------------
 
     public static void main(String[] args) {
@@ -67,7 +66,7 @@ public class ScanExample {
         String scanId = Integer.toString(getRandomNumberInRange(100, 100000));
 
         // Configure webhooks
-        SubmissionWebhooks webhooks = new SubmissionWebhooks("https://your.server/webhook/{STATUS}");
+        SubmissionWebhooks webhooks = new SubmissionWebhooks(WEBHOOK_URL);
         webhooks.setNewResult("https://your.server/webhook/new-results");
 
         // Create submission properties with enhanced configuration
@@ -219,6 +218,7 @@ import static java.nio.file.Files.readAllBytes;
 import java.nio.file.Paths;
 import java.util.Base64;
 import java.io.IOException;
+import models.constants.CopyleaksAiImageDetectionModels;
 
 public class ScanExample {
     // --- Your Credentials ---
@@ -247,10 +247,11 @@ public class ScanExample {
         // Create the image detection request model
         CopyleaksAiImageDetectionRequestModel imageDetectionRequest = new CopyleaksAiImageDetectionRequestModel(
             base64Image,
-            "image-name",
-            "ai-image-1-ultra-01-09-2025",
+            "my-image.png",
+            CopyleaksAiImageDetectionModels.AI_IMAGE_1_ULTRA,
             true
         );
+        
         try {
             // Submit the image for AI detection
             CopyleaksAiImageDetectionResponseModel imageDetectionResponse = Copyleaks.aiImageDetectionClient.submit(token, scanId, imageDetectionRequest);

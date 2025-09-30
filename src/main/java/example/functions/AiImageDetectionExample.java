@@ -2,6 +2,7 @@
 package example.functions;
 
 import classes.Copyleaks;
+import models.constants.CopyleaksAiImageDetectionModels;
 import models.request.AiImageDetection.CopyleaksAiImageDetectionRequestModel;
 import models.response.CopyleaksAuthToken;
 import models.response.AiImageDetection.CopyleaksAiImageDetectionResponseModel;
@@ -42,8 +43,8 @@ public class AiImageDetectionExample {
         // Create the image detection request model
         CopyleaksAiImageDetectionRequestModel imageDetectionRequest = new CopyleaksAiImageDetectionRequestModel(
             base64Image,
-            "image-name",
-            "ai-image-1-ultra-01-09-2025",
+            "my-image.png",
+            CopyleaksAiImageDetectionModels.AI_IMAGE_1_ULTRA,
             true
         );
 
