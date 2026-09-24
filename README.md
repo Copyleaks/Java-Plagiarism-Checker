@@ -89,25 +89,48 @@ When AI text detection is enabled for a scan (`aiGeneratedText.detect`), the com
 
 ```java
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
 import models.response.aidetection.AIDetectionResponse;
 import models.response.aidetection.Result;
 import models.submissions.Webhooks.CompletedWebhookModel;
 
-// payload is the raw JSON body of the completed webhook
-CompletedWebhookModel completed = new Gson().fromJson(payload, CompletedWebhookModel.class);
+@RestController
+public class CompletedWebhookController {
 
-AIDetectionResponse aiResult = completed.getAIDetectionResult();
-if (aiResult != null) {
-    System.out.println("AI: " + aiResult.getSummary().getAi() + ", human: " + aiResult.getSummary().getHuman());
-    for (Result section : aiResult.getResults()) {
-        // classification: 1 = human-written, 2 = AI-generated
-        System.out.println("Classification: " + section.getClassification());
+    private static final Gson gson = new Gson();
+
+    @PostMapping("/webhook/completed")
+    public ResponseEntity<String> handleCompleted(@RequestBody String payload) {
+        CompletedWebhookModel completed = gson.fromJson(payload, CompletedWebhookModel.class);
+        try {
+            // null when the scan produced no AI alert or the alert has no data;
+            // throws JsonSyntaxException when additionalData is not valid JSON
+            AIDetectionResponse aiResult = completed.getAIDetectionResult();
+            if (aiResult != null && aiResult.getSummary() != null) {
+                System.out.println("AI: " + aiResult.getSummary().getAi() + ", human: " + aiResult.getSummary().getHuman());
+                if (aiResult.getResults() != null) {
+                    for (Result section : aiResult.getResults()) {
+                        // classification: 1 = human, 2 = AI
+                        System.out.println("Classification: " + section.getClassification());
+                    }
+                }
+            }
+        } catch (JsonSyntaxException e) {
+            System.err.println("Could not decode the AI alert: " + e.getMessage());
+        }
+        // Acknowledge the webhook even when the AI alert could not be decoded.
+        return ResponseEntity.ok("Completed webhook received");
     }
 }
 ```
+A missing AI alert means the scan produced no AI alert. It does not by itself prove that AI detection ran: check the scan's `aiGeneratedText.detect` setting and the other AI alert codes in `CopyleaksAlertCodes` (for example `AI_DETECTION_FAILED`, `AI_DETECTION_LANG_NOT_SUPPORTED` or `AI_DETECTION_TEXT_TOO_SHORT`).
 - `completed.getAIDetectionAlert()` returns the alert itself (`AlertsModel`), and `AlertsModel.getAdditionalData()` still returns the raw string.
-- A null result means the scan produced no AI alert, or the alert carried no data. It does not by itself prove that AI detection ran: check that `aiGeneratedText.detect` was set, and look for the other codes in `CopyleaksAlertCodes` (for example `AI_DETECTION_FAILED`).
-- Malformed `additionalData` throws Gson's `JsonSyntaxException`.
+- Malformed `additionalData` throws Gson's `JsonSyntaxException`. Valid JSON that is not an object gives null.
 
 For the alert fields, refer to the Copyleaks Scan Completed Webhook [Documentation](https://docs.copyleaks.com/reference/data-types/authenticity/webhooks/scan-completed)
 ##

@@ -52,6 +52,11 @@ public class CompletedWebhookModel extends StatusWebhookModel {
      * that AI detection ran: check that the submission set {@code aiGeneratedText.detect},
      * and look for the category 2 failure codes in {@link CopyleaksAlertCodes}
      * (for example {@link CopyleaksAlertCodes#AI_DETECTION_FAILED}).
+     * <p>
+     * This is a computed helper, not a wire field. When re-serializing the models with a
+     * bean-based serializer such as Jackson, exclude it (for example with a mix-in that
+     * marks it {@code @JsonIgnore}). The SDK itself uses Gson, which reads fields only
+     * and is unaffected.
      *
      * @return the first alert whose code is {@link CopyleaksAlertCodes#SUSPECTED_AI_TEXT},
      *         or null when there is none or the webhook has no notifications or alerts.
@@ -71,10 +76,15 @@ public class CompletedWebhookModel extends StatusWebhookModel {
     /**
      * Decodes the AI text detection result from the AI alert of this scan.
      * <p>
-     * A null result means the scan produced no AI alert, or the alert carried no data.
-     * It does not by itself prove that AI detection ran: check that the submission set
-     * {@code aiGeneratedText.detect}, and look for the category 2 failure codes in
-     * {@link CopyleaksAlertCodes}.
+     * A null result means the scan produced no AI alert, or the alert carried no data,
+     * or its data is JSON that is not an object. It does not by itself prove that AI
+     * detection ran: check that the submission set {@code aiGeneratedText.detect}, and
+     * look for the category 2 failure codes in {@link CopyleaksAlertCodes}.
+     * <p>
+     * This is a computed helper, not a wire field. When re-serializing the models with a
+     * bean-based serializer such as Jackson, exclude it (for example with a mix-in that
+     * marks it {@code @JsonIgnore}). The SDK itself uses Gson, which reads fields only
+     * and is unaffected.
      *
      * @return the result decoded by {@link AlertsModel#getAIDetectionResult()} for the alert
      *         returned by {@link #getAIDetectionAlert()}, or null.

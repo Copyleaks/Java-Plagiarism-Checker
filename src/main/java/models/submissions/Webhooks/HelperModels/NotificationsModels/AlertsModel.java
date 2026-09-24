@@ -20,6 +20,8 @@
 package models.submissions.Webhooks.HelperModels.NotificationsModels;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 import models.constants.CopyleaksAlertCodes;
 import models.response.aidetection.AIDetectionResponse;
@@ -88,12 +90,19 @@ public class AlertsModel {
      * {@link CopyleaksAlertCodes#SUSPECTED_AI_TEXT} alert.
      * <p>
      * The server sends {@code additionalData} as a JSON-encoded string. Trailing NUL
-     * characters and whitespace are removed before parsing. The string is parsed on
+     * (U+0000) characters and ASCII whitespace (tab, line feed, vertical tab, form feed,
+     * carriage return and space) are removed before parsing. The string is parsed on
      * every call. The raw value stays available through {@link #getAdditionalData()}.
+     * <p>
+     * This is a computed helper, not a wire field. When re-serializing the models with a
+     * bean-based serializer such as Jackson, exclude it (for example with a mix-in that
+     * marks it {@code @JsonIgnore}). The SDK itself uses Gson, which reads fields only
+     * and is unaffected.
      *
      * @return the decoded result, or null when this alert's code is not
-     *         {@link CopyleaksAlertCodes#SUSPECTED_AI_TEXT} or {@code additionalData}
-     *         is missing or empty.
+     *         {@link CopyleaksAlertCodes#SUSPECTED_AI_TEXT}, {@code additionalData}
+     *         is missing or empty, or it decodes to JSON that is not an object
+     *         (an array, number, string, boolean or null).
      * @throws com.google.gson.JsonSyntaxException if {@code additionalData} is not valid JSON.
      */
     public AIDetectionResponse getAIDetectionResult() {
@@ -103,7 +112,7 @@ public class AlertsModel {
         int end = additionalData.length();
         while (end > 0) {
             char c = additionalData.charAt(end - 1);
-            if (c != '\0' && !Character.isWhitespace(c)) {
+            if (c != '\u0000' && c != '\t' && c != '\n' && c != '\u000B' && c != '\f' && c != '\r' && c != ' ') {
                 break;
             }
             end--;
@@ -111,7 +120,11 @@ public class AlertsModel {
         if (end == 0) {
             return null;
         }
-        return Parser.GSON.fromJson(additionalData.substring(0, end), AIDetectionResponse.class);
+        JsonElement decoded = JsonParser.parseString(additionalData.substring(0, end));
+        if (!decoded.isJsonObject()) {
+            return null;
+        }
+        return Parser.GSON.fromJson(decoded, AIDetectionResponse.class);
     }
 
 }
