@@ -48,10 +48,7 @@ public class CompletedWebhookModel extends StatusWebhookModel {
     /**
      * Finds the AI text detection alert of this scan.
      * <p>
-     * A null result means the scan produced no AI alert. It does not by itself prove
-     * that AI detection ran: check that the submission set {@code aiGeneratedText.detect},
-     * and look for the category 2 failure codes in {@link CopyleaksAlertCodes}
-     * (for example {@link CopyleaksAlertCodes#AI_DETECTION_FAILED}).
+     * Returns null when the completed webhook contains no suspected-ai-text alert.
      * <p>
      * This is a computed helper, not a wire field. When re-serializing the models with a
      * bean-based serializer such as Jackson, exclude it (for example with a mix-in that
@@ -76,10 +73,8 @@ public class CompletedWebhookModel extends StatusWebhookModel {
     /**
      * Decodes the AI text detection result from the AI alert of this scan.
      * <p>
-     * A null result means the scan produced no AI alert, or the alert carried no data,
-     * or its data is JSON that is not an object. It does not by itself prove that AI
-     * detection ran: check that the submission set {@code aiGeneratedText.detect}, and
-     * look for the category 2 failure codes in {@link CopyleaksAlertCodes}.
+     * Returns null when the completed webhook contains no suspected-ai-text alert,
+     * or the alert carried no data, or its data is JSON that is not an object.
      * <p>
      * This is a computed helper, not a wire field. When re-serializing the models with a
      * bean-based serializer such as Jackson, exclude it (for example with a mix-in that

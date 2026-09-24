@@ -128,7 +128,7 @@ public class CompletedWebhookController {
     }
 }
 ```
-A missing AI alert means the scan produced no AI alert. It does not by itself prove that AI detection ran: check the scan's `aiGeneratedText.detect` setting and the other AI alert codes in `CopyleaksAlertCodes` (for example `AI_DETECTION_FAILED`, `AI_DETECTION_LANG_NOT_SUPPORTED` or `AI_DETECTION_TEXT_TOO_SHORT`).
+`completed.getAIDetectionResult()` returns null when the completed webhook contains no suspected-ai-text alert.
 - `completed.getAIDetectionAlert()` returns the alert itself (`AlertsModel`), and `AlertsModel.getAdditionalData()` still returns the raw string.
 - Malformed `additionalData` throws Gson's `JsonSyntaxException`. Valid JSON that is not an object gives null.
 

@@ -23,7 +23,6 @@ package models.constants;
 /**
  * Scan alert codes reported in {@code notifications.alerts[].code} of the completed webhook.
  * <p>
- * All codes listed here belong to alert category 2 (AI content detection).
  * Alert severity ranges from 0 (lowest) to 4 (highest); the {@link #SUSPECTED_AI_TEXT} alert has severity 4.
  */
 public final class CopyleaksAlertCodes {
@@ -33,24 +32,4 @@ public final class CopyleaksAlertCodes {
      * The alert's {@code additionalData} holds the AI text detection result as a JSON string.
      */
     public static final String SUSPECTED_AI_TEXT = "suspected-ai-text";
-
-    /**
-     * AI text detection failed for the scanned document.
-     */
-    public static final String AI_DETECTION_FAILED = "ai-detection-failed";
-
-    /**
-     * AI text detection was not run because the document language is not supported.
-     */
-    public static final String AI_DETECTION_LANG_NOT_SUPPORTED = "ai-detection-lang-not-supported";
-
-    /**
-     * AI text detection was not run because the text is too short.
-     */
-    public static final String AI_DETECTION_TEXT_TOO_SHORT = "ai-detection-text-too-short";
-
-    /**
-     * AI text detection was not run because the file type is not supported.
-     */
-    public static final String FILE_TYPE_NOT_SUPPORTED = "file-type-not-supported";
 }
