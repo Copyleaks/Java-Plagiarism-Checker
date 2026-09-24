@@ -19,10 +19,13 @@
 */
 package models.submissions.Webhooks;
 
+import models.constants.CopyleaksAlertCodes;
+import models.response.aidetection.AIDetectionResponse;
 import models.submissions.Webhooks.HelperModels.BaseModels.StatusWebhookModel;
 import models.submissions.Webhooks.HelperModels.CompletedModels.NotificationsModel;
 import models.submissions.Webhooks.HelperModels.CompletedModels.ResultsModel;
 import models.submissions.Webhooks.HelperModels.CompletedModels.ScannedDocumentModel;
+import models.submissions.Webhooks.HelperModels.NotificationsModels.AlertsModel;
 
 public class CompletedWebhookModel extends StatusWebhookModel {
 
@@ -40,6 +43,46 @@ public class CompletedWebhookModel extends StatusWebhookModel {
 
     public ScannedDocumentModel getScannedDocument() {
         return scannedDocument;
+    }
+
+    /**
+     * Finds the AI text detection alert of this scan.
+     * <p>
+     * A null result means the scan produced no AI alert. It does not by itself prove
+     * that AI detection ran: check that the submission set {@code aiGeneratedText.detect},
+     * and look for the category 2 failure codes in {@link CopyleaksAlertCodes}
+     * (for example {@link CopyleaksAlertCodes#AI_DETECTION_FAILED}).
+     *
+     * @return the first alert whose code is {@link CopyleaksAlertCodes#SUSPECTED_AI_TEXT},
+     *         or null when there is none or the webhook has no notifications or alerts.
+     */
+    public AlertsModel getAIDetectionAlert() {
+        if (notifications == null || notifications.getAlerts() == null) {
+            return null;
+        }
+        for (AlertsModel alert : notifications.getAlerts()) {
+            if (alert != null && CopyleaksAlertCodes.SUSPECTED_AI_TEXT.equals(alert.getCode())) {
+                return alert;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Decodes the AI text detection result from the AI alert of this scan.
+     * <p>
+     * A null result means the scan produced no AI alert, or the alert carried no data.
+     * It does not by itself prove that AI detection ran: check that the submission set
+     * {@code aiGeneratedText.detect}, and look for the category 2 failure codes in
+     * {@link CopyleaksAlertCodes}.
+     *
+     * @return the result decoded by {@link AlertsModel#getAIDetectionResult()} for the alert
+     *         returned by {@link #getAIDetectionAlert()}, or null.
+     * @throws com.google.gson.JsonSyntaxException if the alert's {@code additionalData} is not valid JSON.
+     */
+    public AIDetectionResponse getAIDetectionResult() {
+        AlertsModel alert = getAIDetectionAlert();
+        return alert == null ? null : alert.getAIDetectionResult();
     }
 
 }

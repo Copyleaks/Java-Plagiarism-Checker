@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
 
+import models.response.aidetection.AIDetectionResponse;
 import models.submissions.Webhooks.CompletedWebhookModel;
 import models.submissions.Webhooks.CreditsCheckedWebhookModel;
 import models.submissions.Webhooks.ErrorWebhookModel;
@@ -43,6 +44,12 @@ public class WebhookController {
         CompletedWebhookModel completedData = gson.fromJson(payload, CompletedWebhookModel.class);
         System.out
                 .println("Scan completed with creation time: " + completedData.getScannedDocument().getCreationTime());
+
+        // AI text detection result from the "suspected-ai-text" alert; null when the scan raised no AI alert.
+        AIDetectionResponse aiDetectionResult = completedData.getAIDetectionResult();
+        if (aiDetectionResult != null && aiDetectionResult.getSummary() != null) {
+            System.out.println("AI text detected. AI score: " + aiDetectionResult.getSummary().getAi());
+        }
         return "Completed webhook received";
     }
 

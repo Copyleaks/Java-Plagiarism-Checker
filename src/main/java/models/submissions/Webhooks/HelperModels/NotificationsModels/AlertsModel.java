@@ -19,7 +19,15 @@
 */
 package models.submissions.Webhooks.HelperModels.NotificationsModels;
 
+import com.google.gson.Gson;
+
+import models.constants.CopyleaksAlertCodes;
+import models.response.aidetection.AIDetectionResponse;
+
 public class AlertsModel {
+
+    /* Parser for additionalData. Static fields are not (de)serialized by Gson. */
+    private static final Gson GSON = new Gson();
 
     /*Scan alert category. */
     private int category;
@@ -68,6 +76,37 @@ public class AlertsModel {
 
     public String getAdditionalData() {
         return additionalData;
+    }
+
+    /**
+     * Decodes the AI text detection result carried by a
+     * {@link CopyleaksAlertCodes#SUSPECTED_AI_TEXT} alert.
+     * <p>
+     * The server sends {@code additionalData} as a JSON-encoded string. Trailing NUL
+     * characters and whitespace are removed before parsing. The string is parsed on
+     * every call. The raw value stays available through {@link #getAdditionalData()}.
+     *
+     * @return the decoded result, or null when this alert's code is not
+     *         {@link CopyleaksAlertCodes#SUSPECTED_AI_TEXT} or {@code additionalData}
+     *         is missing or empty.
+     * @throws com.google.gson.JsonSyntaxException if {@code additionalData} is not valid JSON.
+     */
+    public AIDetectionResponse getAIDetectionResult() {
+        if (!CopyleaksAlertCodes.SUSPECTED_AI_TEXT.equals(code) || additionalData == null) {
+            return null;
+        }
+        int end = additionalData.length();
+        while (end > 0) {
+            char c = additionalData.charAt(end - 1);
+            if (c != '\0' && !Character.isWhitespace(c)) {
+                break;
+            }
+            end--;
+        }
+        if (end == 0) {
+            return null;
+        }
+        return GSON.fromJson(additionalData.substring(0, end), AIDetectionResponse.class);
     }
 
 }
