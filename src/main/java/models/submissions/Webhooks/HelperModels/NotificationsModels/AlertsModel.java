@@ -19,9 +19,13 @@
 */
 package models.submissions.Webhooks.HelperModels.NotificationsModels;
 
+import java.io.IOException;
+import java.io.StringReader;
+
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
 
 import models.constants.CopyleaksAlertCodes;
 import models.response.aidetection.AIDetectionResponse;
@@ -120,11 +124,20 @@ public class AlertsModel {
         if (end == 0) {
             return null;
         }
-        JsonElement decoded = JsonParser.parseString(additionalData.substring(0, end));
-        if (!decoded.isJsonObject()) {
+        String json = additionalData.substring(0, end);
+        try {
+            JsonReader reader = new JsonReader(new StringReader(json));
+            if (reader.peek() == JsonToken.BEGIN_OBJECT) {
+                return Parser.GSON.fromJson(json, AIDetectionResponse.class);
+            }
+            reader.skipValue();
+            if (reader.peek() != JsonToken.END_DOCUMENT) {
+                throw new JsonSyntaxException("Unexpected content after the JSON value in additionalData");
+            }
             return null;
+        } catch (IOException e) {
+            throw new JsonSyntaxException(e);
         }
-        return Parser.GSON.fromJson(decoded, AIDetectionResponse.class);
     }
 
 }
