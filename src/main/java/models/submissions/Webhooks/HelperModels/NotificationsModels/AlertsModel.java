@@ -26,8 +26,13 @@ import models.response.aidetection.AIDetectionResponse;
 
 public class AlertsModel {
 
-    /* Parser for additionalData. Static fields are not (de)serialized by Gson. */
-    private static final Gson GSON = new Gson();
+    /*
+     Parser for additionalData. It is kept in a nested holder, not in a field of this model,
+     so a caller's Gson that does not exclude static fields can still (de)serialize the model.
+    */
+    private static final class Parser {
+        static final Gson GSON = new Gson();
+    }
 
     /*Scan alert category. */
     private int category;
@@ -106,7 +111,7 @@ public class AlertsModel {
         if (end == 0) {
             return null;
         }
-        return GSON.fromJson(additionalData.substring(0, end), AIDetectionResponse.class);
+        return Parser.GSON.fromJson(additionalData.substring(0, end), AIDetectionResponse.class);
     }
 
 }
