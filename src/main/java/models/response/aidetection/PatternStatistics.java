@@ -22,38 +22,43 @@ package models.response.aidetection;
 
 import java.util.List;
 
-import com.google.gson.annotations.SerializedName;
-
-public class Words {
+/**
+ * Per-pattern statistics of an AI Logic explanation. All lists match the patterns by index.
+ */
+public class PatternStatistics {
     /**
-     * Start positions, in words.
-     * Also read from the PascalCase key {@code Starts} sent by sandbox scans.
+     * How often each pattern appears in AI-generated text.
      */
-    @SerializedName(value = "starts", alternate = {"Starts"})
-    private List<Integer> starts;
-
-    /**
-     * Lengths, in words, matching {@code starts} by index.
-     * Also read from the PascalCase key {@code Lengths} sent by sandbox scans.
-     */
-    @SerializedName(value = "lengths", alternate = {"Lengths"})
-    private List<Integer> lengths;
+    private List<Double> aiCount;
 
     /**
-     * HTML group identifiers, matching {@code starts} by index.
-     * Present only for HTML positions; otherwise null.
+     * How often each pattern appears in human-written text.
      */
-    private List<Integer> groupIds;
+    private List<Double> humanCount;
 
-    public List<Integer> getStarts() {
-        return starts;
+    /**
+     * Ratio between the AI and human frequencies of each pattern.
+     */
+    private List<Double> proportion;
+
+    /**
+     * Source of each pattern: 1 = AI, 2 = humanizer.
+     */
+    private List<Integer> source;
+
+    public List<Double> getAiCount() {
+        return aiCount;
     }
 
-    public List<Integer> getLengths() {
-        return lengths;
+    public List<Double> getHumanCount() {
+        return humanCount;
     }
 
-    public List<Integer> getGroupIds() {
-        return groupIds;
+    public List<Double> getProportion() {
+        return proportion;
+    }
+
+    public List<Integer> getSource() {
+        return source;
     }
 }

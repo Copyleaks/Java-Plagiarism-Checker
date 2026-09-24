@@ -18,42 +18,18 @@
  SOFTWARE.
 */
 
-package models.response.aidetection;
+package models.constants;
 
-import java.util.List;
-
-import com.google.gson.annotations.SerializedName;
-
-public class Words {
-    /**
-     * Start positions, in words.
-     * Also read from the PascalCase key {@code Starts} sent by sandbox scans.
-     */
-    @SerializedName(value = "starts", alternate = {"Starts"})
-    private List<Integer> starts;
+/**
+ * Scan alert codes reported in {@code notifications.alerts[].code} of the completed webhook.
+ * <p>
+ * Alert severity ranges from 0 (lowest) to 4 (highest); the {@link #SUSPECTED_AI_TEXT} alert has severity 4.
+ */
+public final class CopyleaksAlertCodes {
 
     /**
-     * Lengths, in words, matching {@code starts} by index.
-     * Also read from the PascalCase key {@code Lengths} sent by sandbox scans.
+     * AI-generated text was detected in the scanned document.
+     * The alert's {@code additionalData} holds the AI text detection result as a JSON string.
      */
-    @SerializedName(value = "lengths", alternate = {"Lengths"})
-    private List<Integer> lengths;
-
-    /**
-     * HTML group identifiers, matching {@code starts} by index.
-     * Present only for HTML positions; otherwise null.
-     */
-    private List<Integer> groupIds;
-
-    public List<Integer> getStarts() {
-        return starts;
-    }
-
-    public List<Integer> getLengths() {
-        return lengths;
-    }
-
-    public List<Integer> getGroupIds() {
-        return groupIds;
-    }
+    public static final String SUSPECTED_AI_TEXT = "suspected-ai-text";
 }

@@ -47,6 +47,25 @@ public class AIDetectionResponse {
      */
     private ScannedDocument scannedDocument;
 
+    /**
+     * Identifier of the machine-translation provider used before detection.
+     * 0 means the text was not translated.
+     * Sent in the AI alert of the completed webhook; null when absent.
+     */
+    private Integer translationProvider;
+
+    /**
+     * The full text after machine translation to English.
+     * Present only when the text was translated; otherwise null.
+     */
+    private String translation;
+
+    /**
+     * AI Logic explanation of the detected patterns.
+     * Present only when explain (AI Logic) was enabled; otherwise null.
+     */
+    private Explain explain;
+
     public String getScanType() {
         return scanType;
     }
@@ -65,5 +84,17 @@ public class AIDetectionResponse {
 
     public ScannedDocument getScannedDocument() {
         return scannedDocument;
+    }
+
+    public Integer getTranslationProvider() {
+        return translationProvider;
+    }
+
+    public String getTranslation() {
+        return translation;
+    }
+
+    public Explain getExplain() {
+        return explain;
     }
 }

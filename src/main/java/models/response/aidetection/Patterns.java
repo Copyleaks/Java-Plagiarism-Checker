@@ -20,40 +20,36 @@
 
 package models.response.aidetection;
 
-import java.util.List;
-
-import com.google.gson.annotations.SerializedName;
-
-public class Words {
+/**
+ * Patterns found by AI Logic, with their statistics and positions.
+ */
+public class Patterns {
     /**
-     * Start positions, in words.
-     * Also read from the PascalCase key {@code Starts} sent by sandbox scans.
+     * Statistics for each pattern, matching the pattern positions by index.
      */
-    @SerializedName(value = "starts", alternate = {"Starts"})
-    private List<Integer> starts;
+    private PatternStatistics statistics;
 
     /**
-     * Lengths, in words, matching {@code starts} by index.
-     * Also read from the PascalCase key {@code Lengths} sent by sandbox scans.
+     * Positions of the patterns in the plain text of the document.
+     * {@code chars} may be null; {@code words} is always sent.
      */
-    @SerializedName(value = "lengths", alternate = {"Lengths"})
-    private List<Integer> lengths;
+    private Text text;
 
     /**
-     * HTML group identifiers, matching {@code starts} by index.
-     * Present only for HTML positions; otherwise null.
+     * Positions of the patterns in the HTML version of the document.
+     * Present only for HTML sources; otherwise null.
      */
-    private List<Integer> groupIds;
+    private Text html;
 
-    public List<Integer> getStarts() {
-        return starts;
+    public PatternStatistics getStatistics() {
+        return statistics;
     }
 
-    public List<Integer> getLengths() {
-        return lengths;
+    public Text getText() {
+        return text;
     }
 
-    public List<Integer> getGroupIds() {
-        return groupIds;
+    public Text getHtml() {
+        return html;
     }
 }

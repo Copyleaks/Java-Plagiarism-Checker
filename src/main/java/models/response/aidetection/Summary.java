@@ -20,8 +20,21 @@
 
 package models.response.aidetection;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Summary {
+    /**
+     * Share of the text classified as human-written. Range: 0.0-1.0.
+     * Also read from the PascalCase key {@code Human} sent by sandbox scans.
+     */
+    @SerializedName(value = "human", alternate = {"Human"})
     private double human;
+
+    /**
+     * Share of the text classified as AI-generated. Range: 0.0-1.0.
+     * Also read from the PascalCase key {@code Ai} sent by sandbox scans.
+     */
+    @SerializedName(value = "ai", alternate = {"Ai"})
     private double ai;
 
     public double getHuman() {
