@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
+import models.response.aidetection.AIDetectionResponse;
 import models.submissions.Webhooks.CompletedWebhookModel;
 import models.submissions.Webhooks.CreditsCheckedWebhookModel;
 import models.submissions.Webhooks.ErrorWebhookModel;
@@ -43,6 +45,17 @@ public class WebhookController {
         CompletedWebhookModel completedData = gson.fromJson(payload, CompletedWebhookModel.class);
         System.out
                 .println("Scan completed with creation time: " + completedData.getScannedDocument().getCreationTime());
+
+        // AI text detection result from the "suspected-ai-text" alert; null when the scan raised no AI alert.
+        // Catch the parse error so the webhook is still acknowledged when the alert data is malformed.
+        try {
+            AIDetectionResponse aiDetectionResult = completedData.getAIDetectionResult();
+            if (aiDetectionResult != null && aiDetectionResult.getSummary() != null) {
+                System.out.println("AI text detected. AI score: " + aiDetectionResult.getSummary().getAi());
+            }
+        } catch (JsonSyntaxException e) {
+            System.out.println("Could not decode the AI alert data: " + e.getMessage());
+        }
         return "Completed webhook received";
     }
 

@@ -21,9 +21,22 @@
 package models.response.aidetection;
 
 public class Match {
+    /**
+     * Positions of the match in the plain text of the document.
+     */
     private Text text;
+
+    /**
+     * Positions of the match in the HTML version of the document.
+     * Present only for HTML sources; otherwise null.
+     */
+    private Text html;
 
     public Text getText() {
         return text;
+    }
+
+    public Text getHtml() {
+        return html;
     }
 }

@@ -19,10 +19,13 @@
 */
 package models.submissions.Webhooks;
 
+import models.constants.CopyleaksAlertCodes;
+import models.response.aidetection.AIDetectionResponse;
 import models.submissions.Webhooks.HelperModels.BaseModels.StatusWebhookModel;
 import models.submissions.Webhooks.HelperModels.CompletedModels.NotificationsModel;
 import models.submissions.Webhooks.HelperModels.CompletedModels.ResultsModel;
 import models.submissions.Webhooks.HelperModels.CompletedModels.ScannedDocumentModel;
+import models.submissions.Webhooks.HelperModels.NotificationsModels.AlertsModel;
 
 public class CompletedWebhookModel extends StatusWebhookModel {
 
@@ -40,6 +43,51 @@ public class CompletedWebhookModel extends StatusWebhookModel {
 
     public ScannedDocumentModel getScannedDocument() {
         return scannedDocument;
+    }
+
+    /**
+     * Finds the AI text detection alert of this scan.
+     * <p>
+     * Returns null when the completed webhook contains no suspected-ai-text alert.
+     * <p>
+     * This is a computed helper, not a wire field. When re-serializing the models with a
+     * bean-based serializer such as Jackson, exclude it (for example with a mix-in that
+     * marks it {@code @JsonIgnore}). The SDK itself uses Gson, which reads fields only
+     * and is unaffected.
+     *
+     * @return the first alert whose code is {@link CopyleaksAlertCodes#SUSPECTED_AI_TEXT},
+     *         or null when there is none or the webhook has no notifications or alerts.
+     */
+    public AlertsModel getAIDetectionAlert() {
+        if (notifications == null || notifications.getAlerts() == null) {
+            return null;
+        }
+        for (AlertsModel alert : notifications.getAlerts()) {
+            if (alert != null && CopyleaksAlertCodes.SUSPECTED_AI_TEXT.equals(alert.getCode())) {
+                return alert;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Decodes the AI text detection result from the AI alert of this scan.
+     * <p>
+     * Returns null when the completed webhook contains no suspected-ai-text alert,
+     * or the alert carried no data, or its data is JSON that is not an object.
+     * <p>
+     * This is a computed helper, not a wire field. When re-serializing the models with a
+     * bean-based serializer such as Jackson, exclude it (for example with a mix-in that
+     * marks it {@code @JsonIgnore}). The SDK itself uses Gson, which reads fields only
+     * and is unaffected.
+     *
+     * @return the result decoded by {@link AlertsModel#getAIDetectionResult()} for the alert
+     *         returned by {@link #getAIDetectionAlert()}, or null.
+     * @throws com.google.gson.JsonSyntaxException if the alert's {@code additionalData} is not valid JSON.
+     */
+    public AIDetectionResponse getAIDetectionResult() {
+        AlertsModel alert = getAIDetectionAlert();
+        return alert == null ? null : alert.getAIDetectionResult();
     }
 
 }

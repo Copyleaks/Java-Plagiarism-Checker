@@ -23,8 +23,20 @@ package models.response.aidetection;
 import java.util.List;
 
 public class Result {
+    /**
+     * Classification of this section: 1 = human-written, 2 = AI-generated.
+     */
     private int classification;
+
+    /**
+     * Probability for the classification.
+     * Deprecated by the server and may be removed; reads 0.0 when absent.
+     */
     private double probability;
+
+    /**
+     * Positions of the text sections that received this classification.
+     */
     private List<Match> matches;
 
     public int getClassification() {
