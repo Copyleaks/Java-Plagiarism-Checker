@@ -85,7 +85,11 @@ public class Copyleaks {
      * @param email Copyleaks account email address.
      * @param key   Copyleaks account secret key.
      * @return CopyleaksAuthToken A authentication token that being expired after certain amount of time.
-     * @throws ExecutionException, UnderMaintenanceException, RateLimitException, CommandException, InterruptedException
+     * @throws ExecutionException If the HTTP request fails.
+     * @throws UnderMaintenanceException If Copyleaks servers are unavailable for maintenance.
+     * @throws RateLimitException If too many requests were sent.
+     * @throws CommandException If the server rejected the request.
+     * @throws InterruptedException If the thread is interrupted while waiting for the response.
      */
     public static CopyleaksAuthToken login(String email, String key)
             throws ExecutionException, UnderMaintenanceException, RateLimitException, CommandException, InterruptedException {
@@ -619,7 +623,7 @@ public class Copyleaks {
      * https://api.copyleaks.com/documentation/v3/exponential-backoff
      * * RateLimitException: Too many requests. Please wait before calling again.
      *
-     * @returns List of release notes.
+     * @return List of release notes.
      */
     public static ReleaseNotesResponse getReleaseNotes() throws UnderMaintenanceException, CommandException, RateLimitException, ExecutionException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
@@ -663,7 +667,7 @@ public class Copyleaks {
      * https://api.copyleaks.com/documentation/v3/exponential-backoff
      * * RateLimitException: Too many requests. Please wait before calling again.
      *
-     * @returns List of supported file types.
+     * @return List of supported file types.
      */
     public static SupportedFileTypesResponse getSupportedFileTypes() throws CommandException, RateLimitException, UnderMaintenanceException, ExecutionException, InterruptedException {
 
