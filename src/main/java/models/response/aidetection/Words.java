@@ -22,10 +22,28 @@ package models.response.aidetection;
 
 import java.util.List;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Words {
+    /**
+     * Start positions, in words.
+     * Also read from the PascalCase key {@code Starts} sent by sandbox scans.
+     */
+    @SerializedName(value = "starts", alternate = {"Starts"})
     private List<Integer> starts;
 
+    /**
+     * Lengths, in words, matching {@code starts} by index.
+     * Also read from the PascalCase key {@code Lengths} sent by sandbox scans.
+     */
+    @SerializedName(value = "lengths", alternate = {"Lengths"})
     private List<Integer> lengths;
+
+    /**
+     * HTML group identifiers, matching {@code starts} by index.
+     * Present only for HTML positions; otherwise null.
+     */
+    private List<Integer> groupIds;
 
     public List<Integer> getStarts() {
         return starts;
@@ -33,5 +51,9 @@ public class Words {
 
     public List<Integer> getLengths() {
         return lengths;
+    }
+
+    public List<Integer> getGroupIds() {
+        return groupIds;
     }
 }
