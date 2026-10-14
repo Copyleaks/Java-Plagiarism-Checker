@@ -39,8 +39,9 @@ public class SharedResultsModel {
     Otherwise, this field will remain empty. */
     private String scanId;
     
-     /*Metdata object */
-    private MetadataModel metadata;
+    /*Metadata object. Declared with the repository type, a subclass of MetadataModel, so repository
+      results keep submittedBy; for other results it is null. */
+    private RepositoryMetadataModel metadata;
 
     public String getId() {
         return id;

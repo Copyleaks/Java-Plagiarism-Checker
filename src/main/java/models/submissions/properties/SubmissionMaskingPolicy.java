@@ -20,13 +20,40 @@
 
 package models.submissions.properties;
 
+import com.google.gson.annotations.JsonAdapter;
 
-public enum SubmissionMaskingPolicy {
+import helpers.CopyleaksIntegerEnum;
+import helpers.CopyleaksIntegerEnumAdapterFactory;
 
-    NoMask,
+/**
+ * How documents indexed in a Private Cloud Hub repository are shown to other users. Sent as an integer: 0, 1 or 2.
+ */
+@JsonAdapter(CopyleaksIntegerEnumAdapterFactory.class)
+public enum SubmissionMaskingPolicy implements CopyleaksIntegerEnum {
+    /**
+     * Users see the entire document.
+     */
+    NoMask(0),
+    /**
+     * Mask documents that other users added. Text that does not match identically is replaced with hashtags.
+     */
+    MaskOtherUsersFiles(1),
+    /**
+     * Mask all documents. Text that does not match identically is replaced with hashtags.
+     */
+    MaskAllFiles(2);
 
-    MaskOtherUsersFiles,
+    private final int value;
 
-    MaskAllFiles
+    SubmissionMaskingPolicy(int value) {
+        this.value = value;
+    }
 
+    /**
+     * @return the integer value sent to the API.
+     */
+    @Override
+    public int getValue() {
+        return value;
+    }
 }

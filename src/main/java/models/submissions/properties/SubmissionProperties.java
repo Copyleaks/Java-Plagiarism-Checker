@@ -28,7 +28,7 @@ public class SubmissionProperties {
     private Boolean includeHtml = null;
     /**
      * Add custom developer payload that will then be provided on the webhooks.
-     * https://api.copyleaks.com/documentation/v3/webhooks
+     * https://docs.copyleaks.com/reference/data-types/authenticity/webhooks/overview
      */
     private String developerPayload = null;
     /**
@@ -39,12 +39,6 @@ public class SubmissionProperties {
      * Turn off this feature on production environment.
      */
     private Boolean sandbox = null;
-    /**
-     * Specify the maximum life span of a scan in hours on the Copyleaks servers.
-     * <p>
-     * When expired, the scan will be deleted and will no longer be accessible.
-     */
-    private Integer experation = null;
     /**
      * You can control the level of plagiarism sensitivity that will be identified according to the speed of the scan.
      * If you prefer a faster scan with the results that contains the highest amount of plagiarism choose 1,
@@ -116,7 +110,7 @@ public class SubmissionProperties {
     /**
      * Add custom properties that will be attached to your document in a Copyleaks repository.
      */
-    private SubmissionCustomMetadata customMetadata;
+    private SubmissionCustomMetadata[] customMetadata;
     /**
      * Detects whether the text was written by an AI.
      * 
@@ -142,6 +136,64 @@ public class SubmissionProperties {
      * This allows you to find instances of potential plagiarism and understand if the matched source content itself might have been created by an AI.
      */
     private SubmissionAiSourceMatch aiSourceMatch;
+
+    /**
+     * The IANA time zone, for example "America/New_York", used for the scan time in the PDF report.
+     * When not set, the time zone of the user's country is used, or UTC.
+     */
+    private String scanTimeZone;
+
+    /**
+     * Find sources in the Copyleaks internal AI database that contain AI-generated text.
+     */
+    private SubmissionInternalAiSourceMatch internalAiSourceMatch;
+
+    /**
+     * Detect, parse and validate the references in the submitted text (Citation Checker).
+     */
+    private SubmissionReferences references;
+
+    /**
+     * @return the scan time zone, or null.
+     */
+    public String getScanTimeZone() {
+        return scanTimeZone;
+    }
+
+    /**
+     * @param scanTimeZone a case-sensitive IANA time zone name, for example "America/New_York".
+     */
+    public void setScanTimeZone(String scanTimeZone) {
+        this.scanTimeZone = scanTimeZone;
+    }
+
+    /**
+     * @return the Internal AI Source Match settings, or null.
+     */
+    public SubmissionInternalAiSourceMatch getInternalAiSourceMatch() {
+        return internalAiSourceMatch;
+    }
+
+    /**
+     * @param internalAiSourceMatch the Internal AI Source Match settings.
+     */
+    public void setInternalAiSourceMatch(SubmissionInternalAiSourceMatch internalAiSourceMatch) {
+        this.internalAiSourceMatch = internalAiSourceMatch;
+    }
+
+    /**
+     * @return the Citation Checker settings, or null.
+     */
+    public SubmissionReferences getReferences() {
+        return references;
+    }
+
+    /**
+     * @param references the Citation Checker settings.
+     */
+    public void setReferences(SubmissionReferences references) {
+        this.references = references;
+    }
 
         public SubmissionAiSourceMatch getAiSourceMatch() {
         return aiSourceMatch;
@@ -183,11 +235,18 @@ public class SubmissionProperties {
         this.writingFeedback = writingFeedback;
     }
 
-    public SubmissionCustomMetadata getCustomMetadata() {
+    /**
+     * @return the custom properties attached to the document, or null.
+     */
+    public SubmissionCustomMetadata[] getCustomMetadata() {
         return customMetadata;
     }
 
-    public void setCustomMetadata(SubmissionCustomMetadata customMetadata) {
+    /**
+     * @param customMetadata custom key and value pairs attached to the document in a Copyleaks repository,
+     *                       at most 20 items.
+     */
+    public void setCustomMetadata(SubmissionCustomMetadata[] customMetadata) {
         this.customMetadata = customMetadata;
     }
 
@@ -241,12 +300,23 @@ public class SubmissionProperties {
         this.sandbox = sandbox;
     }
 
+    /**
+     * @return the scan retention in hours, the same as {@link #getExpiration()}.
+     * @deprecated Misspelled. Use {@link #getExpiration()}.
+     */
+    @Deprecated
     public Integer getExperation() {
-        return experation;
+        return expiration;
     }
 
+    /**
+     * Sets the scan retention in hours, the same as {@link #setExpiration(Integer)}.
+     * @param experation the retention in hours, from 1 to 2880.
+     * @deprecated Misspelled. Use {@link #setExpiration(Integer)}.
+     */
+    @Deprecated
     public void setExperation(Integer experation) {
-        this.experation = experation;
+        this.expiration = experation;
     }
 
     public Integer getSensitivityLevel() {

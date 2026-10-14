@@ -20,18 +20,40 @@
 
 package models.submissions.properties;
 
+import com.google.gson.annotations.JsonAdapter;
 
-public enum SubmissionActions {
+import helpers.CopyleaksIntegerEnum;
+import helpers.CopyleaksIntegerEnumAdapterFactory;
+
+/**
+ * Types of content submission actions. Sent as an integer: 0, 1 or 2.
+ */
+@JsonAdapter(CopyleaksIntegerEnumAdapterFactory.class)
+public enum SubmissionActions implements CopyleaksIntegerEnum {
     /**
      * Start scan immediately
      */
-    Scan,
+    Scan(0),
     /**
      * Check how many credits will be used for this scan.
      */
-    CheckCredits,
+    CheckCredits(1),
     /**
-     * Only index the file in the Copyleaks internal database. No credits will be used.
+     * Only index the file in the Copyleaks internal database or a Private Cloud Hub repository. No credits will be used.
      */
-    IndexOnly
+    IndexOnly(2);
+
+    private final int value;
+
+    SubmissionActions(int value) {
+        this.value = value;
+    }
+
+    /**
+     * @return the integer value sent to the API.
+     */
+    @Override
+    public int getValue() {
+        return value;
+    }
 }

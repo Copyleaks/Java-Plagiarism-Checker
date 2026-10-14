@@ -20,85 +20,150 @@
 
 package models.exports;
 
+/**
+ * Request body for exporting scan artifacts to your server.
+ * Only {@code completionWebhook} is required. Add the artifacts you want: results, the crawled version,
+ * the PDF report, the AI Text Detection report, the Grammar Checker report or the overview report.
+ */
 public class CopyleaksExportModel {
+
+    /** This webhook event is triggered once the export is completed. */
+    private String completionWebhook;
+    /** Headers added to the completion webhook request, as {@code [["name", "value"], ...]}. */
+    private String[][] completionWebhookHeaders = null;
+    /** An array of results to be exported. The equivalent of downloading results manually. */
+    private ExportResults[] results;
+    /** Download the crawled version of the submitted text. */
+    private ExportCrawledVersion crawledVersion;
+    /** How many retries to send before giving up, from 1 to 12. Default: 3. */
+    private Integer maxRetries = null;
+    /** A custom payload that is sent back in the Export-Completed webhook. */
+    private String developerPayload = null;
+    /** Download the PDF report. Allowed only when {@code properties.pdf.create} was true on the scan. */
+    private ExportPdfReport pdfReport = null;
+    /** Export the AI Text Detection report. Allowed only when {@code properties.aiGeneratedText.detect} was true. */
+    private ExportAiDetection aiDetection = null;
+    /** Export the Grammar Checker report. Allowed only when {@code properties.writingFeedback.enable} was true. */
+    private ExportWritingFeedback writingFeedback = null;
+    /** Export the overview report. Allowed only when {@code properties.overview.enable} was true. */
+    private ExportOverview overview = null;
+
+    /**
+     * Creates an export request with only the completion webhook. Add artifacts with the setters.
+     * @param completionWebhook the URL called once the export is completed.
+     */
+    public CopyleaksExportModel(String completionWebhook) {
+        this.completionWebhook = completionWebhook;
+    }
+
     /**
      * @param completionWebhook This webhook event is triggered once the export is completed.
-     * @param results An array of results to be exported. The equivalent of downloading results manually.
-     * @param crawledVersion Download the crawled version of the submitted text. The equivalent of downloading crawled version manually.
-     * @param maxRetries How many retries to send before giving up. Using high value (12) may lead to a longer time until the completionWebhook being executed. A low value (1) may lead to errors while your service is temporary having problems.
-     * @param developerPayload Add a custom developer payload that will then be provided on the Export-Completed webhook. https://api.copyleaks.com/documentation/v3/webhooks/export-completed
-     * @param pdfReport Download the PDF report. Allowed only when `properties.pdf.create` was set to true on the scan submittion.
-     * @param aiDetection Export the AI Content detection report. Allowed only when properties.aiGeneratedText.detect was set to true on the scan submission.
-     * @param writingFeedback Export the Writing Assistant report. Allowed only when properties.writingFeedback.enable was set to true on the scan submission.
+     * @param results An array of results to be exported, or null. The equivalent of downloading results manually.
+     * @param crawledVersion Download the crawled version of the submitted text, or null.
      */
-    private String completionWebhook;
-    private ExportResults[] results;
-    private ExportCrawledVersion crawledVersion;
-    private Integer maxRetries = null;
-    private String developerPayload = null;
-    private ExportPdfReport pdfReport = null;
-    private ExportAiDetection aiDetection = null;
-    private ExportWritingFeedback writingFeedback = null;
-
     public CopyleaksExportModel(String completionWebhook, ExportResults[] results, ExportCrawledVersion crawledVersion) {
         this.completionWebhook = completionWebhook;
         this.results = results;
         this.crawledVersion = crawledVersion;
     }
 
+    /** @return the completion webhook URL. */
     public String getCompletionWebhook() {
         return completionWebhook;
     }
 
+    /** @param completionWebhook the URL called once the export is completed. */
     public void setCompletionWebhook(String completionWebhook) {
         this.completionWebhook = completionWebhook;
     }
 
+    /** @return the completion webhook headers, or null. */
+    public String[][] getCompletionWebhookHeaders() {
+        return completionWebhookHeaders;
+    }
+
+    /** @param completionWebhookHeaders headers added to the completion webhook request, as {@code [["name", "value"], ...]}. */
+    public void setCompletionWebhookHeaders(String[][] completionWebhookHeaders) {
+        this.completionWebhookHeaders = completionWebhookHeaders;
+    }
+
+    /** @return the results to export, or null. */
     public ExportResults[] getResults() {
         return results;
     }
 
+    /** @param results the results to export, at most 1000. */
+    public void setResults(ExportResults[] results) {
+        this.results = results;
+    }
+
+    /** @return the crawled version target, or null. */
     public ExportCrawledVersion getCrawledVersion() {
         return crawledVersion;
     }
 
+    /** @param crawledVersion where to upload the crawled version. */
+    public void setCrawledVersion(ExportCrawledVersion crawledVersion) {
+        this.crawledVersion = crawledVersion;
+    }
+
+    /** @return the number of retries, or null for the server default. */
     public Integer getMaxRetries() {
         return maxRetries;
     }
 
+    /** @param maxRetries how many retries to send before giving up, from 1 to 12. */
     public void setMaxRetries(Integer maxRetries) {
         this.maxRetries = maxRetries;
     }
 
+    /** @return the developer payload, or null. */
     public String getDeveloperPayload() {
         return developerPayload;
     }
 
+    /** @param developerPayload a custom payload sent back in the Export-Completed webhook. */
     public void setDeveloperPayload(String developerPayload) {
         this.developerPayload = developerPayload;
     }
 
+    /** @return the PDF report target, or null. */
     public ExportPdfReport getPdfReport() {
         return pdfReport;
     }
 
+    /** @param pdfReport where to upload the PDF report. */
     public void setPdfReport(ExportPdfReport pdfReport) {
         this.pdfReport = pdfReport;
     }
-    
+
+    /** @return the AI Text Detection report target, or null. */
     public ExportAiDetection getAiDetection() {
         return aiDetection;
     }
 
+    /** @param aiDetection where to upload the AI Text Detection report. */
     public void setAiDetection(ExportAiDetection aiDetection) {
         this.aiDetection = aiDetection;
     }
 
+    /** @return the Grammar Checker report target, or null. */
     public ExportWritingFeedback getWritingFeedback() {
         return writingFeedback;
     }
 
+    /** @param writingFeedback where to upload the Grammar Checker report. */
     public void setWritingFeedback(ExportWritingFeedback writingFeedback) {
         this.writingFeedback = writingFeedback;
+    }
+
+    /** @return the overview report target, or null. */
+    public ExportOverview getOverview() {
+        return overview;
+    }
+
+    /** @param overview where to upload the overview report. */
+    public void setOverview(ExportOverview overview) {
+        this.overview = overview;
     }
 }

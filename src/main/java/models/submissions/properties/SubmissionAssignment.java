@@ -26,6 +26,29 @@ public class SubmissionAssignment {
      */
     private String id;
 
+    /**
+     * Creates an empty assignment object. Set the ID with {@link #setId(String)}.
+     */
+    public SubmissionAssignment() {
+    }
+
+    /**
+     * @param id the assignment ID.
+     */
+    public SubmissionAssignment(String id) {
+        this.id = id;
+    }
+
+    /**
+     * @param id the assignment ID.
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    /**
+     * @return the assignment ID.
+     */
     public String getId() {
         return id;
     }

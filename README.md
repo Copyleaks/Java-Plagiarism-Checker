@@ -7,7 +7,9 @@ This SDK gives you access to the following Copyleaks products:
 
 *   AI Text Detection
 *   AI Image Detection
+*   AI Video Detection
 *   Plagiarism Checker (Authenticity scans: file, URL, OCR)
+*   Image Plagiarism Detection
 *   Grammar Checker
 *   Text Moderation
 
@@ -21,13 +23,25 @@ Once you have your account and API key:
 
 **Install the SDK**: 
 
-Download the latest version from [Maven Central Repository](https://search.maven.org/artifact/com.copyleaks.sdk/copyleaks-java-sdk)
+Add the dependency from [Maven Central Repository](https://search.maven.org/artifact/com.copyleaks.sdk/copyleaks-java-sdk):
+
+```xml
+<dependency>
+    <groupId>com.copyleaks.sdk</groupId>
+    <artifactId>copyleaks-java-sdk</artifactId>
+    <version>6.0.0</version>
+</dependency>
+```
+
+Gradle: `implementation 'com.copyleaks.sdk:copyleaks-java-sdk:6.0.0'`
+
+The SDK depends only on Gson. Upgrading from 5.x? Read the upgrade notes in [CHANGELOG.md](CHANGELOG.md).
 
 ## 📚 Documentation
 To learn more about how to use Copyleaks API please check out our [Documentation](https://docs.copyleaks.com/resources/sdks/java/). 
 
 ## 💡 Usage Examples
-Here are some common usage examples for the Copyleaks SDK. You can also see a comprehensive code example in the `example.java` file on our GitHub repository: [example.java](https://github.com/Copyleaks/Java-Plagiarism-Checker/blob/master/src/main/java/example/Example.java).
+Here are some common usage examples for the Copyleaks SDK. Complete example programs, including a Spring Boot webhook receiver, are in the separate [examples](https://github.com/Copyleaks/Java-Plagiarism-Checker/tree/master/examples) project. It is not part of the published library.
 
 ### Get Authentication Token
 This example demonstrates how to log in to the Copyleaks API and obtain an authentication token.
@@ -96,6 +110,8 @@ For a detailed understanding of the plagiarism detection process, refer to the C
 ##
 ### Reading the AI alert from the completed webhook
 When AI Text Detection is enabled for a scan (`aiGeneratedText.detect`), the completed webhook reports AI-generated text as a `suspected-ai-text` alert in `notifications.alerts`. The alert's `additionalData` is a JSON-encoded string, and the SDK decodes it into an `AIDetectionResponse`.
+
+The handler below uses Spring Boot. The SDK does not depend on Spring, so add it to your own application if you use it.
 
 ```java
 import com.google.gson.Gson;
@@ -331,6 +347,156 @@ public class ScanExample {
 For a full guide please refer to our step by step [Guide](https://docs.copyleaks.com/guides/ai-detector/ai-image-detection/)
 
 For a detailed understanding of the AI Image Detection process, refer to the Copyleaks image detection Endpoint [Documentation](https://docs.copyleaks.com/reference/actions/ai-image-detector/check/)
+##
+### AI Image Detection with a file upload
+`submitFile` uploads the image bytes as `multipart/form-data`, without base64 encoding. It is faster for large images. Both `submit` and `submitFile` accept the `maskType` and `objectDetection` options.
+
+```java
+import classes.Copyleaks;
+import models.constants.CopyleaksAiImageDetectionModels;
+import models.constants.CopyleaksAiImageMaskTypes;
+import models.request.AiImageDetection.CopyleaksAiImageDetectionFileRequestModel;
+import models.request.AiImageDetection.CopyleaksObjectDetectionItem;
+import models.response.AiImageDetection.CopyleaksAiImageDetectionResponseModel;
+
+byte[] image = java.nio.file.Files.readAllBytes(java.nio.file.Paths.get("my-image.png"));
+CopyleaksAiImageDetectionFileRequestModel request = new CopyleaksAiImageDetectionFileRequestModel(
+        image, "my-image.png", CopyleaksAiImageDetectionModels.AI_IMAGE_1_ULTRA, true);
+request.setMaskType(CopyleaksAiImageMaskTypes.HEATMAP);  // adds result.labels
+request.setObjectDetection(new CopyleaksObjectDetectionItem[] { new CopyleaksObjectDetectionItem("face") });
+
+CopyleaksAiImageDetectionResponseModel result = Copyleaks.aiImageDetectionClient.submitFile(token, scanId, request);
+System.out.println("AI detected: " + result.getIsAiDetected());
+```
+Refer to the AI Image Detection Endpoint [Documentation](https://docs.copyleaks.com/reference/actions/ai-image-detector/check)
+##
+### AI Image Detection for an image URL (async)
+The call returns once the image is accepted. The result is sent to your webhook and has the same shape as the synchronous result, so you can parse it into `CopyleaksAiImageDetectionResponseModel`.
+
+```java
+import models.request.CopyleaksAsyncWebhooksModel;
+import models.request.AiImageDetection.CopyleaksAiImageDetectionAsyncRequestModel;
+
+CopyleaksAiImageDetectionAsyncRequestModel request = new CopyleaksAiImageDetectionAsyncRequestModel(
+        "https://example.com/image1.png", "image1.png", CopyleaksAiImageDetectionModels.AI_IMAGE_1_ULTRA,
+        new CopyleaksAsyncWebhooksModel("https://your-server.com/webhook/ai-image"));
+request.setSandbox(true);
+Copyleaks.aiImageDetectionClient.submitAsync(token, scanId, request);
+```
+Refer to the AI Image Detector Async Endpoint [Documentation](https://docs.copyleaks.com/reference/actions/ai-image-detector/submit)
+##
+### AI Video Detection
+Submit a video URL. The result is sent to your webhook; parse it into `CopyleaksAiVideoDetectionResponseModel`.
+
+```java
+import models.constants.CopyleaksAiVideoDetectionModels;
+import models.request.CopyleaksAsyncWebhooksModel;
+import models.request.AiVideoDetection.CopyleaksAiVideoDetectionRequestModel;
+import models.response.AiVideoDetection.CopyleaksAiVideoDetectionResponseModel;
+
+CopyleaksAiVideoDetectionRequestModel request = new CopyleaksAiVideoDetectionRequestModel(
+        "https://example.com/my-video.mp4", "my-video.mp4", CopyleaksAiVideoDetectionModels.AI_VIDEO_1_PRO,
+        new CopyleaksAsyncWebhooksModel("https://your-server.com/webhook/ai-video"));
+request.setSandbox(true); // free, returns mock results
+Copyleaks.aiVideoDetectionClient.submit(token, scanId, request);
+
+// In your webhook handler:
+CopyleaksAiVideoDetectionResponseModel result = new Gson().fromJson(body, CopyleaksAiVideoDetectionResponseModel.class);
+System.out.println("Overall AI ratio: " + result.getSummary().getOverallAIRatio());
+```
+Refer to the AI Video Detection Endpoint [Documentation](https://docs.copyleaks.com/reference/actions/ai-video-detector/submit)
+##
+### Image Plagiarism Detection
+Search the web for copies of an image. The image is uploaded as `multipart/form-data` and the matches are returned right away.
+
+```java
+import models.request.ImagePlagiarism.CopyleaksImagePlagiarismRequestModel;
+import models.response.ImagePlagiarism.CopyleaksImagePlagiarismInternetMatchModel;
+import models.response.ImagePlagiarism.CopyleaksImagePlagiarismResponseModel;
+
+byte[] image = java.nio.file.Files.readAllBytes(java.nio.file.Paths.get("my-photo.jpg"));
+CopyleaksImagePlagiarismRequestModel request = new CopyleaksImagePlagiarismRequestModel(image, "my-photo.jpg", true);
+CopyleaksImagePlagiarismResponseModel result = Copyleaks.imagePlagiarismClient.check(token, scanId, request);
+
+System.out.println("Total matches: " + result.getMatches().getScore().getTotalMatches());
+for (CopyleaksImagePlagiarismInternetMatchModel match : result.getMatches().getInternet()) {
+    System.out.println(match.getMatchType() == CopyleaksImagePlagiarismInternetMatchModel.MATCH_TYPE_FULL
+            ? "Full match: " + match.getUrl() : "Partial match: " + match.getUrl());
+}
+```
+Refer to the Image Plagiarism Detection Endpoint [Documentation](https://docs.copyleaks.com/reference/actions/image-plagiarism-detector/check)
+##
+### AI Text Detection options and credits
+```java
+CopyleaksNaturalLanguageSubmissionModel model = new CopyleaksNaturalLanguageSubmissionModel(text, true, "en");
+model.setExplain(true);    // AI Logic: the result includes getExplain()
+model.setSensitivity(3);   // 1 to 3, default 2
+AIDetectionResponse result = Copyleaks.aiDetectionClient.submitNaturalLanguage(token, scanId, model);
+
+int credits = Copyleaks.aiDetectionClient.getCredits(token).getCredits();
+```
+Refer to the AI Text Detection Credits Endpoint [Documentation](https://docs.copyleaks.com/reference/actions/writer-detector/credits)
+##
+### Lookups
+```java
+// Public, no login needed
+CrossLanguagesResponse languages = Copyleaks.getAllowedCrossLanguages();
+String[] sources = languages.getDocumentLanguages();
+String[] targets = languages.getResultLanguages();
+String[] aiFileTypes = Copyleaks.getSupportedAiTextDetectionFileTypes().getSupportedAiFileTypes();
+
+// Private Cloud Hub repository (Admin or Super Admin role)
+RepositoryInfoResponse repository = Copyleaks.getRepositoryInfo(token, "my-repository-id");
+System.out.println(repository.getName() + ": " + repository.getCurrentCredits() + "/" + repository.getMaxCredits());
+```
+Refer to the [Cross-Language](https://docs.copyleaks.com/reference/actions/miscellaneous/supported-cross-languages), [AI Text Detection File Types](https://docs.copyleaks.com/reference/actions/miscellaneous/supported-ai-text-detection-file-types) and [Repository Information](https://docs.copyleaks.com/reference/actions/private-cloud-hub/info) documentation.
+##
+### More scan options
+```java
+SubmissionProperties properties = new SubmissionProperties(new SubmissionWebhooks(WEBHOOK_URL));
+properties.setScanTimeZone("America/New_York");
+properties.setReferences(new SubmissionReferences(true));                      // Citation Checker
+properties.setInternalAiSourceMatch(new SubmissionInternalAiSourceMatch(true));
+properties.setCustomMetadata(new SubmissionCustomMetadata[] { new SubmissionCustomMetadata("course", "bio-101") });
+properties.setAction(SubmissionActions.IndexOnly);                            // sent as 2
+
+// Delete scans and get notified when the removal is done
+CopyleaksDeleteRequest delete = new CopyleaksDeleteRequest(
+        new ScansRequests[] { new ScansRequests(scanId) }, false, "https://your-server.com/webhook/deleted");
+Copyleaks.delete(token, delete);
+
+// Export the AI Text Detection and overview reports; results and the crawled version are optional
+CopyleaksExportModel export = new CopyleaksExportModel("https://your-server.com/webhook/export-done");
+export.setAiDetection(new ExportAiDetection("https://your-server.com/export/ai", "POST", null));
+export.setOverview(new ExportOverview("https://your-server.com/export/overview", "POST", null));
+Copyleaks.export(token, scanId, exportId, export);
+```
+The completed webhook model also exposes `getReferencesValidation()` and `getResults().getInternalAIData()`.
+##
+### HTTP settings
+All calls share one HTTP client. Every request is bounded by a timeout, so a call cannot hang forever.
+
+```java
+Copyleaks.setConnectTimeout(Duration.ofSeconds(10));   // default 30 seconds
+Copyleaks.setRequestTimeout(Duration.ofMinutes(5));    // default 120 seconds, covers the whole request
+Copyleaks.setMaxConcurrentRequests(50);                 // default 20
+Copyleaks.setMaxRetries(3);                             // default 0; retries 429 and 503, and GET on 502, 504 and network errors
+Copyleaks.setHttpClient(myHttpClient);                  // optional: your own java.net.http.HttpClient (proxy, executor)
+```
+A timeout throws `ExecutionException` caused by `java.net.http.HttpTimeoutException`.
+##
+### Error handling
+`RateLimitException` (429), `UnderMaintenanceException` (503) and `CommandException` (any other error status) carry the HTTP status and the response body.
+
+```java
+try {
+    Copyleaks.submitFile(token, scanId, model);
+} catch (RateLimitException e) {
+    Duration wait = e.getRetryAfter();  // from the Retry-After header, or null
+} catch (CommandException e) {
+    System.out.println(e.getStatusCode() + ": " + e.getResponseBody());
+}
+```
 ##
 ### Further Resources
 *   **Copyleaks API Dashboard:** Manage your API keys, monitor usage, and view analytics from your personalized dashboard. [Access Dashboard](https://api.copyleaks.com/dashboard)

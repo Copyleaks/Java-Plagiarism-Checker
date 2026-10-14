@@ -24,8 +24,12 @@ package classes;
 import com.google.gson.Gson;
 import classes.clients.AIDetectionClient;
 import classes.clients.AiImageDetectionClient;
+import classes.clients.AiVideoDetectionClient;
+import classes.clients.ImagePlagiarismClient;
 import classes.clients.TextModerationClient;
 import classes.clients.WritingAssistantClient;
+import helpers.CopyleaksClientHelper;
+import helpers.CopyleaksRequestExecutor;
 import models.exceptions.AuthExpiredException;
 import models.exceptions.CommandException;
 import models.exceptions.RateLimitException;
@@ -37,55 +41,166 @@ import models.response.*;
 import models.submissions.CopyleaksFileOcrSubmissionModel;
 import models.submissions.CopyleaksFileSubmissionModel;
 import models.submissions.CopyleaksURLSubmissionModel;
-import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.text.ParseException;
-import java.time.Instant;
-import java.time.ZonedDateTime;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Semaphore;
 
+import static helpers.CopyleaksRequestExecutor.pathSegment;
+
+/**
+ * Entry point of the Copyleaks SDK.
+ * <p>
+ * Static methods cover login, plagiarism scans (Authenticity), exports, account information and lookups.
+ * The product clients are static fields: {@link #aiDetectionClient}, {@link #aiImageDetectionClient},
+ * {@link #aiVideoDetectionClient}, {@link #imagePlagiarismClient}, {@link #writingAssistantClient} and
+ * {@link #textModerationClient}.
+ * <p>
+ * All calls share one HTTP client and one set of limits, configured with {@link #setConnectTimeout(Duration)},
+ * {@link #setRequestTimeout(Duration)}, {@link #setMaxConcurrentRequests(int)}, {@link #setMaxRetries(int)}
+ * and {@link #setHttpClient(HttpClient)}.
+ * <p>
+ * Errors: a 429 response throws {@link RateLimitException}, a 503 response throws
+ * {@link UnderMaintenanceException}, and any other non-2xx response throws {@link CommandException}.
+ * Each carries the HTTP status code and the response body. Network errors and timeouts throw
+ * {@link ExecutionException} with the I/O error as its cause. See
+ * https://docs.copyleaks.com/concepts/performance/handling-failures for a retry strategy.
+ */
 public class Copyleaks {
-    private static Semaphore semaphore = new Semaphore(20); // To limit the number of httpClient connections.
 
-    private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
-            .build();
+    private static final CopyleaksRequestExecutor EXECUTOR = new CopyleaksRequestExecutor();
 
     private static final Gson gson = new Gson();
 
-    public final static AIDetectionClient aiDetectionClient = new AIDetectionClient(HTTP_CLIENT, semaphore);
-    public final static WritingAssistantClient writingAssistantClient = new WritingAssistantClient(HTTP_CLIENT, semaphore);
-    public final static TextModerationClient textModerationClient = new TextModerationClient(HTTP_CLIENT, semaphore);
-    public final static AiImageDetectionClient aiImageDetectionClient = new AiImageDetectionClient(HTTP_CLIENT, semaphore);
+    private static final String JSON = "application/json";
 
+    /** AI Text Detection. */
+    public final static AIDetectionClient aiDetectionClient = new AIDetectionClient(EXECUTOR);
+    /** Grammar Checker (Writing Assistant). */
+    public final static WritingAssistantClient writingAssistantClient = new WritingAssistantClient(EXECUTOR);
+    /** Text Moderation. */
+    public final static TextModerationClient textModerationClient = new TextModerationClient(EXECUTOR);
+    /** AI Image Detection, synchronous and asynchronous. */
+    public final static AiImageDetectionClient aiImageDetectionClient = new AiImageDetectionClient(EXECUTOR);
+    /** AI Video Detection. */
+    public final static AiVideoDetectionClient aiVideoDetectionClient = new AiVideoDetectionClient(EXECUTOR);
+    /** Image Plagiarism Detection. */
+    public final static ImagePlagiarismClient imagePlagiarismClient = new ImagePlagiarismClient(EXECUTOR);
+
+    /**
+     * Changes the identity (login) server address. Default: https://id.copyleaks.com.
+     * @param uri the server address, without a trailing slash.
+     */
     public static void setIdentityUri(String uri){
-        Consts.IDENTITY_SERVER_URI = uri;
-    }
-    public static void setApiUri(String uri){
-        Consts.API_SERVER_URI = uri;
+        Consts.IDENTITY_SERVER_URI = Objects.requireNonNull(uri, "uri is null");
     }
 
     /**
+     * Changes the API server address. Default: https://api.copyleaks.com.
+     * @param uri the server address, without a trailing slash.
+     */
+    public static void setApiUri(String uri){
+        Consts.API_SERVER_URI = Objects.requireNonNull(uri, "uri is null");
+    }
+
+    // ---- HTTP configuration ----------------------------------------------------------------------
+
+    /**
+     * Sets the time allowed to open a connection. Default: 30 seconds.
+     * A client passed to {@link #setHttpClient(HttpClient)} keeps its own setting.
+     * @param timeout a positive duration.
+     */
+    public static void setConnectTimeout(Duration timeout) {
+        EXECUTOR.setConnectTimeout(timeout);
+    }
+
+    /**
+     * @return the time allowed to open a connection.
+     */
+    public static Duration getConnectTimeout() {
+        return EXECUTOR.getConnectTimeout();
+    }
+
+    /**
+     * Sets the time allowed for each request: waiting for a free concurrency slot, sending the request
+     * and reading the whole response. Default: 120 seconds. When it runs out, the call throws an
+     * {@link ExecutionException} caused by a {@link java.net.http.HttpTimeoutException}.
+     * @param timeout a positive duration.
+     */
+    public static void setRequestTimeout(Duration timeout) {
+        EXECUTOR.setRequestTimeout(timeout);
+    }
+
+    /**
+     * @return the time allowed for each request.
+     */
+    public static Duration getRequestTimeout() {
+        return EXECUTOR.getRequestTimeout();
+    }
+
+    /**
+     * Sets how many SDK requests may run at the same time in this JVM. Default: 20.
+     * @param max a number of requests, at least 1.
+     */
+    public static void setMaxConcurrentRequests(int max) {
+        EXECUTOR.setMaxConcurrentRequests(max);
+    }
+
+    /**
+     * @return how many SDK requests may run at the same time.
+     */
+    public static int getMaxConcurrentRequests() {
+        return EXECUTOR.getMaxConcurrentRequests();
+    }
+
+    /**
+     * Sets how many times a failed request is retried. Default: 0 (no retries).
+     * Any request is retried on 429 and 503. GET requests are also retried on 502, 504 and network errors.
+     * The wait between attempts grows exponentially with jitter and honors the {@code Retry-After} header.
+     * @param retries a number of retries, from 0 to 10.
+     */
+    public static void setMaxRetries(int retries) {
+        EXECUTOR.setMaxRetries(retries);
+    }
+
+    /**
+     * @return how many times a failed request is retried.
+     */
+    public static int getMaxRetries() {
+        return EXECUTOR.getMaxRetries();
+    }
+
+    /**
+     * Uses your own {@link HttpClient}, for example to set a proxy or an executor.
+     * Its connect timeout applies instead of {@link #setConnectTimeout(Duration)}.
+     * Pass null to go back to the client the SDK creates.
+     * @param client the client to use, or null.
+     */
+    public static void setHttpClient(HttpClient client) {
+        EXECUTOR.setHttpClient(client);
+    }
+
+    /**
+     * @return the HTTP client the SDK sends requests with.
+     */
+    public static HttpClient getHttpClient() {
+        return EXECUTOR.getHttpClient();
+    }
+
+    // ---- Account -----------------------------------------------------------------------------------
+
+    /**
      * Login to Copyleaks authentication server.
-     * For more info: https://api.copyleaks.com/documentation/v3/account/login.
-     * * Exceptions:
-     * * CommandExceptions: Server reject the request. See response status code,
-     * headers and content for more info.
-     * * UnderMaintenanceException: Copyleaks servers are unavailable for maintenance.
-     * We recommend to implement exponential backoff algorithm as described here:
-     * https://api.copyleaks.com/documentation/v3/exponential-backoff
+     * For more info: https://docs.copyleaks.com/reference/actions/account/login
      *
      * @param email Copyleaks account email address.
      * @param key   Copyleaks account secret key.
      * @return CopyleaksAuthToken A authentication token that being expired after certain amount of time.
-     * @throws ExecutionException If the HTTP request fails.
+     * @throws ExecutionException If the HTTP request fails or times out.
      * @throws UnderMaintenanceException If Copyleaks servers are unavailable for maintenance.
      * @throws RateLimitException If too many requests were sent.
      * @throws CommandException If the server rejected the request.
@@ -93,658 +208,349 @@ public class Copyleaks {
      */
     public static CopyleaksAuthToken login(String email, String key)
             throws ExecutionException, UnderMaintenanceException, RateLimitException, CommandException, InterruptedException {
-        assert email != null : "email is null";
-        assert key != null : "key is null";
+        Objects.requireNonNull(email, "email is null");
+        Objects.requireNonNull(key, "key is null");
 
         Map<String, String> object = new HashMap<>();
         object.put("email", email);
         object.put("key", key);
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(object)))
-                .uri(URI.create(Consts.IDENTITY_SERVER_URI + "/v3/account/login/api"))
-                .setHeader("Content-Type", "application/json")
-                .setHeader("User-Agent", Consts.USER_AGENT)
-                .build();
-        
-        semaphore.acquire();
-        try{
-            CompletableFuture<HttpResponse<String>> response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-
-            String body = response.thenApply(HttpResponse::body).get();
-            int statusCode = response.thenApply(HttpResponse::statusCode).get();
-
-            if (ensureHttpSuccess(statusCode)) {
-                CopyleaksAuthToken token = gson.fromJson(body, CopyleaksAuthToken.class);
-                return token;
-            } else if (statusCode == 503) {
-                throw new UnderMaintenanceException();
-            } else {
-                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
-            }
-        }
-        finally{
-            semaphore.release();
-        }
-
+        String body = EXECUTOR.send("POST", Consts.IDENTITY_SERVER_URI + "/v3/account/login/api",
+                CopyleaksRequestExecutor.jsonBody(gson, object), JSON, null);
+        return gson.fromJson(body, CopyleaksAuthToken.class);
     }
+
+    // ---- Authenticity (plagiarism) scans --------------------------------------------------------------
 
     /**
      * Starting a new process by providing a file to scan.
-     * For more info:
-     * https://api.copyleaks.com/documentation/v3/scans/submit/file
-     * * Exceptions:
-     * * CommandExceptions: Server reject the request. See response status code,
-     * headers and content for more info.
-     * * UnderMaintenanceException: Copyleaks servers are unavailable for maintenance.
-     * We recommend to implement exponential backoff algorithm as described here:
-     * https://api.copyleaks.com/documentation/v3/exponential-backoff
+     * For more info: https://docs.copyleaks.com/reference/actions/authenticity/submit-file
      *
      * @param authToken  Copyleaks authentication token
      * @param scanId     Attach your own scan Id
      * @param submission Submission properties
+     * @throws ParseException Not thrown. Kept for source compatibility.
+     * @throws AuthExpiredException If the token has expired.
+     * @throws UnderMaintenanceException If Copyleaks servers are unavailable for maintenance.
+     * @throws RateLimitException If too many requests were sent.
+     * @throws CommandException If the server rejected the request.
+     * @throws ExecutionException If the HTTP request fails or times out.
+     * @throws InterruptedException If the thread is interrupted while waiting for the response.
      */
     public static void submitFile(CopyleaksAuthToken authToken, String scanId, CopyleaksFileSubmissionModel submission)
-            throws ParseException, AuthExpiredException, UnderMaintenanceException, CommandException, ExecutionException, InterruptedException {
-        assert authToken != null : "token is null";
-        assert scanId != null : "scanId is null";
-        assert submission != null : "submission is null";
-
-        verifyAuthToken(authToken);
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .PUT(HttpRequest.BodyPublishers.ofString(gson.toJson(submission)))
-                .uri(URI.create(Consts.API_SERVER_URI + "/v3/scans/submit/file/" + scanId))
-                .setHeader("Content-Type", "application/json")
-                .setHeader("User-Agent", Consts.USER_AGENT)
-                .setHeader("Authorization", "Bearer " + authToken.getAccessToken())
-                .build();
-
-        CompletableFuture<HttpResponse<String>> response;
-        semaphore.acquire();
-        try{
-            
-            
-            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-            int statusCode = response.thenApply(HttpResponse::statusCode).get();
-            if (ensureHttpSuccess(statusCode)) {
-                return;
-            } else if (statusCode == 503) {
-                throw new UnderMaintenanceException();
-            } else {
-                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
-            }
-        }
-        finally{
-            semaphore.release();
-        }
+            throws ParseException, AuthExpiredException, UnderMaintenanceException, RateLimitException, CommandException, ExecutionException, InterruptedException {
+        put(authToken, "/v3/scans/submit/file/", scanId, submission);
     }
 
     /**
      * Starting a new process by providing a OCR image file to scan.
-     * For more info:
-     * https://api.copyleaks.com/documentation/v3/scans/submit/ocr
-     * * Exceptions:
-     * * CommandExceptions: Server reject the request. See response status code,
-     * headers and content for more info.
-     * * UnderMaintenanceException: Copyleaks servers are unavailable for maintenance.
-     * We recommend to implement exponential backoff algorithm as described here:
-     * https://api.copyleaks.com/documentation/v3/exponential-backoff
+     * For more info: https://docs.copyleaks.com/reference/actions/authenticity/submit-ocr
      *
      * @param authToken  Copyleaks authentication token
      * @param scanId     Attach your own scan Id
      * @param submission Submission properties
+     * @throws ParseException Not thrown. Kept for source compatibility.
+     * @throws AuthExpiredException If the token has expired.
+     * @throws UnderMaintenanceException If Copyleaks servers are unavailable for maintenance.
+     * @throws RateLimitException If too many requests were sent.
+     * @throws CommandException If the server rejected the request.
+     * @throws ExecutionException If the HTTP request fails or times out.
+     * @throws InterruptedException If the thread is interrupted while waiting for the response.
      */
-    public static void submitFileOcr(CopyleaksAuthToken authToken, String scanId, CopyleaksFileOcrSubmissionModel submission) throws ParseException, AuthExpiredException, UnderMaintenanceException, CommandException, ExecutionException, InterruptedException {
-        assert authToken != null : "token is null";
-        assert scanId != null : "scanId is null";
-        assert submission != null : "submission is null";
-
-        verifyAuthToken(authToken);
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .PUT(HttpRequest.BodyPublishers.ofString(gson.toJson(submission)))
-                .uri(URI.create(Consts.API_SERVER_URI + "/v3/scans/submit/ocr/" + scanId))
-                .setHeader("Content-Type", "application/json")
-                .setHeader("User-Agent", Consts.USER_AGENT)
-                .setHeader("Authorization", "Bearer " + authToken.getAccessToken())
-                .build();
-
-        CompletableFuture<HttpResponse<String>> response;
-        semaphore.acquire();
-        try{
-            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-            int statusCode = response.thenApply(HttpResponse::statusCode).get();
-    
-            if (ensureHttpSuccess(statusCode)) {
-                return;
-            } else if (statusCode == 503) {
-                throw new UnderMaintenanceException();
-            } else {
-                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
-            }
-        }
-        finally{
-            semaphore.release();
-        }
+    public static void submitFileOcr(CopyleaksAuthToken authToken, String scanId, CopyleaksFileOcrSubmissionModel submission)
+            throws ParseException, AuthExpiredException, UnderMaintenanceException, RateLimitException, CommandException, ExecutionException, InterruptedException {
+        put(authToken, "/v3/scans/submit/ocr/", scanId, submission);
     }
 
     /**
      * Starting a new process by providing a URL to scan.
-     * For more info:
-     * https://api.copyleaks.com/documentation/v3/scans/submit/url
-     * * Exceptions:
-     * * CommandExceptions: Server reject the request. See response status code,
-     * headers and content for more info.
-     * * UnderMaintenanceException: Copyleaks servers are unavailable for maintenance.
-     * We recommend to implement exponential backoff algorithm as described here:
-     * https://api.copyleaks.com/documentation/v3/exponential-backoff
+     * For more info: https://docs.copyleaks.com/reference/actions/authenticity/submit-url
      *
      * @param authToken  Copyleaks authentication token
      * @param scanId     Attach your own scan Id
      * @param submission Submission properties
+     * @throws ParseException Not thrown. Kept for source compatibility.
+     * @throws AuthExpiredException If the token has expired.
+     * @throws UnderMaintenanceException If Copyleaks servers are unavailable for maintenance.
+     * @throws RateLimitException If too many requests were sent.
+     * @throws CommandException If the server rejected the request.
+     * @throws ExecutionException If the HTTP request fails or times out.
+     * @throws InterruptedException If the thread is interrupted while waiting for the response.
      */
-
     public static void submitUrl(CopyleaksAuthToken authToken, String scanId, CopyleaksURLSubmissionModel submission)
-            throws ParseException, AuthExpiredException, UnderMaintenanceException, CommandException, ExecutionException, InterruptedException {
-        assert authToken != null : "token is null";
-        assert scanId != null : "scanId is null";
-        assert submission != null : "submission is null";
+            throws ParseException, AuthExpiredException, UnderMaintenanceException, RateLimitException, CommandException, ExecutionException, InterruptedException {
+        put(authToken, "/v3/scans/submit/url/", scanId, submission);
+    }
 
-        verifyAuthToken(authToken);
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .PUT(HttpRequest.BodyPublishers.ofString(gson.toJson(submission)))
-                .uri(URI.create(Consts.API_SERVER_URI + "/v3/scans/submit/url/" + scanId))
-                .setHeader("Content-Type", "application/json")
-                .setHeader("User-Agent", Consts.USER_AGENT)
-                .setHeader("Authorization", "Bearer " + authToken.getAccessToken())
-                .build();
-
-        CompletableFuture<HttpResponse<String>> response;
-        semaphore.acquire();
-        try{
-            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-            int statusCode = response.thenApply(HttpResponse::statusCode).get();
-    
-            if (ensureHttpSuccess(statusCode)) {
-                return;
-            } else if (statusCode == 503) {
-                throw new UnderMaintenanceException();
-            } else {
-                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
-            }
-        }
-        finally{
-            semaphore.release();
-        }
+    private static void put(CopyleaksAuthToken authToken, String path, String scanId, Object submission)
+            throws AuthExpiredException, UnderMaintenanceException, RateLimitException, CommandException, ExecutionException, InterruptedException {
+        Objects.requireNonNull(authToken, "token is null");
+        Objects.requireNonNull(scanId, "scanId is null");
+        Objects.requireNonNull(submission, "submission is null");
+        CopyleaksClientHelper.verifyAuthToken(authToken);
+        EXECUTOR.send("PUT", Consts.API_SERVER_URI + path + pathSegment(scanId),
+                CopyleaksRequestExecutor.jsonBody(gson, submission), JSON, authToken);
     }
 
     /**
      * Exporting scans artifact into your server.
-     * For more info:
-     * https://api.copyleaks.com/documentation/v3/downloads/export
-     * * Exceptions:
-     * * CommandExceptions: Server reject the request. See response status code,
-     * headers and content for more info.
-     * * UnderMaintenanceException: Copyleaks servers are unavailable for maintenance.
-     * We recommend to implement exponential backoff algorithm as described here:
-     * https://api.copyleaks.com/documentation/v3/exponential-backoff
+     * For more info: https://docs.copyleaks.com/reference/actions/downloads/export
      *
      * @param authToken Your login token to Copyleaks server
      * @param scanId    The scan ID of the specific scan to export.
      * @param exportId  A new Id for the export process.
      * @param model     Request of which artifact should be exported.
+     * @throws ParseException Not thrown. Kept for source compatibility.
+     * @throws AuthExpiredException If the token has expired.
+     * @throws UnderMaintenanceException If Copyleaks servers are unavailable for maintenance.
+     * @throws RateLimitException If too many requests were sent.
+     * @throws CommandException If the server rejected the request.
+     * @throws ExecutionException If the HTTP request fails or times out.
+     * @throws InterruptedException If the thread is interrupted while waiting for the response.
      */
     public static void export(CopyleaksAuthToken authToken, String scanId, String exportId, CopyleaksExportModel model)
             throws ParseException, AuthExpiredException, UnderMaintenanceException, RateLimitException, CommandException, ExecutionException, InterruptedException {
-        assert exportId != null : "exportId is null";
-        assert authToken != null : "token is null";
-        assert scanId != null : "scanId is null";
-        assert model != null : "model is null";
-        verifyAuthToken(authToken);
+        Objects.requireNonNull(exportId, "exportId is null");
+        Objects.requireNonNull(authToken, "token is null");
+        Objects.requireNonNull(scanId, "scanId is null");
+        Objects.requireNonNull(model, "model is null");
+        CopyleaksClientHelper.verifyAuthToken(authToken);
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(model)))
-                .uri(URI.create(Consts.API_SERVER_URI + "/v3/downloads/" + scanId + "/export/" + exportId))
-                .setHeader("Content-Type", "application/json")
-                .setHeader("User-Agent", Consts.USER_AGENT)
-                .setHeader("Authorization", "Bearer " + authToken.getAccessToken())
-                .build();
-
-        CompletableFuture<HttpResponse<String>> response;
-        semaphore.acquire();
-        try{
-            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-            int statusCode = response.thenApply(HttpResponse::statusCode).get();
-    
-            if (ensureHttpSuccess(statusCode)) {
-                return;
-            } else if (statusCode == 503) {
-                throw new UnderMaintenanceException();
-            } else {
-                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
-            }
-        }
-        finally{
-            semaphore.release();
-        }
+        EXECUTOR.send("POST", Consts.API_SERVER_URI + "/v3/downloads/" + pathSegment(scanId) + "/export/" + pathSegment(exportId),
+                CopyleaksRequestExecutor.jsonBody(gson, model), JSON, authToken);
     }
 
     /**
      * Start scanning all the files you submitted for a price-check.
-     * For more info:
-     * https://api.copyleaks.com/documentation/v3/scans/start
-     * * Exceptions:
-     * * CommandExceptions: Server reject the request. See response status code,
-     * headers and content for more info.
-     * * UnderMaintenanceException: Copyleaks servers are unavailable for maintenance.
-     * We recommend to implement exponential backoff algorithm as described here:
-     * https://api.copyleaks.com/documentation/v3/exponential-backoff
+     * For more info: https://docs.copyleaks.com/reference/actions/authenticity/start
      *
      * @param authToken Your login token to Copyleaks server.
      * @param model     Include information about which scans should be started.
-     * @return
+     * @return the scans that started and the scans that failed to start.
+     * @throws ParseException Not thrown. Kept for source compatibility.
+     * @throws AuthExpiredException If the token has expired.
+     * @throws ExecutionException If the HTTP request fails or times out.
+     * @throws InterruptedException If the thread is interrupted while waiting for the response.
+     * @throws UnderMaintenanceException If Copyleaks servers are unavailable for maintenance.
+     * @throws RateLimitException If too many requests were sent.
+     * @throws CommandException If the server rejected the request.
      */
     public static CopyleaksStartResponse start(CopyleaksAuthToken authToken, CopyleaksStartRequest model) throws ParseException, AuthExpiredException, ExecutionException, InterruptedException, UnderMaintenanceException, RateLimitException, CommandException {
+        Objects.requireNonNull(authToken, "token is null");
+        Objects.requireNonNull(model, "model is null");
+        CopyleaksClientHelper.verifyAuthToken(authToken);
 
-        assert authToken != null : "token is null";
-        assert model != null : "model is null";
-
-        verifyAuthToken(authToken);
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(Consts.API_SERVER_URI + "/v3/scans/start"))
-                .method("PATCH", HttpRequest.BodyPublishers.ofString(gson.toJson(model)))
-                .setHeader("Content-Type", "application/json")
-                .setHeader("User-Agent", Consts.USER_AGENT)
-                .setHeader("Authorization", "Bearer " + authToken.getAccessToken())
-                .build();
-
-        CompletableFuture<HttpResponse<String>> response;
-        semaphore.acquire();
-        try{
-            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-    
-            String body = response.thenApply(HttpResponse::body).get();
-            int statusCode = response.thenApply(HttpResponse::statusCode).get();
-    
-            if (ensureHttpSuccess(statusCode)) {
-                CopyleaksStartResponse startResponse = gson.fromJson(body, CopyleaksStartResponse.class);
-                return startResponse;
-            } else if (statusCode == 503) {
-                throw new UnderMaintenanceException();
-            } else {
-                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
-            }
-        }
-        finally{
-            semaphore.release();
-        }
+        String body = EXECUTOR.send("PATCH", Consts.API_SERVER_URI + "/v3/scans/start",
+                CopyleaksRequestExecutor.jsonBody(gson, model), JSON, authToken);
+        return gson.fromJson(body, CopyleaksStartResponse.class);
     }
 
     /**
      * Delete the specific process from the server.
-     * For more info:
-     * https://api.copyleaks.com/documentation/v3/scans/delete
-     * * Exceptions:
-     * * CommandExceptions: Server reject the request. See response status code,
-     * headers and content for more info.
-     * * UnderMaintenanceException: Copyleaks servers are unavailable for maintenance.
-     * We recommend to implement exponential backoff algorithm as described here:
-     * https://api.copyleaks.com/documentation/v3/exponential-backoff
+     * For more info: https://docs.copyleaks.com/reference/actions/authenticity/delete
      *
      * @param authToken Copyleaks authentication token
-     * @param payloads
+     * @param payloads  The scans to delete, and an optional completion webhook.
+     * @throws ParseException Not thrown. Kept for source compatibility.
+     * @throws AuthExpiredException If the token has expired.
+     * @throws ExecutionException If the HTTP request fails or times out.
+     * @throws InterruptedException If the thread is interrupted while waiting for the response.
+     * @throws UnderMaintenanceException If Copyleaks servers are unavailable for maintenance.
+     * @throws RateLimitException If too many requests were sent.
+     * @throws CommandException If the server rejected the request.
      */
     public static void delete(CopyleaksAuthToken authToken, CopyleaksDeleteRequest payloads) throws ParseException, AuthExpiredException, ExecutionException, InterruptedException, UnderMaintenanceException, RateLimitException, CommandException {
+        Objects.requireNonNull(authToken, "token is null");
+        Objects.requireNonNull(payloads, "payloads is null");
+        CopyleaksClientHelper.verifyAuthToken(authToken);
 
-        assert authToken != null : "token is null";
-        assert payloads != null : "payloads is null";
-
-        verifyAuthToken(authToken);
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(Consts.API_SERVER_URI + "/v3.1/scans/delete"))
-                .method("PATCH", HttpRequest.BodyPublishers.ofString(gson.toJson(payloads)))
-                .setHeader("Content-Type", "application/json")
-                .setHeader("User-Agent", Consts.USER_AGENT)
-                .setHeader("Authorization", "Bearer " + authToken.getAccessToken())
-                .build();
-
-        CompletableFuture<HttpResponse<String>> response;
-        semaphore.acquire();
-        try{
-            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-            
-            String body = response.thenApply(HttpResponse::body).get();
-            int statusCode = response.thenApply(HttpResponse::statusCode).get();
-    
-            if (ensureHttpSuccess(statusCode)) {
-                return;
-            } else if (statusCode == 503) {
-                throw new UnderMaintenanceException();
-            } else if (statusCode == 429) {
-                throw new RateLimitException();
-            } else {
-                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
-            }
-        }
-        finally{
-            semaphore.release();
-        }
+        EXECUTOR.send("PATCH", Consts.API_SERVER_URI + "/v3.1/scans/delete",
+                CopyleaksRequestExecutor.jsonBody(gson, payloads), JSON, authToken);
     }
 
     /**
      * Resend status webhooks for existing scans.
-     * For more info:
-     * https://api.copyleaks.com/documentation/v3/scans/webhook-resend
-     * * Exceptions:
-     * * CommandExceptions: Server reject the request. See response status code,
-     * headers and content for more info.
-     * * UnderMaintenanceException: Copyleaks servers are unavailable for maintenance.
-     * We recommend to implement exponential backoff algorithm as described here:
-     * https://api.copyleaks.com/documentation/v3/exponential-backoff
+     * For more info: https://docs.copyleaks.com/reference/actions/authenticity/resend-webhook
      *
      * @param authToken Copyleaks authentication token
      * @param scanId    Copyleaks scan Id
+     * @throws ParseException Not thrown. Kept for source compatibility.
+     * @throws AuthExpiredException If the token has expired.
+     * @throws UnderMaintenanceException If Copyleaks servers are unavailable for maintenance.
+     * @throws RateLimitException If too many requests were sent.
+     * @throws CommandException If the server rejected the request.
+     * @throws ExecutionException If the HTTP request fails or times out.
+     * @throws InterruptedException If the thread is interrupted while waiting for the response.
      */
     public static void resendWebhook(CopyleaksAuthToken authToken, String scanId) throws ParseException, AuthExpiredException, UnderMaintenanceException, RateLimitException, CommandException, ExecutionException, InterruptedException {
-        assert authToken != null : "token is null";
-        assert scanId != null : "scanId is null";
+        Objects.requireNonNull(authToken, "token is null");
+        Objects.requireNonNull(scanId, "scanId is null");
+        CopyleaksClientHelper.verifyAuthToken(authToken);
 
-        verifyAuthToken(authToken);
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .POST(HttpRequest.BodyPublishers.ofString(""))
-                .uri(URI.create(Consts.API_SERVER_URI + "/v3/scans/" + scanId + "/webhooks/resend"))
-                .setHeader("Content-Type", "application/json")
-                .setHeader("User-Agent", Consts.USER_AGENT)
-                .setHeader("Authorization", "Bearer " + authToken.getAccessToken())
-                .build();
-
-        CompletableFuture<HttpResponse<String>> response;
-        semaphore.acquire();
-        try{
-            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-            int statusCode = response.thenApply(HttpResponse::statusCode).get();
-    
-            if (ensureHttpSuccess(statusCode)) {
-                return;
-            } else if (statusCode == 503) {
-                throw new UnderMaintenanceException();
-            } else if (statusCode == 429) {
-                throw new RateLimitException();
-            } else {
-                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
-            }
-        }
-        finally{
-            semaphore.release();
-        }
+        EXECUTOR.send("POST", Consts.API_SERVER_URI + "/v3/scans/" + pathSegment(scanId) + "/webhooks/resend",
+                HttpRequest.BodyPublishers.noBody(), JSON, authToken);
     }
+
+    // ---- Account information --------------------------------------------------------------------------
 
     /**
      * Get current credits balance for the Copyleaks account.
-     * For more info:
-     * https://api.copyleaks.com/documentation/v3/scans/credits
-     * * Exceptions:
-     * * CommandExceptions: Server reject the request. See response status code,
-     * headers and content for more info.
-     * * UnderMaintenanceException: Copyleaks servers are unavailable for maintenance.
-     * We recommend to implement exponential backoff algorithm as described here:
-     * https://api.copyleaks.com/documentation/v3/exponential-backoff
-     * * RateLimitException: Too many requests. Please wait before calling again.
+     * For more info: https://docs.copyleaks.com/reference/actions/admin/check-credits
      *
      * @param authToken Copyleaks authentication token
-     * @return
+     * @return the credits balance.
+     * @throws ExecutionException If the HTTP request fails or times out.
+     * @throws InterruptedException If the thread is interrupted while waiting for the response.
+     * @throws UnderMaintenanceException If Copyleaks servers are unavailable for maintenance.
+     * @throws RateLimitException If too many requests were sent.
+     * @throws CommandException If the server rejected the request.
+     * @throws ParseException Not thrown. Kept for source compatibility.
+     * @throws AuthExpiredException If the token has expired.
      */
     public static CreditsBalanceResponse getCreditsBalance(CopyleaksAuthToken authToken) throws ExecutionException, InterruptedException, UnderMaintenanceException, RateLimitException, CommandException, ParseException, AuthExpiredException {
-        assert authToken != null : "token is null";
+        Objects.requireNonNull(authToken, "token is null");
+        CopyleaksClientHelper.verifyAuthToken(authToken);
 
-        verifyAuthToken(authToken);
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .GET()
-                .uri(URI.create(Consts.API_SERVER_URI + "/v3/scans/credits"))
-                .setHeader("User-Agent", Consts.USER_AGENT)
-                .setHeader("Authorization", "Bearer " + authToken.getAccessToken())
-                .build();
-
-        CompletableFuture<HttpResponse<String>> response;
-        semaphore.acquire();
-        try{
-            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-    
-            String body = response.thenApply(HttpResponse::body).get();
-            int statusCode = response.thenApply(HttpResponse::statusCode).get();
-    
-            if (ensureHttpSuccess(statusCode)) {
-                CreditsBalanceResponse creditsBalance = gson.fromJson(body, CreditsBalanceResponse.class);
-                return creditsBalance;
-            } else if (statusCode == 503) {
-                throw new UnderMaintenanceException();
-            } else if (statusCode == 429) {
-                throw new RateLimitException();
-            } else {
-                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
-            }
-        }
-        finally{
-            semaphore.release();
-        }
-    }
-
-    /**
-     * Verify that Copyleaks authentication token is exists and not expired.
-     * * Exceptions:
-     * * AuthExpiredException: authentication expired. Need to login again.
-     *
-     * @param authToken Copyleaks authentication token
-     */
-    private static void verifyAuthToken(CopyleaksAuthToken authToken) throws AuthExpiredException {
-        Calendar date = Calendar.getInstance();
-        Date currentDate = new Date(date.getTimeInMillis() + (5 * 60 * 1000));
-        Date expireDate = Date.from(Instant.from(ZonedDateTime.parse(authToken.getExpires())));
-        if (expireDate.getTime() <= currentDate.getTime())
-            throw new AuthExpiredException();
-    }
-
-    private static boolean ensureHttpSuccess(int statusCode) {
-        if (statusCode >= 200 && statusCode <= 299)
-            return true;
-        return false;
+        String body = EXECUTOR.send("GET", Consts.API_SERVER_URI + "/v3/scans/credits", null, null, authToken);
+        return gson.fromJson(body, CreditsBalanceResponse.class);
     }
 
     /**
      * This endpoint allows you to export your usage history between two dates.
      * The output results will be exported to a csv file and it will be attached to the response.
-     * For more info:
-     * https://api.copyleaks.com/documentation/v3/scans/usages/history
-     * * Exceptions:
-     * * CommandExceptions: Server reject the request. See response status code,
-     * headers and content for more info.
-     * * UnderMaintenanceException: Copyleaks servers are unavailable for maintenance.
-     * We recommend to implement exponential backoff algorithm as described here:
-     * https://api.copyleaks.com/documentation/v3/exponential-backoff
-     * * RateLimitException: Too many requests. Please wait before calling again.
+     * For more info: https://docs.copyleaks.com/reference/actions/admin/usage-history
      *
      * @param authToken Copyleaks authentication token.
      * @param startDate The start date to collect usage history from. Date Format: `dd-MM-yyyy`.
      * @param endDate   The end date to collect usage history from. Date Format: `dd-MM-yyyy`.
-     * @return
+     * @return the usage history as CSV text.
+     * @throws ExecutionException If the HTTP request fails or times out.
+     * @throws InterruptedException If the thread is interrupted while waiting for the response.
+     * @throws UnderMaintenanceException If Copyleaks servers are unavailable for maintenance.
+     * @throws RateLimitException If too many requests were sent.
+     * @throws CommandException If the server rejected the request.
+     * @throws ParseException Not thrown. Kept for source compatibility.
+     * @throws AuthExpiredException If the token has expired.
      */
     public static String getUsagesHistoryCsv(CopyleaksAuthToken authToken, String startDate, String endDate) throws ExecutionException, InterruptedException, UnderMaintenanceException, RateLimitException, CommandException, ParseException, AuthExpiredException {
-        assert authToken != null : "token is null";
-        assert startDate != null : "startDate is null";
-        assert endDate != null : "endDate is null";
+        Objects.requireNonNull(authToken, "token is null");
+        Objects.requireNonNull(startDate, "startDate is null");
+        Objects.requireNonNull(endDate, "endDate is null");
+        CopyleaksClientHelper.verifyAuthToken(authToken);
 
-        verifyAuthToken(authToken);
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .GET()
-                .uri(URI.create(Consts.API_SERVER_URI + "/v3/scans/usages/history?start=" + startDate + "&end=" + endDate))
-                .setHeader("Content-Type", "application/json")
-                .setHeader("User-Agent", Consts.USER_AGENT)
-                .setHeader("Authorization", "Bearer " + authToken.getAccessToken())
-                .build();
-
-        CompletableFuture<HttpResponse<String>> response;
-        semaphore.acquire();
-        try{
-            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-    
-            String body = response.thenApply(HttpResponse::body).get();
-            int statusCode = response.thenApply(HttpResponse::statusCode).get();
-    
-            if (ensureHttpSuccess(statusCode)) {
-                return body;
-            } else if (statusCode == 503) {
-                throw new UnderMaintenanceException();
-            } else if (statusCode == 429) {
-                throw new RateLimitException();
-            } else {
-                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
-            }
-        }
-        finally{
-            semaphore.release();
-        }
+        return EXECUTOR.send("GET", Consts.API_SERVER_URI + "/v3/scans/usages/history?start="
+                + CopyleaksRequestExecutor.queryValue(startDate) + "&end=" + CopyleaksRequestExecutor.queryValue(endDate),
+                null, null, authToken);
     }
+
+    /**
+     * Get information about a Private Cloud Hub repository, such as its credits, masking policy and status.
+     * Requires the Admin or Super Admin role.
+     * For more info: https://docs.copyleaks.com/reference/actions/private-cloud-hub/info
+     *
+     * @param authToken    Copyleaks authentication token.
+     * @param repositoryId The repository ID, as shown in the Copyleaks Admin Dashboard.
+     * @return the repository information.
+     * @throws AuthExpiredException If the token has expired.
+     * @throws ExecutionException If the HTTP request fails or times out.
+     * @throws InterruptedException If the thread is interrupted while waiting for the response.
+     * @throws UnderMaintenanceException If Copyleaks servers are unavailable for maintenance.
+     * @throws RateLimitException If too many requests were sent.
+     * @throws CommandException If the server rejected the request, for example 403 without the required role.
+     */
+    public static RepositoryInfoResponse getRepositoryInfo(CopyleaksAuthToken authToken, String repositoryId)
+            throws AuthExpiredException, ExecutionException, InterruptedException, UnderMaintenanceException, RateLimitException, CommandException {
+        Objects.requireNonNull(authToken, "token is null");
+        Objects.requireNonNull(repositoryId, "repositoryId is null");
+        CopyleaksClientHelper.verifyAuthToken(authToken);
+
+        String body = EXECUTOR.send("GET", Consts.API_SERVER_URI + "/v3/repositories/repository/"
+                + pathSegment(repositoryId) + "/info", null, null, authToken);
+        return gson.fromJson(body, RepositoryInfoResponse.class);
+    }
+
+    // ---- Miscellaneous (no login needed) --------------------------------------------------------------
 
     /**
      * Get updates about copyleaks api release notes.
-     * For more info: https://api.copyleaks.com/documentation/v3/release-notes
-     * * Exceptions:
-     * * CommandExceptions: Server reject the request. See response status code,
-     * headers and content for more info.
-     * * UnderMaintenanceException: Copyleaks servers are unavailable for maintenance.
-     * We recommend to implement exponential backoff algorithm as described here:
-     * https://api.copyleaks.com/documentation/v3/exponential-backoff
-     * * RateLimitException: Too many requests. Please wait before calling again.
      *
      * @return List of release notes.
+     * @throws UnderMaintenanceException If Copyleaks servers are unavailable for maintenance.
+     * @throws CommandException If the server rejected the request.
+     * @throws RateLimitException If too many requests were sent.
+     * @throws ExecutionException If the HTTP request fails or times out.
+     * @throws InterruptedException If the thread is interrupted while waiting for the response.
      */
     public static ReleaseNotesResponse getReleaseNotes() throws UnderMaintenanceException, CommandException, RateLimitException, ExecutionException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .GET()
-                .uri(URI.create(Consts.API_SERVER_URI + "/v3/release-logs.json"))
-                .setHeader("Content-Type", "application/json")
-                .setHeader("User-Agent", Consts.USER_AGENT)
-                .build();
-
-        CompletableFuture<HttpResponse<String>> response;
-        semaphore.acquire();
-        try{
-            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-    
-            String body = response.thenApply(HttpResponse::body).get();
-            int statusCode = response.thenApply(HttpResponse::statusCode).get();
-    
-            if (ensureHttpSuccess(statusCode)) {
-                return gson.fromJson(body, ReleaseNotesResponse.class);
-            } else if (statusCode == 503) {
-                throw new UnderMaintenanceException();
-            } else if (statusCode == 429) {
-                throw new RateLimitException();
-            } else {
-                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
-            }
-        }
-        finally{
-            semaphore.release();
-        }
+        String body = EXECUTOR.send("GET", Consts.API_SERVER_URI + "/v3/release-logs.json", null, null, null);
+        return gson.fromJson(body, ReleaseNotesResponse.class);
     }
 
     /**
-     * Get a list of the supported file types.
-     * For more info: https://api.copyleaks.com/documentation/v3/specifications/supported-file-types
-     * * Exceptions:
-     * * CommandExceptions: Server reject the request. See response status code,
-     * headers and content for more info.
-     * * UnderMaintenanceException: Copyleaks servers are unavailable for maintenance.
-     * We recommend to implement exponential backoff algorithm as described here:
-     * https://api.copyleaks.com/documentation/v3/exponential-backoff
-     * * RateLimitException: Too many requests. Please wait before calling again.
+     * Get a list of the file types supported by plagiarism scans.
+     * For more info: https://docs.copyleaks.com/reference/actions/miscellaneous/supported-plagiarism-file-types
      *
      * @return List of supported file types.
+     * @throws CommandException If the server rejected the request.
+     * @throws RateLimitException If too many requests were sent.
+     * @throws UnderMaintenanceException If Copyleaks servers are unavailable for maintenance.
+     * @throws ExecutionException If the HTTP request fails or times out.
+     * @throws InterruptedException If the thread is interrupted while waiting for the response.
      */
     public static SupportedFileTypesResponse getSupportedFileTypes() throws CommandException, RateLimitException, UnderMaintenanceException, ExecutionException, InterruptedException {
+        String body = EXECUTOR.send("GET", Consts.API_SERVER_URI + "/v3/miscellaneous/supported-plagiarism-file-types",
+                null, null, null);
+        return gson.fromJson(body, SupportedFileTypesResponse.class);
+    }
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .GET()
-                .uri(URI.create(Consts.API_SERVER_URI + "/v3/miscellaneous/supported-file-types"))
-                .setHeader("Content-Type", "application/json")
-                .setHeader("User-Agent", Consts.USER_AGENT)
-                .build();
+    /**
+     * Get a list of the file types supported by AI Text Detection.
+     * For more info: https://docs.copyleaks.com/reference/actions/miscellaneous/supported-ai-text-detection-file-types
+     *
+     * @return the supported file extensions.
+     * @throws CommandException If the server rejected the request.
+     * @throws RateLimitException If too many requests were sent.
+     * @throws UnderMaintenanceException If Copyleaks servers are unavailable for maintenance.
+     * @throws ExecutionException If the HTTP request fails or times out.
+     * @throws InterruptedException If the thread is interrupted while waiting for the response.
+     */
+    public static SupportedAiTextDetectionFileTypesResponse getSupportedAiTextDetectionFileTypes() throws CommandException, RateLimitException, UnderMaintenanceException, ExecutionException, InterruptedException {
+        String body = EXECUTOR.send("GET", Consts.API_SERVER_URI + "/v3/miscellaneous/supported-ai-text-detection-file-types",
+                null, null, null);
+        return gson.fromJson(body, SupportedAiTextDetectionFileTypesResponse.class);
+    }
 
-        CompletableFuture<HttpResponse<String>> response;
-        semaphore.acquire();
-        try{
-            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-    
-            String body = response.thenApply(HttpResponse::body).get();
-            int statusCode = response.thenApply(HttpResponse::statusCode).get();
-    
-            if (ensureHttpSuccess(statusCode)) {
-                SupportedFileTypesResponse supportedFileTypes = gson.fromJson(body, SupportedFileTypesResponse.class);
-                return supportedFileTypes;
-            } else if (statusCode == 503) {
-                throw new UnderMaintenanceException();
-            } else if (statusCode == 429) {
-                throw new RateLimitException();
-            } else {
-                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
-            }
-        }
-        finally{
-            semaphore.release();
-        }
+    /**
+     * Get the source and result languages supported by cross-language plagiarism scans
+     * ({@code properties.scanning.crossLanguages}). Language codes use ISO-639-1.
+     * For more info: https://docs.copyleaks.com/reference/actions/miscellaneous/supported-cross-languages
+     *
+     * @return the allowed document and result languages.
+     * @throws CommandException If the server rejected the request.
+     * @throws RateLimitException If too many requests were sent.
+     * @throws UnderMaintenanceException If Copyleaks servers are unavailable for maintenance.
+     * @throws ExecutionException If the HTTP request fails or times out.
+     * @throws InterruptedException If the thread is interrupted while waiting for the response.
+     */
+    public static CrossLanguagesResponse getAllowedCrossLanguages() throws CommandException, RateLimitException, UnderMaintenanceException, ExecutionException, InterruptedException {
+        String body = EXECUTOR.send("GET", Consts.API_SERVER_URI + "/v3/miscellaneous/allowed-cross-languages",
+                null, null, null);
+        return gson.fromJson(body, CrossLanguagesResponse.class);
     }
 
     /**
      * Get a list of the supported languages for OCR (this is not a list of supported languages for the api, but only for the OCR files scan).
-     * For more info: https://api.copyleaks.com/documentation/v3/specifications/ocr-languages/list
-     * * Exceptions:
-     * * CommandExceptions: Server reject the request. See response status code,
-     * headers and content for more info.
-     * * UnderMaintenanceException: Copyleaks servers are unavailable for maintenance.
-     * We recommend to implement exponential backoff algorithm as described here:
-     * https://api.copyleaks.com/documentation/v3/exponential-backoff
-     * * RateLimitException: Too many requests. Please wait before calling again.
+     * For more info: https://docs.copyleaks.com/reference/actions/miscellaneous/ocr-supported-languages
      *
      * @return A list of supported OCR languages
+     * @throws RateLimitException If too many requests were sent.
+     * @throws CommandException If the server rejected the request.
+     * @throws UnderMaintenanceException If Copyleaks servers are unavailable for maintenance.
+     * @throws ExecutionException If the HTTP request fails or times out.
+     * @throws InterruptedException If the thread is interrupted while waiting for the response.
      */
     public static String[] getOCRSupportedLanguagesAsync() throws RateLimitException, CommandException, UnderMaintenanceException, ExecutionException, InterruptedException {
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .GET()
-                .uri(URI.create(Consts.API_SERVER_URI + "/v3/miscellaneous/ocr-languages-list"))
-                .setHeader("Content-Type", "application/json")
-                .setHeader("User-Agent", Consts.USER_AGENT)
-                .build();
-
-        CompletableFuture<HttpResponse<String>> response;
-        semaphore.acquire();
-        try{
-            response = HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-    
-            String body = response.thenApply(HttpResponse::body).get();
-            int statusCode = response.thenApply(HttpResponse::statusCode).get();
-    
-            if (ensureHttpSuccess(statusCode)) {
-                String[] languages = gson.fromJson(body, String[].class);
-                return languages;
-            } else if (statusCode == 503) {
-                throw new UnderMaintenanceException();
-            } else if (statusCode == 429) {
-                throw new RateLimitException();
-            } else {
-                throw new CommandException("command failed with status Code:" + String.valueOf(statusCode) + "\n" + response.toString());
-            }
-        }
-        finally{
-            semaphore.release();
-        }
+        String body = EXECUTOR.send("GET", Consts.API_SERVER_URI + "/v3/miscellaneous/ocr-languages-list", null, null, null);
+        return gson.fromJson(body, String[].class);
     }
 }

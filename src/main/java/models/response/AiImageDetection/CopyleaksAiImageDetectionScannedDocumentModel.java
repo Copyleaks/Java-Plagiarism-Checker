@@ -19,8 +19,6 @@
 */
 package models.response.AiImageDetection;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * Metadata about the AI image detection scan operation.
  */
@@ -29,25 +27,21 @@ public class CopyleaksAiImageDetectionScannedDocumentModel {
     /**
      * The unique identifier for this scan.
      */
-    @JsonProperty("scanId")
     private String scanId;
 
     /**
      * The actual number of credits consumed by this scan.
      */
-    @JsonProperty("actualCredits")
     private int actualCredits;
 
     /**
      * The expected number of credits for this scan.
      */
-    @JsonProperty("expectedCredits")
     private int expectedCredits;
 
     /**
      * ISO 8601 timestamp of when the scan was created.
      */
-    @JsonProperty("creationTime")
     private String creationTime;
 
     public CopyleaksAiImageDetectionScannedDocumentModel() {

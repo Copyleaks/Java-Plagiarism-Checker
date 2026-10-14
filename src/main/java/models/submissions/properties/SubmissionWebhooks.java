@@ -27,7 +27,7 @@ public class SubmissionWebhooks {
      * Use the special token {STATUS} to track the current scan status.
      * This special token will automatically be replaced by the Copyleaks servers
      * with the optional values: completed, error, creditsChecked and indexed.
-     * Read more about webhooks: https://api.copyleaks.com/documentation/v3/webhooks
+     * Read more about webhooks: https://docs.copyleaks.com/reference/data-types/authenticity/webhooks/overview
      */
     private String status;
     /**
@@ -42,6 +42,54 @@ public class SubmissionWebhooks {
         this.status = status;
     }
 
+    /**
+     * Headers added to the status webhook request, as {@code [["name", "value"], ...]}.
+     */
+    private String[][] statusHeaders = null;
+
+    /**
+     * Headers added to the new result webhook request, as {@code [["name", "value"], ...]}.
+     */
+    private String[][] newResultHeaders = null;
+
+    /**
+     * @param status the status webhook URL. Use the {STATUS} placeholder.
+     */
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    /**
+     * @return the status webhook headers, or null.
+     */
+    public String[][] getStatusHeaders() {
+        return statusHeaders;
+    }
+
+    /**
+     * @param statusHeaders headers added to the status webhook request, as {@code [["name", "value"], ...]}.
+     */
+    public void setStatusHeaders(String[][] statusHeaders) {
+        this.statusHeaders = statusHeaders;
+    }
+
+    /**
+     * @return the new result webhook headers, or null.
+     */
+    public String[][] getNewResultHeaders() {
+        return newResultHeaders;
+    }
+
+    /**
+     * @param newResultHeaders headers added to the new result webhook request, as {@code [["name", "value"], ...]}.
+     */
+    public void setNewResultHeaders(String[][] newResultHeaders) {
+        this.newResultHeaders = newResultHeaders;
+    }
+
+    /**
+     * @return the status webhook URL.
+     */
     public String getStatus() {
         return status;
     }

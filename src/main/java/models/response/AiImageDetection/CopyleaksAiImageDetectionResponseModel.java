@@ -19,8 +19,6 @@
 */
 package models.response.AiImageDetection;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * Response model for Copyleaks AI image detection analysis.
  * Contains the AI detection results, image information, and scan metadata.
@@ -30,32 +28,38 @@ public class CopyleaksAiImageDetectionResponseModel {
     /**
      * The version of the AI detection model used for analysis.
      */
-    @JsonProperty("model")
     private String model;
 
     /**
      * RLE-encoded mask data containing arrays of start positions and lengths for AI-detected regions.
      */
-    @JsonProperty("result")
     private CopyleaksAiImageDetectionResultModel result;
 
     /**
      * Summary statistics of the AI detection analysis.
      */
-    @JsonProperty("summary")
     private CopyleaksAiImageDetectionSummaryModel summary;
 
     /**
      * Information about the analyzed image.
      */
-    @JsonProperty("imageInfo")
     private CopyleaksAiImageDetectionImageInfoModel imageInfo;
 
     /**
      * Metadata about the scan operation.
      */
-    @JsonProperty("scannedDocument")
     private CopyleaksAiImageDetectionScannedDocumentModel scannedDocument;
+
+    /**
+     * Whether the image was determined to be AI-generated.
+     */
+    private Boolean isAiDetected;
+
+    /**
+     * The objects found in the image, one entry per object. Present only when the request
+     * included objectDetection; objects that were not found are left out.
+     */
+    private CopyleaksAiImageDetectedObjectModel[] detectedObjects;
 
     public CopyleaksAiImageDetectionResponseModel() {
     }
@@ -106,5 +110,33 @@ public class CopyleaksAiImageDetectionResponseModel {
 
     public void setScannedDocument(CopyleaksAiImageDetectionScannedDocumentModel scannedDocument) {
         this.scannedDocument = scannedDocument;
+    }
+
+    /**
+     * @return true when the image was determined to be AI-generated, or null when the response did not say.
+     */
+    public Boolean getIsAiDetected() {
+        return isAiDetected;
+    }
+
+    /**
+     * @param isAiDetected whether the image was determined to be AI-generated.
+     */
+    public void setIsAiDetected(Boolean isAiDetected) {
+        this.isAiDetected = isAiDetected;
+    }
+
+    /**
+     * @return the objects found in the image, or null when object detection was not requested.
+     */
+    public CopyleaksAiImageDetectedObjectModel[] getDetectedObjects() {
+        return detectedObjects;
+    }
+
+    /**
+     * @param detectedObjects the objects found in the image.
+     */
+    public void setDetectedObjects(CopyleaksAiImageDetectedObjectModel[] detectedObjects) {
+        this.detectedObjects = detectedObjects;
     }
 }

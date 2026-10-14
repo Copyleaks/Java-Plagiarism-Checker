@@ -24,7 +24,7 @@ import models.submissions.properties.SubmissionProperties;
 
 public class CopyleaksFileOcrSubmissionModel extends CopyleaksFileSubmissionModel {
     /**
-     * @param langCode The language code of your content. The selected language should be on the OCR supported languages list. https://api.copyleaks.com/documentation/v3/specifications/ocr-languages
+     * @param langCode The language code of your content. The selected language should be on the OCR supported languages list. https://docs.copyleaks.com/reference/actions/miscellaneous/ocr-supported-languages
      * @param base64 A base64 data string of a file. If you would like to scan plain text, encode it as base64 and submit it.
      * @param filename The name of the file as it will appear in the Copyleaks scan report Make sure to include the right extension for your filetype.
      * @param properties Check inner properties for more details.
@@ -33,6 +33,16 @@ public class CopyleaksFileOcrSubmissionModel extends CopyleaksFileSubmissionMode
 
     public CopyleaksFileOcrSubmissionModel(String langCode, String base64, String filename, SubmissionProperties properties) {
         super(base64, filename, properties);
+        this.langCode = langCode;
+    }
+
+    /** @return the language code of the text in the image. */
+    public String getLangCode() {
+        return langCode;
+    }
+
+    /** @param langCode the language code of the text in the image. */
+    public void setLangCode(String langCode) {
         this.langCode = langCode;
     }
 }

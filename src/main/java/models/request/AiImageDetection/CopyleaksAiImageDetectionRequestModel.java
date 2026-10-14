@@ -19,12 +19,12 @@
 */
 package models.request.AiImageDetection;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.lang.NonNull;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Request model for Copyleaks AI image detection.
  * The request body is a JSON object containing the image to analyze.
+ * To upload the image bytes without base64 encoding, use {@link CopyleaksAiImageDetectionFileRequestModel}.
  */
 public class CopyleaksAiImageDetectionRequestModel {
 
@@ -32,40 +32,34 @@ public class CopyleaksAiImageDetectionRequestModel {
 	 * The base64-encoded image data to be analyzed for AI generation.
 	 * <p>
 	 * Requirements:
-	 * - Minimum 512×512px, maximum 16 megapixels, less than 32MB
+	 * - Minimum 512x512px, maximum 6000x4500px (27 megapixels), less than 32MB
 	 * - Supported formats: PNG, JPEG, BMP, WebP, HEIC/HEIF
 	 * <p>
 	 * Example: "aGVsbG8gd29ybGQ="
 	 */
-	@NonNull
-	@JsonProperty("base64")
 	private String base64;
 
 	/**
-	 * The name of the image file including its extension.
+	 * The name of the image file including its extension. Sent as {@code filename}.
 	 * <p>
 	 * Requirements:
 	 * - Supported extensions: .png, .bmp, .jpg, .jpeg, .webp, .heic, .heif
 	 * - Maximum 255 characters
 	 * <p>
-	 * Example: "my-image.png"      
+	 * Example: "my-image.png"
 	 */
-	@NonNull
-	@JsonProperty("fileName")
+	@SerializedName("filename")
 	private String fileName;
 
 	/**
 	 * The AI detection model to use for analysis.
-	 * You can use either the full model name or its alias.
 	 * <p>
 	 * Available models:
-	 * - AI Image 1 Ultra: "ai-image-1-ultra-01-09-2025" (full name) or "ai-image-1-ultra" (alias)
+	 * - AI Image 1 Ultra: "ai-image-1-ultra"
 	 *   AI image detection model. Produces an overlay of the detected AI segments.
 	 * <p>
-	 * Example: "ai-image-1-ultra-01-09-2025" or "ai-image-1-ultra"
+	 * Example: "ai-image-1-ultra"
 	 */
-	@NonNull
-	@JsonProperty("model")
 	private String model;
 
 	/**
@@ -75,15 +69,22 @@ public class CopyleaksAiImageDetectionRequestModel {
 	 * to ensure you have successfully integrated the API.
 	 * This feature is intended to be used for development purposes only.
 	 * Default value is false.
-	 * <p>
-	 * Example: false
 	 */
-	@JsonProperty("sandbox")
 	private boolean sandbox = false;
 
 	/**
+	 * The type of detection mask to return: "binary" (default), "heatmap" or "none".
+	 * See {@link models.constants.CopyleaksAiImageMaskTypes}. Null leaves the server default.
+	 */
+	private String maskType;
+
+	/**
+	 * Objects to locate and segment in the image, at most 3. Null turns the feature off.
+	 */
+	private CopyleaksObjectDetectionItem[] objectDetection;
+
+	/**
 	 * Constructor for CopyleaksAiImageDetectionRequestModel.
-	 *
 	 * @param base64   The base64-encoded image data.
 	 * @param fileName The name of the image file including its extension.
 	 * @param model    The AI detection model to use for analysis.
@@ -98,40 +99,71 @@ public class CopyleaksAiImageDetectionRequestModel {
 
 	/**
 	 * Constructor with sandbox defaulting to false.
+	 * @param base64   The base64-encoded image data.
+	 * @param fileName The name of the image file including its extension.
+	 * @param model    The AI detection model to use for analysis.
 	 */
 	public CopyleaksAiImageDetectionRequestModel(String base64, String fileName, String model) {
 		this(base64, fileName, model, false);
 	}
 
+	/** @return the base64-encoded image. */
 	public String getBase64() {
 		return base64;
 	}
 
+	/** @param base64 the base64-encoded image. */
 	public void setBase64(String base64) {
 		this.base64 = base64;
 	}
 
+	/** @return the image file name. */
 	public String getFileName() {
 		return fileName;
 	}
 
+	/** @param fileName the image file name, including its extension. */
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
 	}
 
+	/** @return the detection model. */
 	public String getModel() {
 		return model;
 	}
 
+	/** @param model the detection model. */
 	public void setModel(String model) {
 		this.model = model;
 	}
 
+	/** @return true when sandbox mode is on. */
 	public boolean isSandbox() {
 		return sandbox;
 	}
 
+	/** @param sandbox true to use sandbox mode. */
 	public void setSandbox(boolean sandbox) {
 		this.sandbox = sandbox;
+	}
+
+	/** @return the mask type, or null for the server default. */
+	public String getMaskType() {
+		return maskType;
+	}
+
+	/** @param maskType "binary", "heatmap" or "none". See {@link models.constants.CopyleaksAiImageMaskTypes}. */
+	public void setMaskType(String maskType) {
+		this.maskType = maskType;
+	}
+
+	/** @return the objects to detect, or null. */
+	public CopyleaksObjectDetectionItem[] getObjectDetection() {
+		return objectDetection;
+	}
+
+	/** @param objectDetection the objects to detect, at most 3; null turns the feature off. */
+	public void setObjectDetection(CopyleaksObjectDetectionItem[] objectDetection) {
+		this.objectDetection = objectDetection;
 	}
 }

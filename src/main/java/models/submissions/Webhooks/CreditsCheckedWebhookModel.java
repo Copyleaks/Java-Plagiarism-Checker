@@ -19,19 +19,23 @@
 */
 package models.submissions.Webhooks;
 
-import models.response.aidetection.ScannedDocument;
 import models.submissions.Webhooks.HelperModels.BaseModels.StatusWebhookModel;
+import models.submissions.Webhooks.HelperModels.CompletedModels.ScannedDocumentModel;
 
+/**
+ * The creditsChecked webhook: the price of a scan submitted with the CheckCredits action.
+ */
 public class CreditsCheckedWebhookModel extends StatusWebhookModel {
-
     private int credits;
-    private ScannedDocument scannedDocument;
+    private ScannedDocumentModel scannedDocument;
 
+    /** @return the price of the scan in credits. */
     public int getCredits() {
         return credits;
     }
 
-    public ScannedDocument getScannedDocument() {
+    /** @return general information about the scanned document, or null. */
+    public ScannedDocumentModel getScannedDocument() {
         return scannedDocument;
     }
 }

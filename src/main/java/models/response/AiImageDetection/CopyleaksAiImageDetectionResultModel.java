@@ -19,8 +19,6 @@
 */
 package models.response.AiImageDetection;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * RLE-encoded mask data for AI-detected regions.
  */
@@ -29,14 +27,18 @@ public class CopyleaksAiImageDetectionResultModel {
     /**
      * Start positions of AI-detected segments in the flattened image array.
      */
-    @JsonProperty("starts")
     private int[] starts;
 
     /**
      * Lengths of AI-detected segments corresponding to each start position.
      */
-    @JsonProperty("lengths")
     private int[] lengths;
+
+    /**
+     * Confidence band (0 lowest to 4 highest) of each segment, aligned with starts and lengths.
+     * Present only when the request set maskType to "heatmap"; otherwise null.
+     */
+    private int[] labels;
 
     public CopyleaksAiImageDetectionResultModel() {
     }
@@ -60,5 +62,19 @@ public class CopyleaksAiImageDetectionResultModel {
 
     public void setLengths(int[] lengths) {
         this.lengths = lengths;
+    }
+
+    /**
+     * @return the confidence band of each segment, or null when the mask type was not "heatmap".
+     */
+    public int[] getLabels() {
+        return labels;
+    }
+
+    /**
+     * @param labels the confidence band of each segment.
+     */
+    public void setLabels(int[] labels) {
+        this.labels = labels;
     }
 }

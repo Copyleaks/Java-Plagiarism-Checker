@@ -24,13 +24,57 @@ import models.submissions.properties.SubmissionProperties;
 
 public class CopyleaksURLSubmissionModel extends CopyleaksSubmissionModel {
     /**
-     * @param url The url to be scanned
-     * @param properties Check inner properties for more details.
+     * The url to be scanned
      */
     private String url;
 
+    /**
+     * The HTTP method used to fetch the URL: GET, POST or PUT. Null means GET.
+     */
+    private String verb;
+
+    /**
+     * Headers sent when fetching the URL, as {@code [["name", "value"], ...]}.
+     * When set, no default Copyleaks headers are sent.
+     */
+    private String[][] headers;
+
+    /**
+     * @param url The url to be scanned
+     * @param properties Check inner properties for more details.
+     */
     public CopyleaksURLSubmissionModel(String url, SubmissionProperties properties) {
         super(properties);
         this.url = url;
+    }
+
+    /** @return the URL to scan. */
+    public String getUrl() {
+        return url;
+    }
+
+    /** @param url the URL to scan. */
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    /** @return the HTTP method used to fetch the URL, or null for GET. */
+    public String getVerb() {
+        return verb;
+    }
+
+    /** @param verb the HTTP method used to fetch the URL: GET, POST or PUT. */
+    public void setVerb(String verb) {
+        this.verb = verb;
+    }
+
+    /** @return the headers sent when fetching the URL, or null. */
+    public String[][] getHeaders() {
+        return headers;
+    }
+
+    /** @param headers headers sent when fetching the URL, as {@code [["name", "value"], ...]}. */
+    public void setHeaders(String[][] headers) {
+        this.headers = headers;
     }
 }

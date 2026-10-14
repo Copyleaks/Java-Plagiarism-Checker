@@ -23,7 +23,7 @@ package models.exports;
 public class ExportResults {
     /**
      * Result identification to be downloaded. You get these identifications from the completed webhook.
-     * https://api.copyleaks.com/documentation/v3/webhooks/completed
+     * https://docs.copyleaks.com/reference/data-types/authenticity/webhooks/scan-completed
      */
     private String id;
 

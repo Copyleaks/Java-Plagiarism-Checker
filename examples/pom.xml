@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+        Example programs for the Copyleaks Java SDK. This project is not part of the SDK build and is never published.
+        Build the SDK first (mvn install in the repository root), or use the released version from Maven Central, then:
+            mvn -f examples/pom.xml compile exec:java -Dexec.mainClass=example.Example
+    -->
+    <groupId>com.copyleaks.sdk</groupId>
+    <artifactId>copyleaks-java-sdk-examples</artifactId>
+    <version>6.0.0</version>
+    <packaging>jar</packaging>
+    <name>Copyleaks Java SDK examples</name>
+
+    <properties>
+        <copyleaks.sdk.version>6.0.0</copyleaks.sdk.version>
+        <maven.compiler.release>11</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <maven.install.skip>true</maven.install.skip>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.copyleaks.sdk</groupId>
+            <artifactId>copyleaks-java-sdk</artifactId>
+            <version>${copyleaks.sdk.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.13.2</version>
+        </dependency>
+        <!-- Only the webhook receiver example needs Spring Boot. The SDK itself does not depend on it. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>2.7.18</version>
+        </dependency>
+    </dependencies>
+</project>

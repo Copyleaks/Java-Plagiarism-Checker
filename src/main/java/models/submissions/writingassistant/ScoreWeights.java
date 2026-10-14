@@ -20,55 +20,92 @@
 
 package models.submissions.writingassistant;
 
+/**
+ * The weight of each correction category in the overall writing score.
+ * Every weight is between 0.0 and 1.0 and defaults to 1.0, the API default,
+ * so setting one weight leaves the others at 1.0.
+ */
 public class ScoreWeights {
-    /**
-     * Grammar correction category weight in the overall score. 0.0 >= weight <=1.0
-     */
-    private double grammarScoreWeight;
+
+    /** The default weight of each category. */
+    public static final double DEFAULT_WEIGHT = 1.0;
 
     /**
-     * Mechanics correction category weight in the overall score. 0.0 >= weight <=1.0
+     * Grammar correction category weight in the overall score. 0.0 &lt;= weight &lt;= 1.0
      */
-    private double mechanicsScoreWeight;
+    private double grammarScoreWeight = DEFAULT_WEIGHT;
 
     /**
-     * Sentence structure correction category weight in the overall score. 0.0 >= weight <=1.0
+     * Mechanics correction category weight in the overall score. 0.0 &lt;= weight &lt;= 1.0
      */
-    private double sentenceStructureScoreWeight;
+    private double mechanicsScoreWeight = DEFAULT_WEIGHT;
 
     /**
-     * Word choice correction category weight in the overall score. 0.0 >= weight <=1.0
+     * Sentence structure correction category weight in the overall score. 0.0 &lt;= weight &lt;= 1.0
      */
-    private double wordChoiceScoreWeight;
+    private double sentenceStructureScoreWeight = DEFAULT_WEIGHT;
 
+    /**
+     * Word choice correction category weight in the overall score. 0.0 &lt;= weight &lt;= 1.0
+     */
+    private double wordChoiceScoreWeight = DEFAULT_WEIGHT;
+
+    /**
+     * Creates weights that are all 1.0.
+     */
+    public ScoreWeights() {
+    }
+
+    /**
+     * @param grammarScoreWeight           grammar weight, 0.0 to 1.0.
+     * @param mechanicsScoreWeight         mechanics weight, 0.0 to 1.0.
+     * @param sentenceStructureScoreWeight sentence structure weight, 0.0 to 1.0.
+     * @param wordChoiceScoreWeight        word choice weight, 0.0 to 1.0.
+     */
+    public ScoreWeights(double grammarScoreWeight, double mechanicsScoreWeight,
+            double sentenceStructureScoreWeight, double wordChoiceScoreWeight) {
+        this.grammarScoreWeight = grammarScoreWeight;
+        this.mechanicsScoreWeight = mechanicsScoreWeight;
+        this.sentenceStructureScoreWeight = sentenceStructureScoreWeight;
+        this.wordChoiceScoreWeight = wordChoiceScoreWeight;
+    }
+
+    /** @return the grammar weight. */
     public double getGrammarScoreWeight() {
         return grammarScoreWeight;
     }
 
+    /** @param grammarScoreWeight the grammar weight, 0.0 to 1.0. */
     public void setGrammarScoreWeight(double grammarScoreWeight) {
         this.grammarScoreWeight = grammarScoreWeight;
     }
 
+    /** @return the mechanics weight. */
     public double getMechanicsScoreWeight() {
         return mechanicsScoreWeight;
     }
 
+    /** @param mechanicsScoreWeight the mechanics weight, 0.0 to 1.0. */
     public void setMechanicsScoreWeight(double mechanicsScoreWeight) {
         this.mechanicsScoreWeight = mechanicsScoreWeight;
     }
 
+    /** @return the sentence structure weight. */
     public double getSentenceStructureScoreWeight() {
         return sentenceStructureScoreWeight;
     }
 
+    /** @param sentenceStructureScoreWeight the sentence structure weight, 0.0 to 1.0. */
     public void setSentenceStructureScoreWeight(double sentenceStructureScoreWeight) {
         this.sentenceStructureScoreWeight = sentenceStructureScoreWeight;
     }
 
+    /** @return the word choice weight. */
     public double getWordChoiceScoreWeight() {
         return wordChoiceScoreWeight;
     }
 
+    /** @param wordChoiceScoreWeight the word choice weight, 0.0 to 1.0. */
     public void setWordChoiceScoreWeight(double wordChoiceScoreWeight) {
         this.wordChoiceScoreWeight = wordChoiceScoreWeight;
     }

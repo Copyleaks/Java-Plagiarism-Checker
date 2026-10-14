@@ -24,6 +24,18 @@ public class SupportedFileTypesResponse {
     private String[] textual;
     private String[] ocr;
 
+    /**
+     * @return the file types supported for textual scans.
+     */
+    public String[] getTextual() {
+        return textual;
+    }
+
+    /**
+     * @return the file types supported for textual scans.
+     * @deprecated Misspelled. Use {@link #getTextual()}.
+     */
+    @Deprecated
     public String[] getTextural() {
         return textual;
     }

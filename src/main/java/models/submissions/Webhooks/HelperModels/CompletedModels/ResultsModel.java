@@ -22,6 +22,7 @@ package models.submissions.Webhooks.HelperModels.CompletedModels;
 
 import models.submissions.Webhooks.HelperModels.ResultsModels.BatchModel;
 import models.submissions.Webhooks.HelperModels.ResultsModels.DatabaseModel;
+import models.submissions.Webhooks.HelperModels.ResultsModels.InternalAIDataModel;
 import models.submissions.Webhooks.HelperModels.ResultsModels.InternetModel;
 import models.submissions.Webhooks.HelperModels.ResultsModels.RepositoriesModel;
 import models.submissions.Webhooks.HelperModels.ResultsModels.ScoreModel;
@@ -33,6 +34,7 @@ public class ResultsModel {
     private RepositoriesModel[] repositories;
     private ScoreModel score;
     private InternetModel[] internet;
+    private InternalAIDataModel[] internalAIData;
 
     public DatabaseModel[] getDatabase() {
         return database;
@@ -52,6 +54,13 @@ public class ResultsModel {
 
     public InternetModel[] getInternet() {
         return internet;
+    }
+
+    /**
+     * @return the Internal AI Source Match results, or null when the feature was not enabled.
+     */
+    public InternalAIDataModel[] getInternalAIData() {
+        return internalAIData;
     }
 
 }

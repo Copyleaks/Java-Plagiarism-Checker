@@ -41,6 +41,52 @@ public class CopyleaksAIDetectionSubmissionModel {
         this.sandbox = sandbox;
     }
 
+    /*
+     * Turn on AI Logic: explanations of the patterns that drove the result.
+     */
+    private Boolean explain;
+
+    /*
+     * Detection sensitivity from 1 to 3. Default: 2.
+     */
+    private Integer sensitivity;
+
+    /**
+     * @return true when AI Logic is requested, or null for the server default (false).
+     */
+    public Boolean getExplain() {
+        return explain;
+    }
+
+    /**
+     * Turns on AI Logic. The result then includes {@code explain}. Explanations are returned for
+     * six languages only; for other languages the result has no explanation.
+     * @param explain true to request AI Logic explanations.
+     */
+    public void setExplain(Boolean explain) {
+        this.explain = explain;
+    }
+
+    /**
+     * @return the sensitivity, or null for the server default (2).
+     */
+    public Integer getSensitivity() {
+        return sensitivity;
+    }
+
+    /**
+     * Sets how the detection behaves: 1 for text copied from an AI tool without edits,
+     * 2 for text with minor changes, 3 for heavily modified text.
+     * @param sensitivity 1, 2 or 3, or null for the server default.
+     * @throws IllegalArgumentException if the value is not between 1 and 3.
+     */
+    public void setSensitivity(Integer sensitivity) {
+        if (sensitivity != null && (sensitivity < 1 || sensitivity > 3)) {
+            throw new IllegalArgumentException("Sensitivity must be between 1 and 3 (inclusive)");
+        }
+        this.sensitivity = sensitivity;
+    }
+
     public String getText() {
         return text;
     }

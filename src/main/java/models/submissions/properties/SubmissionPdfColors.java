@@ -44,6 +44,44 @@ public class SubmissionPdfColors {
     private String relatedMeaning;
     
 
+    /**
+     * The highlight color for AI content detection, in HEX format.
+     */
+    private String aiDetection;
+
+    /**
+     * The highlight color for writing feedback (Grammar Checker), in HEX format.
+     */
+    private String writingFeedback;
+
+    /**
+     * @return the AI content detection highlight color, or null.
+     */
+    public String getAiDetection() {
+        return aiDetection;
+    }
+
+    /**
+     * @param aiDetection the AI content detection highlight color, in HEX format. Default: #FE5758.
+     */
+    public void setAiDetection(String aiDetection) {
+        this.aiDetection = aiDetection;
+    }
+
+    /**
+     * @return the writing feedback highlight color, or null.
+     */
+    public String getWritingFeedback() {
+        return writingFeedback;
+    }
+
+    /**
+     * @param writingFeedback the writing feedback highlight color, in HEX format. Default: #FF9A02.
+     */
+    public void setWritingFeedback(String writingFeedback) {
+        this.writingFeedback = writingFeedback;
+    }
+
     public String getMainStrip() {
         return mainStrip;
     }

@@ -25,6 +25,8 @@ package example;
 import models.response.CopyleaksAuthToken;
 import example.functions.AIDetectionExample;
 import example.functions.AiImageDetectionExample;
+import example.functions.AiVideoDetectionExample;
+import example.functions.ImagePlagiarismExample;
 import example.functions.AuthenticationExample;
 import example.functions.PlagiarismScanExample;
 import example.functions.TextModerationExample;
@@ -80,6 +82,12 @@ public class Example {
 
         // 5. AI image detection example
         AiImageDetectionExample.run(token, scanId, gson);
+
+        // 6. Image plagiarism detection example
+        ImagePlagiarismExample.run(token, scanId);
+
+        // 7. AI video detection example (the result arrives at the webhook)
+        AiVideoDetectionExample.run(token, scanId);
     }
 
     /**

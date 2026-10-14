@@ -20,8 +20,15 @@
 
 package classes;
 
+/**
+ * Server addresses and the User-Agent sent by the SDK.
+ * Change the addresses with {@link Copyleaks#setApiUri(String)} and {@link Copyleaks#setIdentityUri(String)}.
+ */
 public final class Consts {
-    public static String API_SERVER_URI = "https://api.copyleaks.com";
-    public static String IDENTITY_SERVER_URI = "https://id.copyleaks.com";
-    public static final String USER_AGENT = "java-sdk/3.0";
+    /** The API server address. */
+    public static volatile String API_SERVER_URI = "https://api.copyleaks.com";
+    /** The identity (login) server address. */
+    public static volatile String IDENTITY_SERVER_URI = "https://id.copyleaks.com";
+    /** The User-Agent header sent with every request. */
+    public static final String USER_AGENT = "java-sdk/6.0.0";
 }

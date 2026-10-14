@@ -26,6 +26,29 @@ public class SubmissionInstitution {
      */
     private String id;
 
+    /**
+     * Creates an empty institution object. Set the ID with {@link #setId(String)}.
+     */
+    public SubmissionInstitution() {
+    }
+
+    /**
+     * @param id the institution ID.
+     */
+    public SubmissionInstitution(String id) {
+        this.id = id;
+    }
+
+    /**
+     * @param id the institution ID.
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    /**
+     * @return the institution ID.
+     */
     public String getId() {
         return id;
     }

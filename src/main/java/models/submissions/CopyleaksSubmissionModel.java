@@ -29,4 +29,14 @@ public class CopyleaksSubmissionModel {
         this.properties = properties;
     }
 
+    /** @return the scan properties. */
+    public SubmissionProperties getProperties() {
+        return properties;
+    }
+
+    /** @param properties the scan properties. */
+    public void setProperties(SubmissionProperties properties) {
+        this.properties = properties;
+    }
+
 }

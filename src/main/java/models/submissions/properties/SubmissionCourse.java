@@ -26,6 +26,29 @@ public class SubmissionCourse {
      */
     private String id;
 
+    /**
+     * Creates an empty course object. Set the ID with {@link #setId(String)}.
+     */
+    public SubmissionCourse() {
+    }
+
+    /**
+     * @param id the course ID.
+     */
+    public SubmissionCourse(String id) {
+        this.id = id;
+    }
+
+    /**
+     * @param id the course ID.
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    /**
+     * @return the course ID.
+     */
     public String getId() {
         return id;
     }

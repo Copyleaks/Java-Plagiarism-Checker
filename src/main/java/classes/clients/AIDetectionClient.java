@@ -20,82 +20,98 @@
 
 package classes.clients;
 
-import java.net.URI;
 import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.text.ParseException;
-import java.util.concurrent.CompletableFuture;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
 import com.google.gson.Gson;
 import classes.Consts;
 import helpers.CopyleaksClientHelper;
+import helpers.CopyleaksRequestExecutor;
 import models.exceptions.AuthExpiredException;
 import models.exceptions.CommandException;
+import models.exceptions.RateLimitException;
 import models.exceptions.UnderMaintenanceException;
 import models.response.CopyleaksAuthToken;
+import models.response.aidetection.AIDetectionCreditsResponse;
 import models.response.aidetection.AIDetectionResponse;
 import models.submissions.aidetection.CopyleaksNaturalLanguageSubmissionModel;
 
+/**
+ * Copyleaks AI Text Detection. Use the shared instance {@code Copyleaks.aiDetectionClient}.
+ */
 public class AIDetectionClient {
 
-    private final HttpClient httpClient;
-    private final Semaphore semaphore;
+    private final CopyleaksRequestExecutor executor;
     private static final Gson gson = new Gson();
 
+    /**
+     * @param executor the request executor to send requests with.
+     */
+    public AIDetectionClient(CopyleaksRequestExecutor executor) {
+        this.executor = Objects.requireNonNull(executor, "executor is null");
+    }
+
+    /**
+     * @param httpClient the HTTP client to send requests with.
+     * @param semaphore  limits how many requests run at the same time.
+     * @deprecated Use the shared {@code Copyleaks.aiDetectionClient}, or
+     *             {@link #AIDetectionClient(CopyleaksRequestExecutor)}.
+     */
+    @Deprecated
     public AIDetectionClient(HttpClient httpClient, Semaphore semaphore) {
-        this.httpClient = httpClient;
-        this.semaphore = semaphore;
+        this(new CopyleaksRequestExecutor(httpClient, semaphore));
     }
 
     /**
      * Use Copyleaks AI Content Detection to differentiate between human texts and AI written texts.
-     * 
-     * * Exceptions:
-     * * CommandExceptions: Server reject the request. See response status code,
-     * headers and content for more info.
-     * * UnderMaintenanceException: Copyleaks servers are unavailable for maintenance.
-     * We recommend to implement exponential backoff algorithm as described here:
-     * https://api.copyleaks.com/documentation/v3/exponential-backoff
+     * For more info: https://docs.copyleaks.com/reference/actions/writer-detector/check
      *
      * @param authToken  Copyleaks authentication token
      * @param scanId     Attach your own scan Id
      * @param submission Submission model
+     * @return the AI Text Detection result.
+     * @throws ParseException Not thrown. Kept for source compatibility.
+     * @throws AuthExpiredException If the token has expired.
+     * @throws UnderMaintenanceException If Copyleaks servers are unavailable for maintenance.
+     * @throws RateLimitException If too many requests were sent.
+     * @throws CommandException If the server rejected the request.
+     * @throws ExecutionException If the HTTP request fails or times out.
+     * @throws InterruptedException If the thread is interrupted while waiting for the response.
      */
     public AIDetectionResponse submitNaturalLanguage(CopyleaksAuthToken authToken, String scanId, CopyleaksNaturalLanguageSubmissionModel submission)
-            throws ParseException, AuthExpiredException, UnderMaintenanceException, CommandException, ExecutionException, InterruptedException {
-        assert authToken != null : "token is null";
-        assert scanId != null : "scanId is null";
-        assert submission != null : "submission is null";
-
+            throws ParseException, AuthExpiredException, UnderMaintenanceException, RateLimitException, CommandException, ExecutionException, InterruptedException {
+        Objects.requireNonNull(authToken, "token is null");
+        Objects.requireNonNull(scanId, "scanId is null");
+        Objects.requireNonNull(submission, "submission is null");
         CopyleaksClientHelper.verifyAuthToken(authToken);
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(submission)))
-                .uri(URI.create(Consts.API_SERVER_URI + "/v2/writer-detector/" + scanId + "/check"))
-                .setHeader("Content-Type", "application/json")
-                .setHeader("User-Agent", Consts.USER_AGENT)
-                .setHeader("Authorization", "Bearer " + authToken.getAccessToken())
-                .build();
-
-        CompletableFuture<HttpResponse<String>> response;
-        semaphore.acquire();
-        try {
-            response = httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-            String body = response.thenApply(HttpResponse::body).get();
-            int statusCode = response.thenApply(HttpResponse::statusCode).get();
-
-            if (CopyleaksClientHelper.ensureHttpSuccess(statusCode)) {
-                AIDetectionResponse supportedFileTypes = gson.fromJson(body, AIDetectionResponse.class);
-                return supportedFileTypes;               } else if (statusCode == 503) {
-                throw new UnderMaintenanceException();
-            } else {
-                throw new CommandException("command failed with status Code: " + statusCode + "\n" + response.toString());
-            }
-        } finally {
-            semaphore.release();
-        }
+        String body = executor.send("POST",
+                Consts.API_SERVER_URI + "/v2/writer-detector/" + CopyleaksRequestExecutor.pathSegment(scanId) + "/check",
+                CopyleaksRequestExecutor.jsonBody(gson, submission), "application/json", authToken);
+        return gson.fromJson(body, AIDetectionResponse.class);
     }
-    
+
+    /**
+     * Get the credit balance available for AI Text Detection.
+     * For more info: https://docs.copyleaks.com/reference/actions/writer-detector/credits
+     *
+     * @param authToken Copyleaks authentication token
+     * @return the available credits.
+     * @throws AuthExpiredException If the token has expired.
+     * @throws UnderMaintenanceException If Copyleaks servers are unavailable for maintenance.
+     * @throws RateLimitException If too many requests were sent.
+     * @throws CommandException If the server rejected the request.
+     * @throws ExecutionException If the HTTP request fails or times out.
+     * @throws InterruptedException If the thread is interrupted while waiting for the response.
+     */
+    public AIDetectionCreditsResponse getCredits(CopyleaksAuthToken authToken)
+            throws AuthExpiredException, UnderMaintenanceException, RateLimitException, CommandException, ExecutionException, InterruptedException {
+        Objects.requireNonNull(authToken, "token is null");
+        CopyleaksClientHelper.verifyAuthToken(authToken);
+
+        String body = executor.send("GET", Consts.API_SERVER_URI + "/v2/writer-detector/credits", null, null, authToken);
+        return gson.fromJson(body, AIDetectionCreditsResponse.class);
+    }
 }

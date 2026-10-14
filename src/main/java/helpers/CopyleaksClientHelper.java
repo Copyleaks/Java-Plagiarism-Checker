@@ -22,32 +22,58 @@ package helpers;
 
 import java.time.Instant;
 import java.time.ZonedDateTime;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.Objects;
 
 import models.exceptions.AuthExpiredException;
 import models.response.CopyleaksAuthToken;
 
 public class CopyleaksClientHelper {
-    
-    /**
-     * Verify that Copyleaks authentication token is exists and not expired.
-     * * Exceptions:
-     * * AuthExpiredException: authentication expired. Need to login again.
-     *
-     * @param authToken Copyleaks authentication token
-     */
-    public static void verifyAuthToken(CopyleaksAuthToken authToken) throws AuthExpiredException {
-        Calendar date = Calendar.getInstance();
-        Date currentDate = new Date(date.getTimeInMillis() + (5 * 60 * 1000));
-        Date expireDate = Date.from(Instant.from(ZonedDateTime.parse(authToken.getExpires())));
-        if (expireDate.getTime() <= currentDate.getTime())
-            throw new AuthExpiredException();
+
+    /** A token is treated as expired when less than this many seconds of validity are left. */
+    private static final long EXPIRY_MARGIN_SECONDS = 5 * 60;
+
+    /** The last parsed expiry date, so the same token is not parsed on every call. */
+    private static volatile ParsedExpiry lastExpiry;
+
+    private static final class ParsedExpiry {
+        final String text;
+        final Instant instant;
+
+        ParsedExpiry(String text, Instant instant) {
+            this.text = text;
+            this.instant = instant;
+        }
     }
 
+    /**
+     * Verify that Copyleaks authentication token is exists and not expired.
+     * A token that expires within the next 5 minutes is treated as expired.
+     *
+     * @param authToken Copyleaks authentication token
+     * @throws AuthExpiredException if the token has expired. Log in again to get a new one.
+     */
+    public static void verifyAuthToken(CopyleaksAuthToken authToken) throws AuthExpiredException {
+        Objects.requireNonNull(authToken, "authToken is null");
+        String expires = authToken.getExpires();
+        Objects.requireNonNull(expires, "authToken has no expiry date");
+        ParsedExpiry cached = lastExpiry;
+        Instant expireDate;
+        if (cached != null && cached.text.equals(expires)) {
+            expireDate = cached.instant;
+        } else {
+            expireDate = Instant.from(ZonedDateTime.parse(expires));
+            lastExpiry = new ParsedExpiry(expires, expireDate);
+        }
+        if (!expireDate.isAfter(Instant.now().plusSeconds(EXPIRY_MARGIN_SECONDS))) {
+            throw new AuthExpiredException();
+        }
+    }
+
+    /**
+     * @param statusCode an HTTP status code.
+     * @return true for a 2xx status code.
+     */
     public static boolean ensureHttpSuccess(int statusCode) {
-        if (statusCode >= 200 && statusCode <= 299)
-            return true;
-        return false;
+        return statusCode >= 200 && statusCode <= 299;
     }
 }

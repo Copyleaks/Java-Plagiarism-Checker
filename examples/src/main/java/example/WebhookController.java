@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
+import models.response.AiImageDetection.CopyleaksAiImageDetectionResponseModel;
+import models.response.AiVideoDetection.CopyleaksAiVideoDetectionResponseModel;
 import models.response.aidetection.AIDetectionResponse;
 import models.submissions.Webhooks.CompletedWebhookModel;
 import models.submissions.Webhooks.CreditsCheckedWebhookModel;
@@ -23,6 +25,9 @@ import models.submissions.Webhooks.NewResultWebhookModel;
  * - /webhook/error
  * - /webhook/indexed
  * - /webhook/creditsChecked
+ * - /webhook/new-results
+ * - /webhook/ai-image (AI Image Detection async results)
+ * - /webhook/ai-video (AI Video Detection results)
  * 
  * Each endpoint accepts a POST request with a JSON payload corresponding to the
  * event type.
@@ -113,5 +118,33 @@ public class WebhookController {
         NewResultWebhookModel newResultsData = gson.fromJson(payload, NewResultWebhookModel.class);
         System.out.println("new-results event received: " + payload);
         return "new-results webhook received";
+    }
+
+    /**
+     * Handles an AI Image Detection result sent by the asynchronous submit.
+     *
+     * @param payload the JSON payload, with the same shape as the synchronous result
+     * @return a simple acknowledgment message
+     */
+    @PostMapping("/ai-image")
+    public String handleAiImage(@RequestBody String payload) {
+        CopyleaksAiImageDetectionResponseModel result = gson.fromJson(payload, CopyleaksAiImageDetectionResponseModel.class);
+        System.out.println("AI image result. AI detected: " + result.getIsAiDetected());
+        return "AI image webhook received";
+    }
+
+    /**
+     * Handles an AI Video Detection result.
+     *
+     * @param payload the JSON payload of the AI Video Detection result
+     * @return a simple acknowledgment message
+     */
+    @PostMapping("/ai-video")
+    public String handleAiVideo(@RequestBody String payload) {
+        CopyleaksAiVideoDetectionResponseModel result = gson.fromJson(payload, CopyleaksAiVideoDetectionResponseModel.class);
+        if (result.getSummary() != null) {
+            System.out.println("AI video result. Overall AI ratio: " + result.getSummary().getOverallAIRatio());
+        }
+        return "AI video webhook received";
     }
 }

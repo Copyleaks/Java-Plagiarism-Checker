@@ -20,7 +20,14 @@
 
 package models.request.TextModeration;
 
+/**
+ * Request body for Text Moderation.
+ */
 public class CopyleaksTextModerationRequest {
+
+    /** The largest number of labels the server accepts in one request. */
+    public static final int MAX_LABELS = 16;
+
     /**
      * Text to produce Text Moderation report for.
      */
@@ -40,10 +47,17 @@ public class CopyleaksTextModerationRequest {
 
     /**
      * A list of label configurations to be used for the moderation process.
-     * The array must have at least 1 element and at most 32 elements.
+     * The array must have at least 1 element and at most 16 elements.
      */
     private final Object[] labels;
 
+    /**
+     * @param text     the text to moderate.
+     * @param sandbox  true to use sandbox mode; null means false.
+     * @param language the language code of the text, or null to detect it.
+     * @param labels   the labels to check, from 1 to {@value #MAX_LABELS} items.
+     * @throws IllegalArgumentException if text is null or labels has no items or more than {@value #MAX_LABELS}.
+     */
     public CopyleaksTextModerationRequest(
             String text,
             Boolean sandbox,
@@ -57,30 +71,32 @@ public class CopyleaksTextModerationRequest {
         this.sandbox = (sandbox != null) ? sandbox : false;
         this.language = language;
 
-        // Validation for labels
-        if (labels == null) {
+        if (labels == null || labels.length == 0) {
             throw new IllegalArgumentException("Labels array must have at least 1 element");
         }
-        
-        if (labels.length > 32) {
-        throw new IllegalArgumentException("Labels array must not contain more than 32 elements");
+        if (labels.length > MAX_LABELS) {
+            throw new IllegalArgumentException("Labels array must not contain more than " + MAX_LABELS + " elements");
         }
 
         this.labels = labels;
     }
 
+    /** @return the text to moderate. */
     public String getText() {
         return text;
     }
 
+    /** @return true when sandbox mode is on. */
     public boolean isSandbox() {
         return sandbox;
     }
 
+    /** @return the language code, or null. */
     public String getLanguage() {
         return language;
     }
 
+    /** @return the labels to check. */
     public Object[] getLabels() {
         return labels;
     }

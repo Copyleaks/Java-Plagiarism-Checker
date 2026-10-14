@@ -19,8 +19,6 @@
 */
 package models.response.AiImageDetection;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * Information about the analyzed image.
  */
@@ -29,13 +27,11 @@ public class CopyleaksAiImageDetectionImageInfoModel {
     /**
      * Dimensions of the analyzed image.
      */
-    @JsonProperty("shape")
     private CopyleaksImageShapeModel shape;
 
     /**
      * Optional metadata extracted from the image.
      */
-    @JsonProperty("metadata")
     private CopyleaksImageMetadataModel metadata;
 
     public CopyleaksAiImageDetectionImageInfoModel() {

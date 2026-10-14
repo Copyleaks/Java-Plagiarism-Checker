@@ -19,8 +19,6 @@
 */
 package models.response.AiImageDetection;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * Optional metadata extracted from the image.
  */
@@ -29,20 +27,22 @@ public class CopyleaksImageMetadataModel {
     /**
      * Timestamp when the image was created (if available).
      */
-    @JsonProperty("issuedTime")
     private String issuedTime;
 
     /**
      * The AI service or tool that created the image (if detected).
      */
-    @JsonProperty("issuedBy")
     private String issuedBy;
 
     /**
      * The application or device used to create the image.
      */
-    @JsonProperty("appOrDeviceUsed")
     private String appOrDeviceUsed;
+
+    /**
+     * A summary of how the image was generated, if available in the metadata.
+     */
+    private String contentSummary;
 
     public CopyleaksImageMetadataModel() {
     }
@@ -75,5 +75,19 @@ public class CopyleaksImageMetadataModel {
 
     public void setAppOrDeviceUsed(String appOrDeviceUsed) {
         this.appOrDeviceUsed = appOrDeviceUsed;
+    }
+
+    /**
+     * @return a summary of how the image was generated, or null.
+     */
+    public String getContentSummary() {
+        return contentSummary;
+    }
+
+    /**
+     * @param contentSummary a summary of how the image was generated.
+     */
+    public void setContentSummary(String contentSummary) {
+        this.contentSummary = contentSummary;
     }
 }

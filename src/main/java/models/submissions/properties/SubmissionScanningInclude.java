@@ -30,7 +30,18 @@ public class SubmissionScanningInclude {
      */
     private String idPattern = null;
 
+    /**
+     * @return the ID pattern, or null.
+     */
     public String getIdPattern() {
         return idPattern;
+    }
+
+    /**
+     * @param idPattern include only submissions whose ID matches this pattern. {@code *} matches any characters
+     *                  and {@code .} matches one non-whitespace character.
+     */
+    public void setIdPattern(String idPattern) {
+        this.idPattern = idPattern;
     }
 }

@@ -23,6 +23,7 @@ import models.constants.CopyleaksAlertCodes;
 import models.response.aidetection.AIDetectionResponse;
 import models.submissions.Webhooks.HelperModels.BaseModels.StatusWebhookModel;
 import models.submissions.Webhooks.HelperModels.CompletedModels.NotificationsModel;
+import models.submissions.Webhooks.HelperModels.CompletedModels.ReferencesValidationModel;
 import models.submissions.Webhooks.HelperModels.CompletedModels.ResultsModel;
 import models.submissions.Webhooks.HelperModels.CompletedModels.ScannedDocumentModel;
 import models.submissions.Webhooks.HelperModels.NotificationsModels.AlertsModel;
@@ -32,6 +33,7 @@ public class CompletedWebhookModel extends StatusWebhookModel {
     private ResultsModel results;
     private NotificationsModel notifications;
     private ScannedDocumentModel scannedDocument;
+    private ReferencesValidationModel referencesValidation;
 
     public ResultsModel getResults() {
         return results;
@@ -43,6 +45,13 @@ public class CompletedWebhookModel extends StatusWebhookModel {
 
     public ScannedDocumentModel getScannedDocument() {
         return scannedDocument;
+    }
+
+    /**
+     * @return the Citation Checker summary, or null when {@code references.validate} was not enabled.
+     */
+    public ReferencesValidationModel getReferencesValidation() {
+        return referencesValidation;
     }
 
     /**

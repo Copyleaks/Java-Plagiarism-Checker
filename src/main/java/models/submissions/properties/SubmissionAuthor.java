@@ -28,6 +28,29 @@ public class SubmissionAuthor {
      */
     private String id;
 
+    /**
+     * Creates an empty author object. Set the ID with {@link #setId(String)}.
+     */
+    public SubmissionAuthor() {
+    }
+
+    /**
+     * @param id the author ID.
+     */
+    public SubmissionAuthor(String id) {
+        this.id = id;
+    }
+
+    /**
+     * @param id the author ID.
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    /**
+     * @return the author ID.
+     */
     public String getId() {
         return id;
     }

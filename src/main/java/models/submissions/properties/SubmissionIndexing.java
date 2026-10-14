@@ -32,7 +32,17 @@ public class SubmissionIndexing {
         this.copyleaksDb = copyleaksDb;
     }
     
+    /**
+     * @return the repositories to index the document in, or null.
+     */
     public SubmissionIndexingRepository[] getRepositories() {
         return repositories;
+    }
+
+    /**
+     * @param repositories the Private Cloud Hub repositories to index the document in.
+     */
+    public void setRepositories(SubmissionIndexingRepository[] repositories) {
+        this.repositories = repositories;
     }
 }

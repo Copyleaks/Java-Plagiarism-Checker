@@ -43,6 +43,11 @@ public class Result {
         return classification;
     }
 
+    /**
+     * @return the probability for the classification, or 0.0 when the server no longer sends it.
+     * @deprecated The API has deprecated this field and may stop sending it.
+     */
+    @Deprecated
     public double getProbability() {
         return probability;
     }

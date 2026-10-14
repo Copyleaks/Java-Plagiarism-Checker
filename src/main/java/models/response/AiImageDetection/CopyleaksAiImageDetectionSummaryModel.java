@@ -19,8 +19,6 @@
 */
 package models.response.AiImageDetection;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * Summary statistics of the AI detection analysis.
  */
@@ -30,14 +28,12 @@ public class CopyleaksAiImageDetectionSummaryModel {
      * Percentage of pixels suspected to be human-created.
      * Range: 0.0-1.0
      */
-    @JsonProperty("human")
     private float human;
 
     /**
      * Percentage of pixels suspected to be AI-generated.
      * Range: 0.0-1.0
      */
-    @JsonProperty("ai")
     private float ai;
 
     public CopyleaksAiImageDetectionSummaryModel() {

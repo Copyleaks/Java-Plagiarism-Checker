@@ -19,20 +19,56 @@
 */
 package models.submissions.Webhooks.HelperModels.ErrorModels;
 
+/**
+ * The error of a scan that ended with an error.
+ */
 public class ErrorModel {
+
+    /*The error type, for example "invalid_request_error" or "payment_error". */
+    private String type;
+
+    /*The machine-readable error identifier, for example "insufficient_credits". */
+    private String id;
 
     /*Error code that represents the reason for failure. See below the full error table. */
     private int code;
-    
+
     /*Error message that represents the reason for failure. */
     private String message;
 
+    /*A URL to the documentation page of this error. */
+    private String url;
+
+    /*Details about the parameters that caused the error. */
+    private ErrorDetailsModel[] details;
+
+    /** @return the error type, for example "invalid_request_error", or null. */
+    public String getType() {
+        return type;
+    }
+
+    /** @return the machine-readable error identifier, for example "insufficient_credits", or null. */
+    public String getId() {
+        return id;
+    }
+
+    /** @return the error code. */
     public int getCode() {
         return code;
     }
 
+    /** @return the human-readable error message. */
     public String getMessage() {
         return message;
     }
 
+    /** @return a URL to the documentation page of this error, or null. */
+    public String getUrl() {
+        return url;
+    }
+
+    /** @return details about the parameters that caused the error, or null. */
+    public ErrorDetailsModel[] getDetails() {
+        return details;
+    }
 }

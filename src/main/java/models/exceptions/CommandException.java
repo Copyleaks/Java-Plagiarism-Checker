@@ -20,14 +20,48 @@
 
 package models.exceptions;
 
+/**
+ * The server rejected the request with a non-2xx status code.
+ * <p>
+ * {@link #getStatusCode()} and {@link #getResponseBody()} return the HTTP status code and the
+ * response body the server sent, which usually holds an {@code error} object describing the problem.
+ */
 public class CommandException extends Exception {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -2201560758494317755L;
 
+    private final int statusCode;
+    private final String responseBody;
+
+    /**
+     * @param errorMessage the exception message.
+     */
     public CommandException(String errorMessage) {
+        this(errorMessage, 0, null);
+    }
+
+    /**
+     * @param errorMessage the exception message.
+     * @param statusCode   the HTTP status code of the response.
+     * @param responseBody the response body text, or null.
+     */
+    public CommandException(String errorMessage, int statusCode, String responseBody) {
         super(errorMessage);
+        this.statusCode = statusCode;
+        this.responseBody = responseBody;
+    }
+
+    /**
+     * @return the HTTP status code of the response, or 0 when it is not known.
+     */
+    public int getStatusCode() {
+        return statusCode;
+    }
+
+    /**
+     * @return the response body the server sent, or null when it is not known.
+     */
+    public String getResponseBody() {
+        return responseBody;
     }
 }
