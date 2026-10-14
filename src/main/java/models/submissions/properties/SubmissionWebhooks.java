@@ -26,7 +26,7 @@ public class SubmissionWebhooks {
      * This webhook event is triggered once the scan status changes.
      * Use the special token {STATUS} to track the current scan status.
      * This special token will automatically be replaced by the Copyleaks servers
-     * with the optional values: completed, error, creditsChecked and indexed.
+     * with the optional values: completed, error, creditschecked and indexed.
      * Read more about webhooks: https://docs.copyleaks.com/reference/data-types/authenticity/webhooks/overview
      */
     private String status;

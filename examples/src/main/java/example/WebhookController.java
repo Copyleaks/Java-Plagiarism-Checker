@@ -24,7 +24,7 @@ import models.submissions.Webhooks.NewResultWebhookModel;
  * - /webhook/completed
  * - /webhook/error
  * - /webhook/indexed
- * - /webhook/creditsChecked
+ * - /webhook/creditschecked
  * - /webhook/new-results
  * - /webhook/ai-image (AI Image Detection async results)
  * - /webhook/ai-video (AI Video Detection results)
@@ -99,7 +99,7 @@ public class WebhookController {
      *                CreditsCheckedWebhook object
      * @return a simple acknowledgment message
      */
-    @PostMapping("/creditsChecked")
+    @PostMapping("/creditschecked")
     public String handleCreditsChecked(@RequestBody String payload) {
         CreditsCheckedWebhookModel creditsCheckedData = gson.fromJson(payload, CreditsCheckedWebhookModel.class);
         System.out.println("Credits checked event received: " + payload);
