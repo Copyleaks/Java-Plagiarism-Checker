@@ -13,7 +13,7 @@ This is a major release. The Maven coordinates (`com.copyleaks.sdk:copyleaks-jav
   - AI Video Detection: `Copyleaks.aiVideoDetectionClient.submit(token, scanId, CopyleaksAiVideoDetectionRequestModel)` submits a video URL. Parse the webhook result into `CopyleaksAiVideoDetectionResponseModel`. New constant `CopyleaksAiVideoDetectionModels.AI_VIDEO_1_PRO`.
   - AI Image Detection for an image URL: `Copyleaks.aiImageDetectionClient.submitAsync(token, scanId, CopyleaksAiImageDetectionAsyncRequestModel)`. The webhook result has the same shape as `CopyleaksAiImageDetectionResponseModel`. Both async requests use the new `CopyleaksAsyncWebhooksModel` for the webhook URL and headers.
   - AI Text Detection credit balance: `Copyleaks.aiDetectionClient.getCredits(token)`.
-  - Allowed cross-language scan languages: `Copyleaks.getAllowedCrossLanguages()`.
+  - Allowed cross-language scan languages: `Copyleaks.getAllowedCrossLanguages()`. Each list maps the language name to its ISO-639-1 code, as the API returns it; `getDocumentLanguageCodes()` and `getResultLanguageCodes()` return the codes only.
   - File types supported by AI Text Detection: `Copyleaks.getSupportedAiTextDetectionFileTypes()`.
   - Private Cloud Hub repository information: `Copyleaks.getRepositoryInfo(token, repositoryId)`.
 - **AI Image Detection with a file upload.** `Copyleaks.aiImageDetectionClient.submitFile(token, scanId, CopyleaksAiImageDetectionFileRequestModel)` sends the image bytes as `multipart/form-data`, without base64 encoding.

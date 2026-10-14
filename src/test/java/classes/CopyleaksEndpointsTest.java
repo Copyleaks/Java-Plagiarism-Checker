@@ -333,11 +333,26 @@ class CopyleaksEndpointsTest {
 
     @Test
     void allowedCrossLanguages() throws Exception {
-        server.reply(200, "{\"documentLanguages\":[\"en\",\"es\"],\"resultLanguages\":[\"fr\",\"de\",\"sq\"]}");
+        // The shape the API returns: language name to ISO-639-1 code.
+        server.reply(200, "{\"documentLanguages\":{\"english\":\"en\",\"spanish\":\"es\"},"
+                + "\"resultLanguages\":{\"albanian\":\"sq\",\"french\":\"fr\",\"german\":\"de\"}}");
         CrossLanguagesResponse r = Copyleaks.getAllowedCrossLanguages();
         assertRequest("GET", "/v3/miscellaneous/allowed-cross-languages", false, null);
-        assertArrayEquals(new String[] { "en", "es" }, r.getDocumentLanguages());
-        assertArrayEquals(new String[] { "fr", "de", "sq" }, r.getResultLanguages());
+        assertEquals("en", r.getDocumentLanguages().get("english"));
+        assertEquals("es", r.getDocumentLanguages().get("spanish"));
+        assertArrayEquals(new String[] { "en", "es" }, r.getDocumentLanguageCodes());
+        assertArrayEquals(new String[] { "sq", "fr", "de" }, r.getResultLanguageCodes());
+        assertEquals(3, r.getResultLanguages().size());
+    }
+
+    @Test
+    void allowedCrossLanguagesAlsoReadsArrays() throws Exception {
+        // The shape shown in the API reference: arrays of codes.
+        server.reply(200, "{\"documentLanguages\":[\"en\",\"es\"],\"resultLanguages\":[\"fr\"]}");
+        CrossLanguagesResponse r = Copyleaks.getAllowedCrossLanguages();
+        assertArrayEquals(new String[] { "en", "es" }, r.getDocumentLanguageCodes());
+        assertArrayEquals(new String[] { "fr" }, r.getResultLanguageCodes());
+        assertEquals("fr", r.getResultLanguages().get("fr"));
     }
 
     @Test

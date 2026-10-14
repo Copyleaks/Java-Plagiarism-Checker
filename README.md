@@ -441,8 +441,8 @@ Refer to the AI Text Detection Credits Endpoint [Documentation](https://docs.cop
 ```java
 // Public, no login needed
 CrossLanguagesResponse languages = Copyleaks.getAllowedCrossLanguages();
-String[] sources = languages.getDocumentLanguages();
-String[] targets = languages.getResultLanguages();
+String[] sources = languages.getDocumentLanguageCodes();      // for example "en", "es"
+Map<String, String> targets = languages.getResultLanguages(); // language name to code, for example "albanian" -> "sq"
 String[] aiFileTypes = Copyleaks.getSupportedAiTextDetectionFileTypes().getSupportedAiFileTypes();
 
 // Private Cloud Hub repository (Admin or Super Admin role)
