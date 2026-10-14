@@ -75,12 +75,17 @@ public final class MultipartBody {
     }
 
     /**
-     * @return a body publisher for the parts added so far.
+     * @return a body publisher for the parts added so far. Its length is known, so the request
+     *         is sent with a Content-Length header instead of in chunks.
      */
     public HttpRequest.BodyPublisher build() {
         List<byte[]> all = new ArrayList<>(chunks);
         all.add(utf8("--" + boundary + "--\r\n"));
-        return HttpRequest.BodyPublishers.ofByteArrays(all);
+        long length = 0;
+        for (byte[] chunk : all) {
+            length += chunk.length;
+        }
+        return HttpRequest.BodyPublishers.fromPublisher(HttpRequest.BodyPublishers.ofByteArrays(all), length);
     }
 
     /**

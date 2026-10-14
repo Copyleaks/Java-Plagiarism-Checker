@@ -369,4 +369,11 @@ class CopyleaksRequestExecutorTest {
         assertEquals("image/x-icon", MultipartBody.imageContentType("x.ico"));
         assertEquals("application/octet-stream", MultipartBody.imageContentType("noext"));
     }
+
+    @Test
+    void multipartBodyHasAKnownLength() throws Exception {
+        HttpRequest.BodyPublisher publisher = new MultipartBody().addField("sandbox", "true")
+                .addFile("image", "a.png", "image/png", new byte[1000]).build();
+        assertEquals(drain(publisher).length, publisher.contentLength());
+    }
 }

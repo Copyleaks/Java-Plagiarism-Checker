@@ -376,13 +376,22 @@ The call returns once the image is accepted. The result is sent to your webhook 
 ```java
 import models.request.CopyleaksAsyncWebhooksModel;
 import models.request.AiImageDetection.CopyleaksAiImageDetectionAsyncRequestModel;
+import models.response.AiImageDetection.CopyleaksAiImageDetectionResponseModel;
 
 CopyleaksAiImageDetectionAsyncRequestModel request = new CopyleaksAiImageDetectionAsyncRequestModel(
         "https://example.com/image1.png", "image1.png", CopyleaksAiImageDetectionModels.AI_IMAGE_1_ULTRA,
         new CopyleaksAsyncWebhooksModel("https://your-server.com/webhook/ai-image"));
 request.setSandbox(true);
 Copyleaks.aiImageDetectionClient.submitAsync(token, scanId, request);
+
+// In your webhook handler:
+CopyleaksAiImageDetectionResponseModel result = new Gson().fromJson(body, CopyleaksAiImageDetectionResponseModel.class);
+if (result.getError() != null) {
+    System.out.println("Scan failed: " + result.getError().getCode() + " " + result.getError().getMessage());
+}
 ```
+When the scan fails, the webhook body has an `error` (with `code`, `message`, and optionally `type`, `id`, `url` and `details`) instead of a result, so check `getError()` first. `getDeveloperPayload()` returns the `developerPayload` you sent.
+
 Refer to the AI Image Detector Async Endpoint [Documentation](https://docs.copyleaks.com/reference/actions/ai-image-detector/submit)
 ##
 ### AI Video Detection
@@ -402,8 +411,14 @@ Copyleaks.aiVideoDetectionClient.submit(token, scanId, request);
 
 // In your webhook handler:
 CopyleaksAiVideoDetectionResponseModel result = new Gson().fromJson(body, CopyleaksAiVideoDetectionResponseModel.class);
-System.out.println("Overall AI ratio: " + result.getSummary().getOverallAIRatio());
+if (result.getError() != null) {
+    System.out.println("Scan failed: " + result.getError().getCode() + " " + result.getError().getMessage());
+} else {
+    System.out.println("Overall AI ratio: " + result.getSummary().getOverallAIRatio());
+}
 ```
+When the scan fails, the webhook body has an `error` instead of a result, so check `getError()` first. `getDeveloperPayload()` returns the `developerPayload` you sent.
+
 Refer to the AI Video Detection Endpoint [Documentation](https://docs.copyleaks.com/reference/actions/ai-video-detector/submit)
 ##
 ### Image Plagiarism Detection

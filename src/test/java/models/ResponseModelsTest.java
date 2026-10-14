@@ -171,5 +171,57 @@ class ResponseModelsTest {
         assertEquals(1, r.getScannedVideo().getActualCredits());
         assertEquals(1, r.getScannedVideo().getExpectedCredits());
         assertEquals("2026-05-05T12:37:50Z", r.getScannedVideo().getCreationTime());
+        assertNull(r.getError());
+        assertNull(r.getDeveloperPayload());
+    }
+
+    private static final String ASYNC_ERROR = "{\"error\":{\"type\":\"invalid_request_error\",\"id\":\"unsupported_file\",\"code\":67,"
+            + "\"message\":\"The file could not be processed.\",\"url\":\"https://docs.copyleaks.com/using-the-apis/api-errors\","
+            + "\"details\":[{\"param\":\"url\",\"message\":\"Unsupported format\"}]},\"developerPayload\":\"order-1\"}";
+
+    private static void assertAsyncError(ErrorModel e) {
+        assertEquals("invalid_request_error", e.getType());
+        assertEquals("unsupported_file", e.getId());
+        assertEquals(67, e.getCode());
+        assertEquals("The file could not be processed.", e.getMessage());
+        assertEquals("https://docs.copyleaks.com/using-the-apis/api-errors", e.getUrl());
+        assertEquals("url", e.getDetails()[0].getParam());
+        assertEquals("Unsupported format", e.getDetails()[0].getMessage());
+    }
+
+    @Test
+    void aiVideoWebhookKeepsDeveloperPayloadAndError() {
+        CopyleaksAiVideoDetectionResponseModel ok = GSON.fromJson("{\"model\":\"ai-video-1-pro\",\"isAiDetected\":false,"
+                + "\"summary\":{\"overallAIRatio\":0.1},\"developerPayload\":\"order-1\"}", CopyleaksAiVideoDetectionResponseModel.class);
+        assertNull(ok.getError());
+        assertEquals("order-1", ok.getDeveloperPayload());
+        assertFalse(ok.getIsAiDetected());
+
+        CopyleaksAiVideoDetectionResponseModel failed = GSON.fromJson(ASYNC_ERROR, CopyleaksAiVideoDetectionResponseModel.class);
+        assertAsyncError(failed.getError());
+        assertEquals("order-1", failed.getDeveloperPayload());
+        assertNull(failed.getSummary());
+        assertNull(failed.getIsAiDetected());
+    }
+
+    @Test
+    void aiImageAsyncWebhookKeepsDeveloperPayloadAndError() {
+        CopyleaksAiImageDetectionResponseModel ok = GSON.fromJson("{\"model\":\"m\",\"summary\":{\"human\":1.0,\"ai\":0.0},"
+                + "\"isAiDetected\":false,\"developerPayload\":\"order-1\"}", CopyleaksAiImageDetectionResponseModel.class);
+        assertNull(ok.getError());
+        assertEquals("order-1", ok.getDeveloperPayload());
+
+        CopyleaksAiImageDetectionResponseModel failed = GSON.fromJson(ASYNC_ERROR, CopyleaksAiImageDetectionResponseModel.class);
+        assertAsyncError(failed.getError());
+        assertEquals("order-1", failed.getDeveloperPayload());
+        assertNull(failed.getSummary());
+        assertNull(failed.getIsAiDetected());
+
+        CopyleaksAiImageDetectionResponseModel minimal = GSON.fromJson("{\"error\":{\"code\":67,\"message\":\"m\"}}",
+                CopyleaksAiImageDetectionResponseModel.class);
+        assertEquals(67, minimal.getError().getCode());
+        assertNull(minimal.getError().getUrl());
+        assertNull(minimal.getError().getDetails());
+        assertNull(minimal.getDeveloperPayload());
     }
 }

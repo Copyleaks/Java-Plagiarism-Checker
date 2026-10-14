@@ -19,9 +19,12 @@
 */
 package models.response.AiImageDetection;
 
+import models.submissions.Webhooks.HelperModels.ErrorModels.ErrorModel;
+
 /**
  * Response model for Copyleaks AI image detection analysis.
  * Contains the AI detection results, image information, and scan metadata.
+ * For an async scan, check {@link #getError()} first: when the scan failed, it is set and the result fields are null.
  */
 public class CopyleaksAiImageDetectionResponseModel {
 
@@ -60,6 +63,16 @@ public class CopyleaksAiImageDetectionResponseModel {
      * included objectDetection; objects that were not found are left out.
      */
     private CopyleaksAiImageDetectedObjectModel[] detectedObjects;
+
+    /**
+     * Why the scan failed. Set only in the webhook of an async scan that failed.
+     */
+    private ErrorModel error;
+
+    /**
+     * The developer payload sent with the async submit request.
+     */
+    private String developerPayload;
 
     public CopyleaksAiImageDetectionResponseModel() {
     }
@@ -138,5 +151,33 @@ public class CopyleaksAiImageDetectionResponseModel {
      */
     public void setDetectedObjects(CopyleaksAiImageDetectedObjectModel[] detectedObjects) {
         this.detectedObjects = detectedObjects;
+    }
+
+    /**
+     * @return why the async scan failed, or null when the scan succeeded.
+     */
+    public ErrorModel getError() {
+        return error;
+    }
+
+    /**
+     * @param error why the async scan failed.
+     */
+    public void setError(ErrorModel error) {
+        this.error = error;
+    }
+
+    /**
+     * @return the developer payload sent with the async submit request, or null when none was sent.
+     */
+    public String getDeveloperPayload() {
+        return developerPayload;
+    }
+
+    /**
+     * @param developerPayload the developer payload sent with the async submit request.
+     */
+    public void setDeveloperPayload(String developerPayload) {
+        this.developerPayload = developerPayload;
     }
 }

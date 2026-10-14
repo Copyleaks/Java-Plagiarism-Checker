@@ -20,9 +20,12 @@
 
 package models.response.AiVideoDetection;
 
+import models.submissions.Webhooks.HelperModels.ErrorModels.ErrorModel;
+
 /**
  * The AI Video Detection result, delivered to the webhook given in the submit request.
  * Parse the webhook body with Gson: {@code new Gson().fromJson(body, CopyleaksAiVideoDetectionResponseModel.class)}.
+ * Check {@link #getError()} first: when the scan failed, it is set and the result fields are null.
  */
 public class CopyleaksAiVideoDetectionResponseModel {
 
@@ -46,6 +49,12 @@ public class CopyleaksAiVideoDetectionResponseModel {
 
     /** Information about the scan. */
     private CopyleaksAiVideoDetectionScannedVideoModel scannedVideo;
+
+    /** Why the scan failed. Set only when the scan failed. */
+    private ErrorModel error;
+
+    /** The developer payload sent with the submit request. */
+    private String developerPayload;
 
     /** @return the version of the AI detection model used. */
     public String getModel() {
@@ -80,5 +89,15 @@ public class CopyleaksAiVideoDetectionResponseModel {
     /** @return information about the scan. */
     public CopyleaksAiVideoDetectionScannedVideoModel getScannedVideo() {
         return scannedVideo;
+    }
+
+    /** @return why the scan failed, or null when the scan succeeded. */
+    public ErrorModel getError() {
+        return error;
+    }
+
+    /** @return the developer payload sent with the submit request, or null when none was sent. */
+    public String getDeveloperPayload() {
+        return developerPayload;
     }
 }

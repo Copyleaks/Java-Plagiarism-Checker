@@ -27,6 +27,7 @@ This is a major release. The Maven coordinates (`com.copyleaks.sdk:copyleaks-jav
   - AI Image Detection: `maskType` (`CopyleaksAiImageMaskTypes`: binary, heatmap, none) and `objectDetection` (`CopyleaksObjectDetectionItem`).
 - **New response and webhook fields.**
   - AI Image Detection: `isAiDetected`, `detectedObjects`, `result.labels` and `imageInfo.metadata.contentSummary`.
+  - Failed async AI Image and AI Video Detection scans: `CopyleaksAiImageDetectionResponseModel` and `CopyleaksAiVideoDetectionResponseModel` have `getError()` (an `ErrorModel` with `code`, `message`, `type`, `id`, `url` and `details`) and `getDeveloperPayload()`. When a scan fails, the webhook has an `error` instead of a result, so check `getError()` first.
   - Error webhook: `error.type`, `error.id`, `error.url` and `error.details`.
   - Completed webhook: `referencesValidation` (the Citation Checker summary) and `results.internalAIData`.
   - The AI alert in the completed webhook: `CompletedWebhookModel.getAIDetectionAlert()` returns the `suspected-ai-text` alert, and `AlertsModel.getAIDetectionResult()` and the shortcut `CompletedWebhookModel.getAIDetectionResult()` decode its `additionalData` into an `AIDetectionResponse`. They return null when there is no AI alert, when the data is empty, or when the data is JSON that is not an object, and throw Gson's `JsonSyntaxException` when the data is malformed JSON. New constant `CopyleaksAlertCodes.SUSPECTED_AI_TEXT`.

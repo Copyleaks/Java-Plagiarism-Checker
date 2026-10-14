@@ -548,6 +548,8 @@ class CopyleaksEndpointsTest {
         CopyleaksImagePlagiarismResponseModel r = Copyleaks.imagePlagiarismClient.check(token, "ip1", m);
 
         Recorded rec = assertRequest("POST", "/v1/image-plagiarism-detector/ip1/check", true, "multipart/form-data; boundary=");
+        assertEquals(String.valueOf(rec.body.length), rec.header("Content-Length"));
+        assertNull(rec.header("Transfer-Encoding"));
         Map<String, Multipart.Part> parts = Multipart.parse(rec.header("Content-Type"), rec.body);
         assertEquals(Set.of("image", "filename", "sandbox", "developerPayload"), parts.keySet());
         assertArrayEquals(jpg, parts.get("image").content);
