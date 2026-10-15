@@ -42,7 +42,7 @@ public class SharedResultsModel {
 
     /**
      * Result metadata. Declared with the repository subtype so repository results keep {@code submittedBy};
-     * null for others.
+     * {@code submittedBy} is null for other results.
      */
     public MetadataModel getMetadata() {
         return metadata;

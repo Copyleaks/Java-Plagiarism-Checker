@@ -6,10 +6,7 @@ public class SubmissionCustomMetadata {
 
     private String value;
 
-    /**
-     * @param key   the property name.
-     * @param value the property value.
-     */
+    /** A custom metadata entry. */
     public SubmissionCustomMetadata(String key, String value){
         this.key = key;
         this.value = value;

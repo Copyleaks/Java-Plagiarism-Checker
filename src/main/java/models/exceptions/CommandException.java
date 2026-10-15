@@ -8,7 +8,7 @@ public class CommandException extends Exception {
     private final int statusCode;
     private final String responseBody;
 
-    /** @param errorMessage the exception message. */
+    /** An error with no HTTP response (status code 0). */
     public CommandException(String errorMessage) {
         this(errorMessage, 0, null);
     }
