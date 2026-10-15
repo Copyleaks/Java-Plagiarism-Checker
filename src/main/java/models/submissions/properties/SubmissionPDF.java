@@ -38,7 +38,7 @@ public class SubmissionPDF {
      * When set to true the text in the report will be aligned from right to left.
      */
     private boolean rtl;
-    /** @deprecated Legacy PDF version, not sent unless set; the server default is v3. */
+    /** @deprecated PDF report versions 1 and 2 are deprecated; use {@link #setReportVersion(String)} with "v3" instead. */
     @Deprecated
     private SubmissionPdfVersion version;
     /**
