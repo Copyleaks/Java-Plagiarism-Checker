@@ -38,15 +38,12 @@ public class SubmissionPDF {
      * When set to true the text in the report will be aligned from right to left.
      */
     private boolean rtl;
-    /** @deprecated PDF report versions 1 and 2 are deprecated; use {@link #setReportVersion(String)} with "v3" instead. */
-    @Deprecated
-    private SubmissionPdfVersion version;
     /**
      * Customizable colors
      */
     private SubmissionPdfColors colors;
     /**
-     * Specifies which version of the PDF report to generate. This property overrides the legacy version property if both are provided.
+     * Specifies which version of the PDF report to generate: "v3" or "latest".
      */
     private String reportVersion;
 
@@ -73,16 +70,6 @@ public class SubmissionPDF {
     }
     public void setRtl(boolean rtl) {
         this.rtl = rtl;
-    }
-    /** @deprecated PDF report versions 1 and 2 are deprecated; use {@link #getReportVersion()} instead. */
-    @Deprecated
-    public SubmissionPdfVersion getVersion() {
-        return version;
-    }
-    /** @deprecated PDF report versions 1 and 2 are deprecated; use {@link #setReportVersion(String)} with "v3" instead. */
-    @Deprecated
-    public void setVersion(SubmissionPdfVersion version) {
-        this.version = version;
     }
     public SubmissionPdfColors getColors() {
         return colors;
