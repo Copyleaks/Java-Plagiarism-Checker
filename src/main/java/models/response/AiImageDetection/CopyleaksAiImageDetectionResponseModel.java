@@ -1,61 +1,30 @@
-/*
- The MIT License(MIT)
- Copyright(c) 2016 Copyleaks LTD (https://copyleaks.com)
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
- The above copyright notice and this permission notice shall be included in all
- copies or substantial portions of the Software.
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
-*/
 package models.response.AiImageDetection;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import models.submissions.Webhooks.HelperModels.ErrorModels.ErrorModel;
 
 /**
- * Response model for Copyleaks AI image detection analysis.
- * Contains the AI detection results, image information, and scan metadata.
+ * AI Image Detection result. For an async scan, check {@link #getError()} first: when set, the result
+ * fields are null.
  */
 public class CopyleaksAiImageDetectionResponseModel {
 
-    /**
-     * The version of the AI detection model used for analysis.
-     */
-    @JsonProperty("model")
     private String model;
 
-    /**
-     * RLE-encoded mask data containing arrays of start positions and lengths for AI-detected regions.
-     */
-    @JsonProperty("result")
     private CopyleaksAiImageDetectionResultModel result;
 
-    /**
-     * Summary statistics of the AI detection analysis.
-     */
-    @JsonProperty("summary")
     private CopyleaksAiImageDetectionSummaryModel summary;
 
-    /**
-     * Information about the analyzed image.
-     */
-    @JsonProperty("imageInfo")
     private CopyleaksAiImageDetectionImageInfoModel imageInfo;
 
-    /**
-     * Metadata about the scan operation.
-     */
-    @JsonProperty("scannedDocument")
     private CopyleaksAiImageDetectionScannedDocumentModel scannedDocument;
+
+    private Boolean isAiDetected;
+
+    private CopyleaksAiImageDetectedObjectModel[] detectedObjects;
+
+    private ErrorModel error;
+
+    private String developerPayload;
 
     public CopyleaksAiImageDetectionResponseModel() {
     }
@@ -68,6 +37,7 @@ public class CopyleaksAiImageDetectionResponseModel {
         this.scannedDocument = scannedDocument;
     }
 
+    /** Version of the detection model used. */
     public String getModel() {
         return model;
     }
@@ -76,6 +46,7 @@ public class CopyleaksAiImageDetectionResponseModel {
         this.model = model;
     }
 
+    /** RLE mask of the AI-detected regions. */
     public CopyleaksAiImageDetectionResultModel getResult() {
         return result;
     }
@@ -106,5 +77,45 @@ public class CopyleaksAiImageDetectionResponseModel {
 
     public void setScannedDocument(CopyleaksAiImageDetectionScannedDocumentModel scannedDocument) {
         this.scannedDocument = scannedDocument;
+    }
+
+    /** Whether the image is AI-generated; null when not reported. */
+    public Boolean getIsAiDetected() {
+        return isAiDetected;
+    }
+
+    /** @param isAiDetected whether the image was determined to be AI-generated. */
+    public void setIsAiDetected(Boolean isAiDetected) {
+        this.isAiDetected = isAiDetected;
+    }
+
+    /** One per object found. Null unless the request set {@code objectDetection}; objects not found are left out. */
+    public CopyleaksAiImageDetectedObjectModel[] getDetectedObjects() {
+        return detectedObjects;
+    }
+
+    /** @param detectedObjects the objects found in the image. */
+    public void setDetectedObjects(CopyleaksAiImageDetectedObjectModel[] detectedObjects) {
+        this.detectedObjects = detectedObjects;
+    }
+
+    /** Why the scan failed. Set only in the webhook of a failed async scan. */
+    public ErrorModel getError() {
+        return error;
+    }
+
+    /** @param error why the async scan failed. */
+    public void setError(ErrorModel error) {
+        this.error = error;
+    }
+
+    /** Developer payload from the async submit request, or null. */
+    public String getDeveloperPayload() {
+        return developerPayload;
+    }
+
+    /** @param developerPayload the developer payload sent with the async submit request. */
+    public void setDeveloperPayload(String developerPayload) {
+        this.developerPayload = developerPayload;
     }
 }
