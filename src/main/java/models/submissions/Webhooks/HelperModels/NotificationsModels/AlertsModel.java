@@ -23,7 +23,6 @@ public class AlertsModel {
 
     private int category;
 
-    /** Unique per alert type, see {@link CopyleaksAlertCodes}. */
     private String code;
     
     private String title;
@@ -32,16 +31,15 @@ public class AlertsModel {
     
     private String helpLink;
     
-    /** 0 (lowest) to 4. */
     private int severity;
     
-    /** A JSON string. */
     private String additionalData;
 
     public int getCategory() {
         return category;
     }
 
+    /** Alert code, unique per alert type; see {@link CopyleaksAlertCodes}. */
     public String getCode() {
         return code;
     }
@@ -58,10 +56,12 @@ public class AlertsModel {
         return helpLink;
     }
 
+    /** Alert severity, 0 (lowest) to 4. */
     public int getSeverity() {
         return severity;
     }
 
+    /** Extra alert data, as a JSON string. */
     public String getAdditionalData() {
         return additionalData;
     }

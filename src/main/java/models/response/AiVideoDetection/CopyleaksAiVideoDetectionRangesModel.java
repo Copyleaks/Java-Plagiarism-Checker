@@ -5,13 +5,14 @@ public class CopyleaksAiVideoDetectionRangesModel {
 
     private long[] starts;
 
-    /** Aligned with {@code starts}. */
     private long[] lengths;
 
+    /** Start of each range. */
     public long[] getStarts() {
         return starts;
     }
 
+    /** Length of each range, aligned with {@code starts}. */
     public long[] getLengths() {
         return lengths;
     }

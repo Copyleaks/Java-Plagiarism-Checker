@@ -2,7 +2,6 @@ package models.submissions.Webhooks.HelperModels.BaseModels;
 
 public class MetadataModel {
 
-    /** The submitted URL after all redirects. */
     private String finalUrl;
 
     private String canonicalUrl;
@@ -19,6 +18,7 @@ public class MetadataModel {
 
     private String filename;
 
+    /** The submitted URL after all redirects. */
     public String getFinalUrl() {
         return finalUrl;
     }

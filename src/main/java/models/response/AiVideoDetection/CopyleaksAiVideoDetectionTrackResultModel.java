@@ -5,20 +5,21 @@ public class CopyleaksAiVideoDetectionTrackResultModel {
 
     private long[] starts;
 
-    /** Aligned with {@code starts}. */
     private long[] lengths;
 
-    /** Ranges that were not scored and are left out of the AI ratios. */
     private CopyleaksAiVideoDetectionRangesModel exclude;
 
+    /** Start of each AI-detected segment. */
     public long[] getStarts() {
         return starts;
     }
 
+    /** Length of each AI-detected segment, aligned with {@code starts}. */
     public long[] getLengths() {
         return lengths;
     }
 
+    /** Ranges that were not scored and are left out of the AI ratios. */
     public CopyleaksAiVideoDetectionRangesModel getExclude() {
         return exclude;
     }

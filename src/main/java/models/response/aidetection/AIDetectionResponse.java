@@ -9,20 +9,16 @@ public class AIDetectionResponse {
 
     private String modelVersion;
 
-    /** Classified sections, with their positions. */
     private List<Result> results;
 
     private Summary summary;
 
     private ScannedDocument scannedDocument;
 
-    /** Machine-translation provider used before detection; 0 = not translated, null when absent. */
     private Integer translationProvider;
 
-    /** The text translated to English; null unless it was translated. */
     private String translation;
 
-    /** AI Logic explanation; null unless {@code explain} was enabled. */
     private Explain explain;
 
     public String getScanType() {
@@ -33,6 +29,7 @@ public class AIDetectionResponse {
         return modelVersion;
     }
 
+    /** Classified sections, with their positions. */
     public List<Result> getResults() {
         return results;
     }
@@ -45,14 +42,17 @@ public class AIDetectionResponse {
         return scannedDocument;
     }
 
+    /** Machine-translation provider used before detection; 0 = not translated, null when absent. */
     public Integer getTranslationProvider() {
         return translationProvider;
     }
 
+    /** The text translated to English; null unless it was translated. */
     public String getTranslation() {
         return translation;
     }
 
+    /** AI Logic explanation; null unless {@code explain} was enabled. */
     public Explain getExplain() {
         return explain;
     }

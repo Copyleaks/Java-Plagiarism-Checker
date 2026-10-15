@@ -23,11 +23,15 @@ public class TextModerationClient {
     private final CopyleaksRequestExecutor executor;
     private static final Gson gson = new Gson();
 
+    /** @param executor the request executor to send requests with. */
     public TextModerationClient(CopyleaksRequestExecutor executor) {
         this.executor = Objects.requireNonNull(executor, "executor is null");
     }
 
-    /** @deprecated Use {@code Copyleaks.textModerationClient}. */
+    /**
+     * Client with its own HTTP client and concurrency semaphore.
+     * @deprecated Use {@code Copyleaks.textModerationClient}.
+     */
     @Deprecated
     public TextModerationClient(HttpClient httpClient, Semaphore semaphore) {
         this(new CopyleaksRequestExecutor(httpClient, semaphore));

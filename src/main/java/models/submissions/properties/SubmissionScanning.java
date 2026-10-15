@@ -1,7 +1,6 @@
 package models.submissions.properties;
 
 public class SubmissionScanning {
-    /** Compare with online sources. */
     private Boolean internet = null;
 
     private SubmissionScanningExclude exclude = null;
@@ -57,6 +56,7 @@ public class SubmissionScanning {
         this.copyleaksDb = copyleaksDb;
     }
 
+    /** Compare with online sources. */
     public void setInternet(Boolean internet) {
         this.internet = internet;
     }

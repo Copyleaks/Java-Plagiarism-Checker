@@ -2,7 +2,6 @@ package models.submissions.properties;
 
 public class SubmissionCrossLanguages {
 
-    /** Languages to scan the content against, see {@code Copyleaks.getAllowedCrossLanguages}. */
     private SubmissionLanguage[] languages;
 
     public SubmissionCrossLanguages(){}
@@ -15,6 +14,7 @@ public class SubmissionCrossLanguages {
         return languages;
     }
 
+    /** Languages to scan the content against, see {@code Copyleaks.getAllowedCrossLanguages}. */
     public void setLanguages(SubmissionLanguage[] languages) {
         this.languages = languages;
     }

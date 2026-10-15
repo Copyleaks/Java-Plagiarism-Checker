@@ -1,10 +1,10 @@
 package models.response.AiImageDetection;
 
+/** Information about the analyzed image. */
 public class CopyleaksAiImageDetectionImageInfoModel {
 
     private CopyleaksImageShapeModel shape;
 
-    /** Metadata found in the image file, or null. */
     private CopyleaksImageMetadataModel metadata;
 
     public CopyleaksAiImageDetectionImageInfoModel() {
@@ -23,6 +23,7 @@ public class CopyleaksAiImageDetectionImageInfoModel {
         this.shape = shape;
     }
 
+    /** Metadata found in the image file, or null. */
     public CopyleaksImageMetadataModel getMetadata() {
         return metadata;
     }

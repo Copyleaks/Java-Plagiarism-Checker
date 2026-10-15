@@ -5,25 +5,28 @@ import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
 public class Chars {
-    /** In characters. Sandbox scans send the key as {@code Starts}. */
     @SerializedName(value = "starts", alternate = {"Starts"})
     private List<Integer> starts;
 
-    /** In characters, aligned with {@code starts}. Sandbox scans send the key as {@code Lengths}. */
     @SerializedName(value = "lengths", alternate = {"Lengths"})
     private List<Integer> lengths;
 
-    /** HTML group IDs, aligned with {@code starts}; null for non-HTML positions. */
     private List<Integer> groupIds;
 
+    /** Start of each section, in characters. Sandbox scans send the key as {@code Starts}. */
     public List<Integer> getStarts() {
         return starts;
     }
 
+    /**
+     * Length of each section in characters, aligned with {@code starts}.
+     * Sandbox scans send the key as {@code Lengths}.
+     */
     public List<Integer> getLengths() {
         return lengths;
     }
 
+    /** HTML group IDs, aligned with {@code starts}; null for non-HTML positions. */
     public List<Integer> getGroupIds() {
         return groupIds;
     }

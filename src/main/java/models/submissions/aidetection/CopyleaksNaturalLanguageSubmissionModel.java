@@ -2,7 +2,6 @@ package models.submissions.aidetection;
 
 public class CopyleaksNaturalLanguageSubmissionModel extends CopyleaksAIDetectionSubmissionModel {
 
-    /** Language code of the text, or null to detect it. */
     private String language;
 
     public CopyleaksNaturalLanguageSubmissionModel(String text) {
@@ -22,6 +21,7 @@ public class CopyleaksNaturalLanguageSubmissionModel extends CopyleaksAIDetectio
         return language;
     }
 
+    /** Language code of the text, or null to detect it. */
     public void setLanguage(String language) {
         this.language = language;
     }

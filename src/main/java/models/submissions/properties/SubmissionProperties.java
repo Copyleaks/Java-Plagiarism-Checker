@@ -2,15 +2,10 @@ package models.submissions.properties;
 
 public class SubmissionProperties {
     private SubmissionWebhooks webhooks;
-    /** Also return the report in HTML format, in addition to text. */
     private Boolean includeHtml = null;
-    /** Sent back in the webhooks. */
     private String developerPayload = null;
-    /** Return mock results without using credits. Turn off in production. */
     private Boolean sandbox = null;
-    /** 1 (fastest, finds the most plagiarism) to 5 (slowest, also finds the smallest matches). */
     private Integer sensitivityLevel = null;
-    /** Check the document for cheating. If found, an alert is added to the completed webhook. */
     private Boolean cheatDetection = null;
     private SubmissionActions action = null;
     private SubmissionAuthor author = null;
@@ -23,53 +18,51 @@ public class SubmissionProperties {
     private SubmissionExclude exclude = null;
     private SubmissionPDF pdf = null;
     private SubmissionSensitiveData sensitiveDataProtection = null;
-    /** Hours the scan is kept on the Copyleaks servers before it is deleted, 1 to 2880. */
     private Integer expiration = null; 
 
     private SubmissionScanMethodAlgorithm scanMethodAlgorithm;
-    /** Key and value pairs attached to the document in a Copyleaks repository, at most 20. */
     private SubmissionCustomMetadata[] customMetadata;
-    /** AI text detection. When found, a "suspected-ai-text" alert is added to the completed webhook. */
     private SubmissionAIGeneratedText aiGeneratedText;
-    /** Grammar Checker: grammar, spelling and sentence structure corrections. */
     private SubmissionWritingFeedback writingFeedback;
-    /** Language of the PDF report. */
     private String displayLanguage;   
-    /** Beta. */
     private SubmissionOverview overview;
-    /** Find online sources that are suspected to contain AI-generated text. */
     private SubmissionAiSourceMatch aiSourceMatch;
 
-    /**
-     * Case-sensitive IANA time zone for the scan time in the PDF report, such as "America/New_York".
-     * Default: the user's country time zone, or UTC.
-     */
     private String scanTimeZone;
 
     private SubmissionInternalAiSourceMatch internalAiSourceMatch;
 
     private SubmissionReferences references;
 
+    /** @return the scan time zone, or null. */
     public String getScanTimeZone() {
         return scanTimeZone;
     }
 
+    /**
+     * Case-sensitive IANA time zone for the scan time in the PDF report, such as "America/New_York".
+     * Default: the user's country time zone, or UTC.
+     */
     public void setScanTimeZone(String scanTimeZone) {
         this.scanTimeZone = scanTimeZone;
     }
 
+    /** @return the Internal AI Source Match settings, or null. */
     public SubmissionInternalAiSourceMatch getInternalAiSourceMatch() {
         return internalAiSourceMatch;
     }
 
+    /** Find sources in the Copyleaks internal AI database that contain AI-generated text. */
     public void setInternalAiSourceMatch(SubmissionInternalAiSourceMatch internalAiSourceMatch) {
         this.internalAiSourceMatch = internalAiSourceMatch;
     }
 
+    /** @return the Citation Checker settings, or null. */
     public SubmissionReferences getReferences() {
         return references;
     }
 
+    /** Citation Checker: detect, parse and validate the references in the submitted text. */
     public void setReferences(SubmissionReferences references) {
         this.references = references;
     }
@@ -78,6 +71,7 @@ public class SubmissionProperties {
         return aiSourceMatch;
     }
 
+    /** Find online sources that are suspected to contain AI-generated text. */
     public void setAiSourceMatch(SubmissionAiSourceMatch aiSourceMatch) {
         this.aiSourceMatch = aiSourceMatch;
     }
@@ -86,6 +80,7 @@ public class SubmissionProperties {
         return overview;
     }
 
+    /** Gen-AI Overview: key insights extracted from the scan data. Beta. */
     public void setOverview(SubmissionOverview overview) {
         this.overview = overview;
     }
@@ -94,6 +89,7 @@ public class SubmissionProperties {
         return displayLanguage;
     }
 
+    /** Language of the PDF report. */
     public void setDisplayLanguage(String displayLanguage) {
         this.displayLanguage = displayLanguage;
     }
@@ -102,6 +98,7 @@ public class SubmissionProperties {
         return aiGeneratedText;
     }
 
+    /** AI text detection. When found, a "suspected-ai-text" alert is added to the completed webhook. */
     public void setAiGeneratedText(SubmissionAIGeneratedText aiGeneratedText) {
         this.aiGeneratedText = aiGeneratedText;
     }
@@ -110,14 +107,17 @@ public class SubmissionProperties {
         return writingFeedback;
     }
 
+    /** Grammar Checker: grammar, spelling and sentence structure corrections. */
     public void setWritingFeedback(SubmissionWritingFeedback writingFeedback) {
         this.writingFeedback = writingFeedback;
     }
 
+    /** @return the custom properties attached to the document, or null. */
     public SubmissionCustomMetadata[] getCustomMetadata() {
         return customMetadata;
     }
 
+    /** Key and value pairs attached to the document in a Copyleaks repository, at most 20. */
     public void setCustomMetadata(SubmissionCustomMetadata[] customMetadata) {
         this.customMetadata = customMetadata;
     }
@@ -133,9 +133,11 @@ public class SubmissionProperties {
         return expiration;
     }
 
+    /** Hours the scan is kept on the Copyleaks servers before it is deleted, 1 to 2880. */
     public void setExpiration(Integer expiration) {
         this.expiration = expiration;
     }
+    /** @param webhooks where Copyleaks sends the scan events. */
     public SubmissionProperties(SubmissionWebhooks webhooks) {
         this.webhooks = webhooks;
     }
@@ -144,6 +146,7 @@ public class SubmissionProperties {
         return webhooks;
     }
 
+    /** Replaces the {@code webhooks} constructor argument. */
     public void setWebhooks(SubmissionWebhooks webhooks) {
         this.webhooks = webhooks;
     }
@@ -152,6 +155,7 @@ public class SubmissionProperties {
         return includeHtml;
     }
 
+    /** Also return the report in HTML format, in addition to text. */
     public void setIncludeHtml(Boolean includeHtml) {
         this.includeHtml = includeHtml;
     }
@@ -160,6 +164,7 @@ public class SubmissionProperties {
         return developerPayload;
     }
 
+    /** Custom payload sent back in the webhooks. */
     public void setDeveloperPayload(String developerPayload) {
         this.developerPayload = developerPayload;
     }
@@ -168,17 +173,24 @@ public class SubmissionProperties {
         return sandbox;
     }
 
+    /** Return mock results without using credits. Turn off in production. */
     public void setSandbox(Boolean sandbox) {
         this.sandbox = sandbox;
     }
 
-    /** @deprecated Misspelled. Use {@link #getExpiration()}. */
+    /**
+     * Misspelled name of {@link #getExpiration()}.
+     * @deprecated Use {@link #getExpiration()}.
+     */
     @Deprecated
     public Integer getExperation() {
         return expiration;
     }
 
-    /** @deprecated Misspelled. Use {@link #setExpiration(Integer)}. */
+    /**
+     * Misspelled name of {@link #setExpiration(Integer)}.
+     * @deprecated Use {@link #setExpiration(Integer)}.
+     */
     @Deprecated
     public void setExperation(Integer experation) {
         this.expiration = experation;
@@ -188,6 +200,10 @@ public class SubmissionProperties {
         return sensitivityLevel;
     }
 
+    /**
+     * Plagiarism sensitivity, 1 (fastest, finds the most plagiarism) to 5 (slowest, also finds the smallest
+     * matches).
+     */
     public void setSensitivityLevel(Integer sensitivityLevel) {
         this.sensitivityLevel = sensitivityLevel;
     }
@@ -196,6 +212,7 @@ public class SubmissionProperties {
         return cheatDetection;
     }
 
+    /** Check the document for cheating. If found, an alert is added to the completed webhook. */
     public void setCheatDetection(Boolean cheatDetection) {
         this.cheatDetection = cheatDetection;
     }
@@ -204,6 +221,7 @@ public class SubmissionProperties {
         return action;
     }
 
+    /** Scan now, only check the credits the scan would use, or only index it; see {@link SubmissionActions}. */
     public void setAction(SubmissionActions action) {
         this.action = action;
     }

@@ -1,21 +1,18 @@
 package models.submissions.properties;
 
 public class SubmissionPDF {
-    /** Generate a PDF report of the scan. */
     private boolean create;
     private String title;
     private String largeLogo;
-    /** Align the report text from right to left. */
     private boolean rtl;
-    /** Default: 1. Overridden by {@code reportVersion}. */
     private SubmissionPdfVersion version;
     private SubmissionPdfColors colors;
-    /** The PDF report version to generate. Overrides {@code version}. */
     private String reportVersion;
 
     public boolean isCreate() {
         return create;
     }
+    /** Generate a PDF report of the scan. */
     public void setCreate(boolean create) {
         this.create = create;
     }
@@ -34,12 +31,14 @@ public class SubmissionPDF {
     public boolean isRtl() {
         return rtl;
     }
+    /** Align the report text from right to left. */
     public void setRtl(boolean rtl) {
         this.rtl = rtl;
     }
     public SubmissionPdfVersion getVersion() {
         return version;
     }
+    /** Report version. Default: 1. Overridden by {@code reportVersion}. */
     public void setVersion(SubmissionPdfVersion version) {
         this.version = version;
     }
@@ -53,6 +52,7 @@ public class SubmissionPDF {
         return reportVersion;
     }
     
+    /** The PDF report version to generate. Overrides {@code version}. */
     public void setReportVersion(String reportVersion) {
         this.reportVersion = reportVersion;
     }

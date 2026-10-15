@@ -8,10 +8,8 @@ public class ScannedDocumentModel {
 
     private int totalWords;
 
-    /** Words excluded from the scan. */
     private int totalExcluded;
 
-    /** Credits the scan used. */
     private int credits;
 
     private String creationTime;
@@ -26,10 +24,12 @@ public class ScannedDocumentModel {
         return totalWords;
     }
 
+    /** Words excluded from the scan. */
     public int getTotalExcluded() {
         return totalExcluded;
     }
 
+    /** Credits the scan used. */
     public int getCredits() {
         return credits;
     }

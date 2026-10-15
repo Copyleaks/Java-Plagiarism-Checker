@@ -6,20 +6,23 @@ package models.submissions.properties;
  */
 public class SubmissionInternalAiSourceMatch {
 
-    /** Default: false. */
     private Boolean enable;
 
+    /** Creates the settings with the server default. */
     public SubmissionInternalAiSourceMatch() {
     }
 
+    /** @param enable see {@link #setEnable(Boolean)}. */
     public SubmissionInternalAiSourceMatch(Boolean enable) {
         this.enable = enable;
     }
 
+    /** @return true when the feature is on, or null for the server default. */
     public Boolean getEnable() {
         return enable;
     }
 
+    /** Turns the feature on. Default: false. */
     public void setEnable(Boolean enable) {
         this.enable = enable;
     }

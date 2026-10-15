@@ -6,17 +6,19 @@ package models.request.AiImageDetection;
  */
 public class CopyleaksObjectDetectionItem {
 
-    /** The object to find, 1 to 32 characters. */
     private String object;
 
+    /** @param object the object to find, for example "face"; 1 to 32 characters. */
     public CopyleaksObjectDetectionItem(String object) {
         this.object = object;
     }
 
+    /** @return the object to find. */
     public String getObject() {
         return object;
     }
 
+    /** Replaces the {@code object} constructor argument. */
     public void setObject(String object) {
         this.object = object;
     }

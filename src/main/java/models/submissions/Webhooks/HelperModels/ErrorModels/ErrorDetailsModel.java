@@ -5,13 +5,14 @@ public class ErrorDetailsModel {
 
     private String param;
 
-    /** What is wrong with the parameter. */
     private String message;
 
+    /** Parameter name. */
     public String getParam() {
         return param;
     }
 
+    /** What is wrong with the parameter. */
     public String getMessage() {
         return message;
     }

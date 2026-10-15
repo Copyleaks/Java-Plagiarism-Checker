@@ -8,10 +8,16 @@ public class CommandException extends Exception {
     private final int statusCode;
     private final String responseBody;
 
+    /** @param errorMessage the exception message. */
     public CommandException(String errorMessage) {
         this(errorMessage, 0, null);
     }
 
+    /**
+     * @param errorMessage the exception message.
+     * @param statusCode   the HTTP status code of the response.
+     * @param responseBody the response body text, or null.
+     */
     public CommandException(String errorMessage, int statusCode, String responseBody) {
         super(errorMessage);
         this.statusCode = statusCode;

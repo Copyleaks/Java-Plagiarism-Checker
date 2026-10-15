@@ -3,15 +3,12 @@ package models.response.AiImageDetection;
 /** Metadata found in the image file. Each field is null when not available. */
 public class CopyleaksImageMetadataModel {
 
-    /** When the image was created. */
     private String issuedTime;
 
-    /** The AI service or tool that created the image. */
     private String issuedBy;
 
     private String appOrDeviceUsed;
 
-    /** How the image was generated. */
     private String contentSummary;
 
     public CopyleaksImageMetadataModel() {
@@ -23,6 +20,7 @@ public class CopyleaksImageMetadataModel {
         this.appOrDeviceUsed = appOrDeviceUsed;
     }
 
+    /** When the image was created. */
     public String getIssuedTime() {
         return issuedTime;
     }
@@ -31,6 +29,7 @@ public class CopyleaksImageMetadataModel {
         this.issuedTime = issuedTime;
     }
 
+    /** The AI service or tool that created the image. */
     public String getIssuedBy() {
         return issuedBy;
     }
@@ -47,10 +46,12 @@ public class CopyleaksImageMetadataModel {
         this.appOrDeviceUsed = appOrDeviceUsed;
     }
 
+    /** How the image was generated. */
     public String getContentSummary() {
         return contentSummary;
     }
 
+    /** @param contentSummary a summary of how the image was generated. */
     public void setContentSummary(String contentSummary) {
         this.contentSummary = contentSummary;
     }

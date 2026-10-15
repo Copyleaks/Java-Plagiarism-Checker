@@ -6,41 +6,44 @@ public class SharedResultsModel {
 
     private String id;
     
-    /** Mostly extracted from the document content. */
     private String title;
     
-    /** Brief introduction, mostly extracted from the document content. */
     private String introduction;
     
-    /** Words matched between this result and the scanned document. */
     private int matchedWords;
     
-    /** Your scan ID of the result, when it is one of your own submissions in the internal database; else empty. */
     private String scanId;
     
-    /** Declared with the repository subtype so repository results keep {@code submittedBy}; null for others. */
     private RepositoryMetadataModel metadata;
 
     public String getId() {
         return id;
     }
 
+    /** Result title, mostly extracted from the document content. */
     public String getTitle() {
         return title;
     }
 
+    /** Brief introduction, mostly extracted from the document content. */
     public String getIntroduction() {
         return introduction;
     }
 
+    /** Words matched between this result and the scanned document. */
     public int getMatchedWords() {
         return matchedWords;
     }
 
+    /** Your scan ID of the result, when it is one of your own submissions in the internal database; else empty. */
     public String getScanId() {
         return scanId;
     }
 
+    /**
+     * Result metadata. Declared with the repository subtype so repository results keep {@code submittedBy};
+     * null for others.
+     */
     public MetadataModel getMetadata() {
         return metadata;
     }

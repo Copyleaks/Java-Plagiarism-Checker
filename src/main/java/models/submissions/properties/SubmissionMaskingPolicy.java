@@ -5,9 +5,13 @@ import com.google.gson.annotations.JsonAdapter;
 import helpers.CopyleaksIntegerEnum;
 import helpers.CopyleaksIntegerEnumAdapterFactory;
 
-/** How documents indexed in a Private Cloud Hub repository are shown to other users. Sent as an integer. */
+/**
+ * How documents indexed in a Private Cloud Hub repository are shown to other users.
+ * Sent as an integer: 0, 1 or 2.
+ */
 @JsonAdapter(CopyleaksIntegerEnumAdapterFactory.class)
 public enum SubmissionMaskingPolicy implements CopyleaksIntegerEnum {
+    /** Users see the entire document. */
     NoMask(0),
     /** Mask documents other users added: text that does not match identically is replaced with #. */
     MaskOtherUsersFiles(1),

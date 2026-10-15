@@ -6,10 +6,8 @@ public class TextModerationScannedDocument {
 
     private final int totalWords;
 
-    /** Words excluded from the scan. */
     private final int totalExcluded;
 
-    /** Credits the scan used. */
     private final int actualCredits;
 
     private final int expectedCredits;
@@ -40,10 +38,12 @@ public class TextModerationScannedDocument {
         return totalWords;
     }
 
+    /** Words excluded from the scan. */
     public int getTotalExcluded() {
         return totalExcluded;
     }
 
+    /** Credits the scan used. */
     public int getActualCredits() {
         return actualCredits;
     }

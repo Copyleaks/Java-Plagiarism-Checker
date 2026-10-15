@@ -39,8 +39,11 @@ import models.response.CopyleaksAuthToken;
  */
 public final class CopyleaksRequestExecutor {
 
+    /** Default time allowed to open a connection: 30 seconds. */
     public static final Duration DEFAULT_CONNECT_TIMEOUT = Duration.ofSeconds(30);
+    /** Default time allowed for a whole request, including reading the response: 120 seconds. */
     public static final Duration DEFAULT_REQUEST_TIMEOUT = Duration.ofSeconds(120);
+    /** Default number of requests that may run at the same time: 20. */
     public static final int DEFAULT_MAX_CONCURRENT_REQUESTS = 20;
 
     static final Duration MAX_RETRY_DELAY = Duration.ofSeconds(30);
@@ -63,7 +66,10 @@ public final class CopyleaksRequestExecutor {
         this.permits = new Semaphore(DEFAULT_MAX_CONCURRENT_REQUESTS, true);
     }
 
-    /** @param semaphore limits how many requests run at the same time. */
+    /**
+     * Uses the given client and concurrency semaphore, with the default request timeout.
+     * @param semaphore limits how many requests run at the same time.
+     */
     public CopyleaksRequestExecutor(HttpClient httpClient, Semaphore semaphore) {
         this.httpClient = Objects.requireNonNull(httpClient, "httpClient is null");
         this.clientProvidedByCaller = true;
@@ -75,11 +81,12 @@ public final class CopyleaksRequestExecutor {
         return HttpClient.newBuilder().connectTimeout(connectTimeout).build();
     }
 
+    /** @return the HTTP client used to send requests. */
     public HttpClient getHttpClient() {
         return httpClient;
     }
 
-    /** @param client the client to use, or null for the SDK's own. See {@link classes.Copyleaks#setHttpClient}. */
+    /** Client for later requests, or null for the SDK's own. See {@link classes.Copyleaks#setHttpClient}. */
     public synchronized void setHttpClient(HttpClient client) {
         if (client == null) {
             this.httpClient = buildClient(connectTimeout);
@@ -90,11 +97,12 @@ public final class CopyleaksRequestExecutor {
         }
     }
 
+    /** @return the time allowed to open a connection. */
     public Duration getConnectTimeout() {
         return connectTimeout;
     }
 
-    /** @param timeout a positive duration. See {@link classes.Copyleaks#setConnectTimeout}. */
+    /** Time allowed to open a connection, a positive duration. See {@link classes.Copyleaks#setConnectTimeout}. */
     public synchronized void setConnectTimeout(Duration timeout) {
         this.connectTimeout = requirePositive(timeout, "connect timeout");
         if (!clientProvidedByCaller) {
@@ -102,20 +110,22 @@ public final class CopyleaksRequestExecutor {
         }
     }
 
+    /** @return the time allowed for a whole request. */
     public Duration getRequestTimeout() {
         return requestTimeout;
     }
 
-    /** @param timeout a positive duration. See {@link classes.Copyleaks#setRequestTimeout}. */
+    /** Time allowed per request, a positive duration. See {@link classes.Copyleaks#setRequestTimeout}. */
     public void setRequestTimeout(Duration timeout) {
         this.requestTimeout = requirePositive(timeout, "request timeout");
     }
 
+    /** @return how many requests may run at the same time. */
     public int getMaxConcurrentRequests() {
         return maxConcurrentRequests;
     }
 
-    /** @param max at least 1. Requests already running are not affected. */
+    /** Requests that may run at the same time, at least 1. Requests already running are not affected. */
     public synchronized void setMaxConcurrentRequests(int max) {
         if (max < 1) {
             throw new IllegalArgumentException("max concurrent requests must be at least 1");
@@ -124,13 +134,14 @@ public final class CopyleaksRequestExecutor {
         this.permits = new Semaphore(max, true);
     }
 
+    /** @return how many times a failed request is retried. */
     public int getMaxRetries() {
         return maxRetries;
     }
 
     /**
+     * Retries for a failed request, from 0 to 10. See {@link classes.Copyleaks#setMaxRetries}.
      * 429 and 503 are retried for every method because the server did not process the request.
-     * @param retries from 0 to 10. See {@link classes.Copyleaks#setMaxRetries}.
      */
     public void setMaxRetries(int retries) {
         if (retries < 0 || retries > 10) {

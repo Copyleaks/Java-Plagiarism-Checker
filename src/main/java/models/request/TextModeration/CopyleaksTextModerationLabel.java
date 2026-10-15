@@ -8,6 +8,7 @@ public class CopyleaksTextModerationLabel {
         this.id = id;
     }
 
+    /** @return the label ID. */
     public String getId() {
         return id;
     }

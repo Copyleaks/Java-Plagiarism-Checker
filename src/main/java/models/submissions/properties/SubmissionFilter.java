@@ -1,27 +1,20 @@
 package models.submissions.properties;
 
 public class SubmissionFilter {
-    /** Match identical words. */
     private Boolean identicalEnabled = null;
 
-    /** Match nearly identical words, such as "slow" and "slowly". */
     private Boolean minorChangesEnabled = null;
 
-    /** Match paraphrased content. */
     private Boolean relatedMeaningEnabled = null;
 
-    /** Keep only results with at least this many copied words. */
     private Integer minCopiedWords = null;
 
-    /** Block explicit adult content from the results. Not 100% effective. */
     private Boolean safeSearch = null;
 
-    /** Domains to include or exclude, see {@code domainsMode}. */
     private String[] domains = null;
 
     private SubmissionFilterDomainsMode domainsMode = null;
 
-    /** Allow results from the same domain as the submitted URL. */
     private Boolean allowSameDomain = false;
 
     public Boolean isIdenticalEnabled() {
@@ -40,6 +33,7 @@ public class SubmissionFilter {
         return minCopiedWords;
     }
 
+    /** Keep only results with at least this many copied words. */
     public void setMinCopiedWords(Integer minCopiedWords) {
         this.minCopiedWords = minCopiedWords;
     }
@@ -52,6 +46,7 @@ public class SubmissionFilter {
         return domains;
     }
 
+    /** Domains to include or exclude, see {@code domainsMode}. */
     public void setDomains(String[] domains) {
         this.domains = domains;
     }
@@ -64,18 +59,22 @@ public class SubmissionFilter {
         this.domainsMode = domainsMode;
     }
 
+    /** Match identical words. */
     public void setIdenticalEnabled(Boolean identicalEnabled) {
         this.identicalEnabled = identicalEnabled;
     }
 
+    /** Match nearly identical words, such as "slow" and "slowly". */
     public void setMinorChangesEnabled(Boolean minorChangesEnabled) {
         this.minorChangesEnabled = minorChangesEnabled;
     }
 
+    /** Match paraphrased content. */
     public void setRelatedMeaningEnabled(Boolean relatedMeaningEnabled) {
         this.relatedMeaningEnabled = relatedMeaningEnabled;
     }
 
+    /** Block explicit adult content from the results. Not 100% effective. */
     public void setSafeSearch(Boolean safeSearch) {
         this.safeSearch = safeSearch;
     }
@@ -84,6 +83,7 @@ public class SubmissionFilter {
         return allowSameDomain;
     }
 
+    /** Allow results from the same domain as the submitted URL. */
     public void setAllowSameDomain(Boolean allowSameDomain) {
         this.allowSameDomain = allowSameDomain;
     }

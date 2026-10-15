@@ -9,21 +9,19 @@ public class SubmissionExclude {
 
     private Boolean titles = null;
 
-    /** For HTML documents, exclude text repeated across the site, such as headers and footers. */
     private Boolean htmlTemplate = null;
 
     private Boolean citations;
 
-    /** Exclude text found in these documents. */
     private String[] documentTemplateIds;
 
-    /** Exclude parts of source code. */
     private SubmissionExcludeCode code;
 
     public SubmissionExcludeCode getCode() {
         return code;
     }
 
+    /** Exclude parts of source code. */
     public void setCode(SubmissionExcludeCode code) {
         this.code = code;
     }
@@ -32,6 +30,7 @@ public class SubmissionExclude {
         return documentTemplateIds;
     }
 
+    /** Exclude text found in these documents. */
     public void setDocumentTemplateIds(String[] documentTemplateIds) {
         this.documentTemplateIds = documentTemplateIds;
     }
@@ -80,6 +79,7 @@ public class SubmissionExclude {
         this.titles = titles;
     }
 
+    /** For HTML documents, exclude text repeated across the site, such as headers and footers. */
     public void setHtmlTemplate(Boolean htmlTemplate) {
         this.htmlTemplate = htmlTemplate;
     }

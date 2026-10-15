@@ -11,10 +11,16 @@ public class RateLimitException extends Exception {
     private final String responseBody;
     private final Duration retryAfter;
 
+    /** Creates the exception without response details. */
     public RateLimitException() {
         this(429, null, null);
     }
 
+    /**
+     * @param statusCode   the HTTP status code of the response.
+     * @param responseBody the response body text, or null.
+     * @param retryAfter   the wait the server asked for in its {@code Retry-After} header, or null.
+     */
     public RateLimitException(int statusCode, String responseBody, Duration retryAfter) {
         super("Too many requests. Please wait before calling again."
                 + (retryAfter != null ? " Retry after " + retryAfter.getSeconds() + " seconds." : ""));
@@ -23,6 +29,7 @@ public class RateLimitException extends Exception {
         this.retryAfter = retryAfter;
     }
 
+    /** @return the HTTP status code of the response (429). */
     public int getStatusCode() {
         return statusCode;
     }

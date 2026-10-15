@@ -3,7 +3,6 @@ package models.response.writingassitant;
 public class WritingAssistantResponse {
     private Score score;
 
-    /** Spelling, grammar and sentence structure corrections. */
     private Corrections corrections;
 
     private ScannedDocument scannedDocument;
@@ -12,6 +11,7 @@ public class WritingAssistantResponse {
         return score;
     }
 
+    /** Spelling, grammar and sentence structure corrections. */
     public Corrections getCorrections() {
         return corrections;
     }

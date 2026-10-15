@@ -2,7 +2,6 @@ package models.response.textModeration.submodules;
 
 public class ModerationsModel {
 
-    /** Labelled segments of the submitted text. */
     private final Text text; 
 
     public ModerationsModel( Text text) {
@@ -13,6 +12,7 @@ public class ModerationsModel {
         this.text = text;
     }
 
+    /** Labelled segments of the submitted text. */
     public Text getText() {
         return text;
     }

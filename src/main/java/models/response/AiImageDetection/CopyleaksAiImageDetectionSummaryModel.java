@@ -1,11 +1,10 @@
 package models.response.AiImageDetection;
 
+/** Summary statistics of the AI detection analysis. */
 public class CopyleaksAiImageDetectionSummaryModel {
 
-    /** Share of pixels suspected to be human-created, 0.0 to 1.0. */
     private float human;
 
-    /** Share of pixels suspected to be AI-generated, 0.0 to 1.0. */
     private float ai;
 
     public CopyleaksAiImageDetectionSummaryModel() {
@@ -16,6 +15,7 @@ public class CopyleaksAiImageDetectionSummaryModel {
         this.ai = ai;
     }
 
+    /** Share of pixels suspected to be human-created, 0.0 to 1.0. */
     public float getHuman() {
         return human;
     }
@@ -24,6 +24,7 @@ public class CopyleaksAiImageDetectionSummaryModel {
         this.human = human;
     }
 
+    /** Share of pixels suspected to be AI-generated, 0.0 to 1.0. */
     public float getAi() {
         return ai;
     }

@@ -24,11 +24,15 @@ public class WritingAssistantClient {
     private final CopyleaksRequestExecutor executor;
     private static final Gson gson = new Gson();
 
+    /** @param executor the request executor to send requests with. */
     public WritingAssistantClient(CopyleaksRequestExecutor executor) {
         this.executor = Objects.requireNonNull(executor, "executor is null");
     }
 
-    /** @deprecated Use {@code Copyleaks.writingAssistantClient}. */
+    /**
+     * Client with its own HTTP client and concurrency semaphore.
+     * @deprecated Use {@code Copyleaks.writingAssistantClient}.
+     */
     @Deprecated
     public WritingAssistantClient(HttpClient httpClient, Semaphore semaphore) {
         this(new CopyleaksRequestExecutor(httpClient, semaphore));
@@ -49,6 +53,7 @@ public class WritingAssistantClient {
     }
 
     /**
+     * Grammar Checker correction types.
      * https://docs.copyleaks.com/reference/actions/writing-assistant/correction-types
      * @param languageCode ISO 639-1 language of the returned texts. Supported: "en".
      */

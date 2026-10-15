@@ -1,16 +1,15 @@
 package models.submissions.properties;
 
 public class SubmissionScanningRepository extends SubmissionRepository {
-    /** Compare with your own submissions in the repository. */
     private boolean includeMySubmissions;
 
-    /** Compare with other users' submissions in the repository. */
     private boolean includeOthersSubmissions;
 
     public boolean isIncludeOthersSubmissions() {
         return includeOthersSubmissions;
     }
 
+    /** Compare with other users' submissions in the repository. */
     public void setIncludeOthersSubmissions(boolean includeOthersSubmissions) {
         this.includeOthersSubmissions = includeOthersSubmissions;
     }
@@ -19,6 +18,7 @@ public class SubmissionScanningRepository extends SubmissionRepository {
         return includeMySubmissions;
     }
 
+    /** Compare with your own submissions in the repository. */
     public void setIncludeMySubmissions(boolean includeMySubmissions) {
         this.includeMySubmissions = includeMySubmissions;
     }

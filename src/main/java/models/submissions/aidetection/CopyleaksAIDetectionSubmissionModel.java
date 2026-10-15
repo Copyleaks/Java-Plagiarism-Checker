@@ -4,7 +4,6 @@ public class CopyleaksAIDetectionSubmissionModel {
 
     private String text;
 
-    /** Return mock results without using credits. */
     private boolean sandbox;
 
     public CopyleaksAIDetectionSubmissionModel(String text) {
@@ -16,25 +15,29 @@ public class CopyleaksAIDetectionSubmissionModel {
         this.sandbox = sandbox;
     }
 
-    /** AI Logic: explain the patterns behind the result, in {@code explain}. Six languages only. Default: false. */
     private Boolean explain;
 
-    /** 1 = copied from an AI tool unedited, 2 (default) = minor changes, 3 = heavily modified. */
     private Integer sensitivity;
 
+    /** @return true when AI Logic is requested, or null for the server default. */
     public Boolean getExplain() {
         return explain;
     }
 
+    /** AI Logic: explain the patterns behind the result, in {@code explain}. Six languages only. Default: false. */
     public void setExplain(Boolean explain) {
         this.explain = explain;
     }
 
+    /** @return the sensitivity, or null for the server default. */
     public Integer getSensitivity() {
         return sensitivity;
     }
 
-    /** @throws IllegalArgumentException if the value is not null and not between 1 and 3. */
+    /**
+     * 1 = copied from an AI tool unedited, 2 (default) = minor changes, 3 = heavily modified.
+     * @throws IllegalArgumentException if the value is not null and not between 1 and 3.
+     */
     public void setSensitivity(Integer sensitivity) {
         if (sensitivity != null && (sensitivity < 1 || sensitivity > 3)) {
             throw new IllegalArgumentException("Sensitivity must be between 1 and 3 (inclusive)");
@@ -54,6 +57,7 @@ public class CopyleaksAIDetectionSubmissionModel {
         return sandbox;
     }
 
+    /** Return mock results without using credits. */
     public void setSandbox(boolean sandbox) {
         this.sandbox = sandbox;
     }

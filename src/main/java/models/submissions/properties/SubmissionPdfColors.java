@@ -3,31 +3,32 @@ package models.submissions.properties;
 /** PDF report colors, as HEX strings such as "#FE5758". */
 public class SubmissionPdfColors {
 
-    /** The strip in the report header. */
     private String mainStrip;
     private String titles;
     private String identical;
     private String minorChanges;
     private String relatedMeaning;
 
-    /** Default: #FE5758. */
     private String aiDetection;
 
-    /** Grammar Checker highlight. Default: #FF9A02. */
     private String writingFeedback;
 
+    /** @return the AI content detection highlight color, or null. */
     public String getAiDetection() {
         return aiDetection;
     }
 
+    /** Highlight color for AI content detection. Default: #FE5758. */
     public void setAiDetection(String aiDetection) {
         this.aiDetection = aiDetection;
     }
 
+    /** @return the writing feedback highlight color, or null. */
     public String getWritingFeedback() {
         return writingFeedback;
     }
 
+    /** Highlight color for writing feedback (Grammar Checker). Default: #FF9A02. */
     public void setWritingFeedback(String writingFeedback) {
         this.writingFeedback = writingFeedback;
     }
@@ -36,6 +37,7 @@ public class SubmissionPdfColors {
         return mainStrip;
     }
 
+    /** Color of the strip in the report header. */
     public void setMainStrip(String mainStrip) {
         this.mainStrip = mainStrip;
     }
@@ -44,6 +46,7 @@ public class SubmissionPdfColors {
         return titles;
     }
 
+    /** Color of the titles in the report. */
     public void setTitles(String titles) {
         this.titles = titles;
     }
@@ -52,6 +55,7 @@ public class SubmissionPdfColors {
         return identical;
     }
 
+    /** Highlight color for identical matches. */
     public void setIdentical(String identical) {
         this.identical = identical;
     }
@@ -60,6 +64,7 @@ public class SubmissionPdfColors {
         return minorChanges;
     }
 
+    /** Highlight color for minor-changes matches. */
     public void setMinorChanges(String minorChanges) {
         this.minorChanges = minorChanges;
     }
@@ -68,6 +73,7 @@ public class SubmissionPdfColors {
         return relatedMeaning;
     }
 
+    /** Highlight color for related-meaning matches. */
     public void setRelatedMeaning(String relatedMeaning) {
         this.relatedMeaning = relatedMeaning;
     }

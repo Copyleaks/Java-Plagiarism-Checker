@@ -5,6 +5,7 @@ public class CopyleaksImagePlagiarismWebPageModel {
 
     private String url;
 
+    /** Web page URL. */
     public String getUrl() {
         return url;
     }

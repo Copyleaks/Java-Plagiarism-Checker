@@ -1,5 +1,6 @@
 package models.request.TextModeration;
 
+/** Request body for Text Moderation. */
 public class CopyleaksTextModerationRequest {
 
     /** The most labels the server accepts in one request. */
@@ -11,8 +12,10 @@ public class CopyleaksTextModerationRequest {
     private final Object[] labels;
 
     /**
+     * @param text     the text to moderate.
      * @param sandbox  return mock results without using credits; null means false.
-     * @param language see {@link models.constants.CopyleaksTextModerationLanguages}, or null to detect it.
+     * @param language see {@link models.constants.CopyleaksTextModerationLanguages}; must be a supported language.
+     *                 Null detects the language.
      * @param labels   the labels to check, 1 to {@value #MAX_LABELS}.
      * @throws IllegalArgumentException if text is null or labels has no items or more than {@value #MAX_LABELS}.
      */
@@ -39,18 +42,22 @@ public class CopyleaksTextModerationRequest {
         this.labels = labels;
     }
 
+    /** @return the text to moderate. */
     public String getText() {
         return text;
     }
 
+    /** @return true when sandbox mode is on. */
     public boolean isSandbox() {
         return sandbox;
     }
 
+    /** @return the language code, or null. */
     public String getLanguage() {
         return language;
     }
 
+    /** @return the labels to check. */
     public Object[] getLabels() {
         return labels;
     }

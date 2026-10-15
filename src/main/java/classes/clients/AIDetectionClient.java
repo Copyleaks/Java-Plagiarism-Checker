@@ -24,11 +24,15 @@ public class AIDetectionClient {
     private final CopyleaksRequestExecutor executor;
     private static final Gson gson = new Gson();
 
+    /** @param executor the request executor to send requests with. */
     public AIDetectionClient(CopyleaksRequestExecutor executor) {
         this.executor = Objects.requireNonNull(executor, "executor is null");
     }
 
-    /** @deprecated Use {@code Copyleaks.aiDetectionClient}. */
+    /**
+     * Client with its own HTTP client and concurrency semaphore.
+     * @deprecated Use {@code Copyleaks.aiDetectionClient}.
+     */
     @Deprecated
     public AIDetectionClient(HttpClient httpClient, Semaphore semaphore) {
         this(new CopyleaksRequestExecutor(httpClient, semaphore));

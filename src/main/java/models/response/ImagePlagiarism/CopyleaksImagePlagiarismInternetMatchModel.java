@@ -11,20 +11,21 @@ public class CopyleaksImagePlagiarismInternetMatchModel {
 
     private String url;
 
-    /** {@link #MATCH_TYPE_FULL} or {@link #MATCH_TYPE_PARTIAL}. */
     private int matchType;
 
-    /** Pages where the image was found, or null. */
     private CopyleaksImagePlagiarismWebPageModel[] webPages;
 
+    /** URL of the matching image. */
     public String getUrl() {
         return url;
     }
 
+    /** {@link #MATCH_TYPE_FULL} (0) or {@link #MATCH_TYPE_PARTIAL} (1). */
     public int getMatchType() {
         return matchType;
     }
 
+    /** Pages where the image was found, or null. */
     public CopyleaksImagePlagiarismWebPageModel[] getWebPages() {
         return webPages;
     }

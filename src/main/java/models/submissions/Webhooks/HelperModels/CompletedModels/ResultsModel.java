@@ -14,7 +14,6 @@ public class ResultsModel {
     private RepositoriesModel[] repositories;
     private ScoreModel score;
     private InternetModel[] internet;
-    /** Internal AI Source Match results; null unless the feature was enabled. */
     private InternalAIDataModel[] internalAIData;
 
     public DatabaseModel[] getDatabase() {
@@ -37,6 +36,7 @@ public class ResultsModel {
         return internet;
     }
 
+    /** Internal AI Source Match results; null unless the feature was enabled. */
     public InternalAIDataModel[] getInternalAIData() {
         return internalAIData;
     }

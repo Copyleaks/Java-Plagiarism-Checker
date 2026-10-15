@@ -8,7 +8,6 @@ import models.response.textModeration.submodules.TextModerationsLegend;
 public class CopyleaksTextModerationResponseModel {
     private final ModerationsModel moderations;
 
-    /** Resolves the label indices in {@code moderations.text.chars.labels} to label IDs. */
     private final TextModerationsLegend[] legend;
 
     private final TextModerationScannedDocument scannedDocument;
@@ -27,6 +26,7 @@ public class CopyleaksTextModerationResponseModel {
         return moderations;
     }
 
+    /** Resolves the label indices in {@code moderations.text.chars.labels} to label IDs. */
     public TextModerationsLegend[] getLegend() {
 
         return legend;

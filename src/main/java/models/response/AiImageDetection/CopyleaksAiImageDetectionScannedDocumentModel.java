@@ -1,15 +1,14 @@
 package models.response.AiImageDetection;
 
+/** Metadata about the AI image detection scan operation. */
 public class CopyleaksAiImageDetectionScannedDocumentModel {
 
     private String scanId;
 
-    /** Credits the scan used. */
     private int actualCredits;
 
     private int expectedCredits;
 
-    /** ISO 8601. */
     private String creationTime;
 
     public CopyleaksAiImageDetectionScannedDocumentModel() {
@@ -30,6 +29,7 @@ public class CopyleaksAiImageDetectionScannedDocumentModel {
         this.scanId = scanId;
     }
 
+    /** Credits the scan used. */
     public int getActualCredits() {
         return actualCredits;
     }
@@ -46,6 +46,7 @@ public class CopyleaksAiImageDetectionScannedDocumentModel {
         this.expectedCredits = expectedCredits;
     }
 
+    /** When the scan was created, ISO 8601. */
     public String getCreationTime() {
         return creationTime;
     }

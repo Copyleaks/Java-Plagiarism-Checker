@@ -14,7 +14,6 @@ public class CompletedWebhookModel extends StatusWebhookModel {
     private ResultsModel results;
     private NotificationsModel notifications;
     private ScannedDocumentModel scannedDocument;
-    /** Citation Checker summary; null unless {@code references.validate} was enabled. */
     private ReferencesValidationModel referencesValidation;
 
     public ResultsModel getResults() {
@@ -29,6 +28,7 @@ public class CompletedWebhookModel extends StatusWebhookModel {
         return scannedDocument;
     }
 
+    /** Citation Checker summary; null unless {@code references.validate} was enabled. */
     public ReferencesValidationModel getReferencesValidation() {
         return referencesValidation;
     }

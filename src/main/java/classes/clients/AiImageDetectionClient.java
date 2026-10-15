@@ -26,11 +26,15 @@ public class AiImageDetectionClient {
     private final CopyleaksRequestExecutor executor;
     private static final Gson gson = new Gson();
 
+    /** @param executor the request executor to send requests with. */
     public AiImageDetectionClient(CopyleaksRequestExecutor executor) {
         this.executor = Objects.requireNonNull(executor, "executor is null");
     }
 
-    /** @deprecated Use {@code Copyleaks.aiImageDetectionClient}. */
+    /**
+     * Client with its own HTTP client and concurrency semaphore.
+     * @deprecated Use {@code Copyleaks.aiImageDetectionClient}.
+     */
     @Deprecated
     public AiImageDetectionClient(HttpClient httpClient, Semaphore semaphore) {
         this(new CopyleaksRequestExecutor(httpClient, semaphore));

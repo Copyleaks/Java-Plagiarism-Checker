@@ -4,7 +4,6 @@ import models.submissions.writingassistant.ScoreWeights;
 
 public class SubmissionWritingFeedback {
 
-    /** Turns on the Grammar Checker. */
     private Boolean enable;
 
     private ScoreWeights score;
@@ -13,6 +12,7 @@ public class SubmissionWritingFeedback {
         return enable;
     }
 
+    /** Turns on the Grammar Checker. */
     public void setEnable(Boolean enable) {
         this.enable = enable;
     }

@@ -5,7 +5,7 @@ import com.google.gson.annotations.JsonAdapter;
 import helpers.CopyleaksIntegerEnum;
 import helpers.CopyleaksIntegerEnumAdapterFactory;
 
-/** The algorithm goal of a scan. Sent as an integer. */
+/** The algorithm goal of a scan. Sent as an integer: 0 or 1. */
 @JsonAdapter(CopyleaksIntegerEnumAdapterFactory.class)
 public enum SubmissionScanMethodAlgorithm implements CopyleaksIntegerEnum {
     /** Prioritize a higher similarity score. */

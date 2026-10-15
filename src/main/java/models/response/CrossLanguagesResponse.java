@@ -17,26 +17,28 @@ import com.google.gson.stream.JsonWriter;
  */
 public class CrossLanguagesResponse {
 
-    /** Languages a scanned document may be in. */
     @JsonAdapter(LanguagesAdapter.class)
     private Map<String, String> documentLanguages;
 
-    /** Languages that can be searched for translated matches. */
     @JsonAdapter(LanguagesAdapter.class)
     private Map<String, String> resultLanguages;
 
+    /** Languages a scanned document may be in. */
     public Map<String, String> getDocumentLanguages() {
         return documentLanguages == null ? null : Collections.unmodifiableMap(documentLanguages);
     }
 
+    /** Languages that can be searched for translated matches. */
     public Map<String, String> getResultLanguages() {
         return resultLanguages == null ? null : Collections.unmodifiableMap(resultLanguages);
     }
 
+    /** ISO-639-1 codes of the languages a scanned document may be in, or null. */
     public String[] getDocumentLanguageCodes() {
         return documentLanguages == null ? null : documentLanguages.values().toArray(new String[0]);
     }
 
+    /** ISO-639-1 codes of the languages that can be searched for translated matches, or null. */
     public String[] getResultLanguageCodes() {
         return resultLanguages == null ? null : resultLanguages.values().toArray(new String[0]);
     }

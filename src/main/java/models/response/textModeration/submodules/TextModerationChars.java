@@ -4,13 +4,10 @@ import java.util.Arrays;
 
 /** Labelled segments as parallel arrays: one entry per segment. */
 public class TextModerationChars {
-    /** Label index of each segment; resolve it with the response {@code legend}. */
     private final int[] labels;
 
-    /** Start character of each segment. */
     private final int[] starts;
 
-    /** Length in characters. */
     private final int[] lengths;
 
     public TextModerationChars(int[] labels,int[] starts,int[] lengths) {
@@ -20,16 +17,19 @@ public class TextModerationChars {
         this.lengths = (lengths != null) ? Arrays.copyOf(lengths, lengths.length) : null;
     }
 
+    /** Label index of each segment; resolve it with the response {@code legend}. */
     public int[] getLabels() {
         
         return (labels != null) ? Arrays.copyOf(labels, labels.length) : null;
     }
 
+    /** Start character of each segment. */
     public int[] getStarts() {
         
         return (starts != null) ? Arrays.copyOf(starts, starts.length) : null;
     }
 
+    /** Length of each segment in characters. */
     public int[] getLengths() {
         
         return (lengths != null) ? Arrays.copyOf(lengths, lengths.length) : null;

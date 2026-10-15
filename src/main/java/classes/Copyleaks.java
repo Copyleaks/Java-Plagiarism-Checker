@@ -48,20 +48,25 @@ public class Copyleaks {
 
     private static final String JSON = "application/json";
 
+    /** AI Text Detection client. */
     public final static AIDetectionClient aiDetectionClient = new AIDetectionClient(EXECUTOR);
-    /** Grammar Checker (Writing Assistant). */
+    /** Grammar Checker (Writing Assistant) client. */
     public final static WritingAssistantClient writingAssistantClient = new WritingAssistantClient(EXECUTOR);
+    /** Text Moderation client. */
     public final static TextModerationClient textModerationClient = new TextModerationClient(EXECUTOR);
+    /** AI Image Detection client, synchronous and asynchronous. */
     public final static AiImageDetectionClient aiImageDetectionClient = new AiImageDetectionClient(EXECUTOR);
+    /** AI Video Detection client. */
     public final static AiVideoDetectionClient aiVideoDetectionClient = new AiVideoDetectionClient(EXECUTOR);
+    /** Image Plagiarism Detection client. */
     public final static ImagePlagiarismClient imagePlagiarismClient = new ImagePlagiarismClient(EXECUTOR);
 
-    /** @param uri identity (login) server address, no trailing slash. Default: https://id.copyleaks.com */
+    /** Identity (login) server address, without a trailing slash. Default: https://id.copyleaks.com */
     public static void setIdentityUri(String uri){
         Consts.IDENTITY_SERVER_URI = Objects.requireNonNull(uri, "uri is null");
     }
 
-    /** @param uri API server address, no trailing slash. Default: https://api.copyleaks.com */
+    /** API server address, without a trailing slash. Default: https://api.copyleaks.com */
     public static void setApiUri(String uri){
         Consts.API_SERVER_URI = Objects.requireNonNull(uri, "uri is null");
     }
@@ -75,6 +80,7 @@ public class Copyleaks {
         EXECUTOR.setConnectTimeout(timeout);
     }
 
+    /** @return the time allowed to open a connection. */
     public static Duration getConnectTimeout() {
         return EXECUTOR.getConnectTimeout();
     }
@@ -89,15 +95,17 @@ public class Copyleaks {
         EXECUTOR.setRequestTimeout(timeout);
     }
 
+    /** @return the time allowed for each request. */
     public static Duration getRequestTimeout() {
         return EXECUTOR.getRequestTimeout();
     }
 
-    /** @param max how many SDK requests may run at the same time in this JVM, at least 1. Default: 20. */
+    /** How many SDK requests may run at the same time in this JVM, at least 1. Default: 20. */
     public static void setMaxConcurrentRequests(int max) {
         EXECUTOR.setMaxConcurrentRequests(max);
     }
 
+    /** @return how many SDK requests may run at the same time. */
     public static int getMaxConcurrentRequests() {
         return EXECUTOR.getMaxConcurrentRequests();
     }
@@ -111,6 +119,7 @@ public class Copyleaks {
         EXECUTOR.setMaxRetries(retries);
     }
 
+    /** @return how many times a failed request is retried. */
     public static int getMaxRetries() {
         return EXECUTOR.getMaxRetries();
     }
@@ -124,6 +133,7 @@ public class Copyleaks {
         EXECUTOR.setHttpClient(client);
     }
 
+    /** @return the HTTP client the SDK sends requests with. */
     public static HttpClient getHttpClient() {
         return EXECUTOR.getHttpClient();
     }
@@ -230,7 +240,7 @@ public class Copyleaks {
                 HttpRequest.BodyPublishers.noBody(), JSON, authToken);
     }
 
-    /** https://docs.copyleaks.com/reference/actions/admin/check-credits */
+    /** Credit balance of the account. https://docs.copyleaks.com/reference/actions/admin/check-credits */
     public static CreditsBalanceResponse getCreditsBalance(CopyleaksAuthToken authToken) throws ExecutionException, InterruptedException, UnderMaintenanceException, RateLimitException, CommandException, ParseException, AuthExpiredException {
         Objects.requireNonNull(authToken, "token is null");
         CopyleaksClientHelper.verifyAuthToken(authToken);
@@ -272,19 +282,26 @@ public class Copyleaks {
         return gson.fromJson(body, RepositoryInfoResponse.class);
     }
 
+    /** Copyleaks API release notes. */
     public static ReleaseNotesResponse getReleaseNotes() throws UnderMaintenanceException, CommandException, RateLimitException, ExecutionException, InterruptedException {
         String body = EXECUTOR.send("GET", Consts.API_SERVER_URI + "/v3/release-logs.json", null, null, null);
         return gson.fromJson(body, ReleaseNotesResponse.class);
     }
 
-    /** https://docs.copyleaks.com/reference/actions/miscellaneous/supported-plagiarism-file-types */
+    /**
+     * File types supported by plagiarism scans.
+     * https://docs.copyleaks.com/reference/actions/miscellaneous/supported-plagiarism-file-types
+     */
     public static SupportedFileTypesResponse getSupportedFileTypes() throws CommandException, RateLimitException, UnderMaintenanceException, ExecutionException, InterruptedException {
         String body = EXECUTOR.send("GET", Consts.API_SERVER_URI + "/v3/miscellaneous/supported-plagiarism-file-types",
                 null, null, null);
         return gson.fromJson(body, SupportedFileTypesResponse.class);
     }
 
-    /** https://docs.copyleaks.com/reference/actions/miscellaneous/supported-ai-text-detection-file-types */
+    /**
+     * File types supported by AI Text Detection.
+     * https://docs.copyleaks.com/reference/actions/miscellaneous/supported-ai-text-detection-file-types
+     */
     public static SupportedAiTextDetectionFileTypesResponse getSupportedAiTextDetectionFileTypes() throws CommandException, RateLimitException, UnderMaintenanceException, ExecutionException, InterruptedException {
         String body = EXECUTOR.send("GET", Consts.API_SERVER_URI + "/v3/miscellaneous/supported-ai-text-detection-file-types",
                 null, null, null);
@@ -301,7 +318,10 @@ public class Copyleaks {
         return gson.fromJson(body, CrossLanguagesResponse.class);
     }
 
-    /** OCR languages. https://docs.copyleaks.com/reference/actions/miscellaneous/ocr-supported-languages */
+    /**
+     * Languages supported by OCR file scans.
+     * https://docs.copyleaks.com/reference/actions/miscellaneous/ocr-supported-languages
+     */
     public static String[] getOCRSupportedLanguagesAsync() throws RateLimitException, CommandException, UnderMaintenanceException, ExecutionException, InterruptedException {
         String body = EXECUTOR.send("GET", Consts.API_SERVER_URI + "/v3/miscellaneous/ocr-languages-list", null, null, null);
         return gson.fromJson(body, String[].class);

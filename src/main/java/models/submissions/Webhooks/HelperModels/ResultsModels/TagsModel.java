@@ -2,13 +2,13 @@ package models.submissions.Webhooks.HelperModels.ResultsModels;
 
 public class TagsModel {
 
-    /** Unique ID of the tag type. */
     private String code;
 
     private String title;
 
     private String description;
 
+    /** Unique ID of the tag type. */
     public String getCode() {
         return code;
     }

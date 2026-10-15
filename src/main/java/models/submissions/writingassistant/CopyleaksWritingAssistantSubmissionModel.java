@@ -1,13 +1,10 @@
 package models.submissions.writingassistant;
 
 public class CopyleaksWritingAssistantSubmissionModel {
-    /** 1 to 25,000 characters. */
     private String text;
 
-    /** Return mock results without using credits. */
     private boolean sandbox = false;
 
-    /** Language code of the text, or null to detect it. */
     private String language;
 
     private ScoreWeights score;
@@ -28,6 +25,7 @@ public class CopyleaksWritingAssistantSubmissionModel {
         return text;
     }
 
+    /** Text to check, 1 to 25000 characters. */
     public void setText(String text) {
         this.text = text;
     }
@@ -36,6 +34,7 @@ public class CopyleaksWritingAssistantSubmissionModel {
         return sandbox;
     }
 
+    /** Return mock results without using credits. */
     public void setSandbox(boolean sandbox) {
         this.sandbox = sandbox;
     }
@@ -44,6 +43,7 @@ public class CopyleaksWritingAssistantSubmissionModel {
         return language;
     }
 
+    /** Language code of the text, or null to detect it. */
     public void setLanguage(String language) {
         this.language = language;
     }

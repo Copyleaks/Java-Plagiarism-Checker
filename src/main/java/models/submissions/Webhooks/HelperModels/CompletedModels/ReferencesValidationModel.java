@@ -5,6 +5,7 @@ public class ReferencesValidationModel {
 
     private ReferencesValidationSummaryModel summary;
 
+    /** Count of references that were detected and validated. */
     public ReferencesValidationSummaryModel getSummary() {
         return summary;
     }

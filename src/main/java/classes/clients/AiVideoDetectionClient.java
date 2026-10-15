@@ -19,6 +19,7 @@ public class AiVideoDetectionClient {
     private final CopyleaksRequestExecutor executor;
     private static final Gson gson = new Gson();
 
+    /** @param executor the request executor to send requests with. */
     public AiVideoDetectionClient(CopyleaksRequestExecutor executor) {
         this.executor = Objects.requireNonNull(executor, "executor is null");
     }

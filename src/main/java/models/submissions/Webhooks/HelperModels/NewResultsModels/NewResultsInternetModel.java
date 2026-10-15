@@ -6,13 +6,10 @@ public class NewResultsInternetModel {
 
     private String id;
 
-    /** Mostly extracted from the document content. */
     private String title;
 
-    /** Brief introduction, mostly extracted from the document content. */
     private String introduction;
 
-    /** Words matched between this result and the scanned document. */
     private int matchedWords;
 
     private MetadataModel metadata;
@@ -23,14 +20,17 @@ public class NewResultsInternetModel {
         return id;
     }
 
+    /** Result title, mostly extracted from the document content. */
     public String getTitle() {
         return title;
     }
 
+    /** Brief introduction, mostly extracted from the document content. */
     public String getIntroduction() {
         return introduction;
     }
 
+    /** Words matched between this result and the scanned document. */
     public int getMatchedWords() {
         return matchedWords;
     }

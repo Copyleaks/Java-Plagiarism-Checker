@@ -1,13 +1,10 @@
 package models.exports;
 
 public class ExportOptions {
-    /** URL to upload the data to. */
     private String endpoint;
 
-    /** HTTP method for the upload, for example POST or PUT. */
     private String verb;
 
-    /** Headers for the upload request, such as Authorization, as {@code [["name", "value"], ...]}. */
     private String[][] headers = null;
 
     public ExportOptions() {}
@@ -22,6 +19,7 @@ public class ExportOptions {
         return endpoint;
     }
 
+    /** URL to upload the data to. */
     public void setEndpoint(String endpoint) {
         this.endpoint = endpoint;
     }
@@ -30,6 +28,7 @@ public class ExportOptions {
         return verb;
     }
 
+    /** HTTP method for the upload, for example POST or PUT. */
     public void setVerb(String verb) {
         this.verb = verb;
     }
@@ -38,6 +37,7 @@ public class ExportOptions {
         return headers;
     }
 
+    /** Headers for the upload request, such as Authorization, as {@code [["name", "value"], ...]}. */
     public void setHeaders(String[][] headers) {
         this.headers = headers;
     }

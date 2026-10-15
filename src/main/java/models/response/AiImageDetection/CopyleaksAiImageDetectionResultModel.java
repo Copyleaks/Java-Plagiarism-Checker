@@ -3,13 +3,10 @@ package models.response.AiImageDetection;
 /** RLE mask of the AI-detected regions. */
 public class CopyleaksAiImageDetectionResultModel {
 
-    /** Start of each AI segment in the flattened image array. */
     private int[] starts;
 
-    /** Aligned with {@code starts}. */
     private int[] lengths;
 
-    /** Confidence band per segment, 0 (lowest) to 4. Only when {@code maskType} is "heatmap", otherwise null. */
     private int[] labels;
 
     public CopyleaksAiImageDetectionResultModel() {
@@ -20,6 +17,7 @@ public class CopyleaksAiImageDetectionResultModel {
         this.lengths = lengths;
     }
 
+    /** Start of each AI segment in the flattened image array. */
     public int[] getStarts() {
         return starts;
     }
@@ -28,6 +26,7 @@ public class CopyleaksAiImageDetectionResultModel {
         this.starts = starts;
     }
 
+    /** Length of each AI segment, aligned with {@code starts}. */
     public int[] getLengths() {
         return lengths;
     }
@@ -36,10 +35,12 @@ public class CopyleaksAiImageDetectionResultModel {
         this.lengths = lengths;
     }
 
+    /** Confidence band per segment, 0 (lowest) to 4. Only when {@code maskType} is "heatmap", otherwise null. */
     public int[] getLabels() {
         return labels;
     }
 
+    /** @param labels the confidence band of each segment. */
     public void setLabels(int[] labels) {
         this.labels = labels;
     }
