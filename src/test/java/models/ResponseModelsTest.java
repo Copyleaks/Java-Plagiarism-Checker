@@ -9,9 +9,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
+import models.response.CopyleaksScanInfoModel;
 import models.response.AiImageDetection.CopyleaksAiImageDetectionResponseModel;
+import models.response.AiImageDetection.CopyleaksAiImageDetectionScannedDocumentModel;
+import models.response.AiImageDetection.CopyleaksImageMetadataModel;
 import models.response.AiVideoDetection.CopyleaksAiVideoDetectionResponseModel;
+import models.response.ImagePlagiarism.CopyleaksImagePlagiarismScannedImageModel;
 import models.response.aidetection.AIDetectionResponse;
 import models.submissions.Webhooks.CompletedWebhookModel;
 import models.submissions.Webhooks.CreditsCheckedWebhookModel;
@@ -171,6 +177,41 @@ class ResponseModelsTest {
         assertEquals("2026-05-05T12:37:50Z", r.getScannedVideo().getCreationTime());
         assertNull(r.getError());
         assertNull(r.getDeveloperPayload());
+    }
+
+    @Test
+    void imageAndVideoShareTheScanInfoAndMetadataModels() {
+        String scan = "{\"scanId\":\"s1\",\"actualCredits\":2,\"expectedCredits\":3,\"creationTime\":\"2026-05-05T12:37:50Z\"";
+        CopyleaksScanInfoModel[] parsed = {
+            GSON.fromJson(scan + "}", CopyleaksAiImageDetectionScannedDocumentModel.class),
+            GSON.fromJson("{\"scannedVideo\":" + scan + "}}", CopyleaksAiVideoDetectionResponseModel.class).getScannedVideo(),
+            GSON.fromJson(scan + ",\"width\":640,\"height\":480,\"filename\":\"p.png\"}", CopyleaksImagePlagiarismScannedImageModel.class) };
+        for (CopyleaksScanInfoModel m : parsed) {
+            assertEquals("s1", m.getScanId());
+            assertEquals(2, m.getActualCredits());
+            assertEquals(3, m.getExpectedCredits());
+            assertEquals("2026-05-05T12:37:50Z", m.getCreationTime());
+        }
+        CopyleaksImagePlagiarismScannedImageModel image = (CopyleaksImagePlagiarismScannedImageModel) parsed[2];
+        assertEquals(640, image.getWidth());
+        assertEquals(480, image.getHeight());
+        assertEquals("p.png", image.getFilename());
+
+        CopyleaksAiImageDetectionScannedDocumentModel built = new CopyleaksAiImageDetectionScannedDocumentModel("s2", 1, 1, "t");
+        built.setActualCredits(5);
+        assertEquals("s2", built.getScanId());
+        assertEquals(5, built.getActualCredits());
+        assertEquals(json("{\"scanId\":\"s2\",\"actualCredits\":5,\"expectedCredits\":1,\"creationTime\":\"t\"}"),
+                json(GSON.toJson(built)));
+
+        CopyleaksImageMetadataModel videoMetadata = GSON.fromJson("{\"videoInfo\":{\"metadata\":{\"issuedBy\":\"OpenAI\"}}}",
+                CopyleaksAiVideoDetectionResponseModel.class).getVideoInfo().getMetadata();
+        assertEquals("OpenAI", videoMetadata.getIssuedBy());
+        assertNull(videoMetadata.getContentSummary());
+    }
+
+    private static JsonElement json(String s) {
+        return JsonParser.parseString(s);
     }
 
     private static final String ASYNC_ERROR = "{\"error\":{\"type\":\"invalid_request_error\",\"id\":\"unsupported_file\",\"code\":67,"

@@ -2,9 +2,7 @@ package classes.clients;
 
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
-import com.google.gson.Gson;
 import classes.Consts;
-import helpers.CopyleaksClientHelper;
 import helpers.CopyleaksRequestExecutor;
 import models.exceptions.AuthExpiredException;
 import models.exceptions.CommandException;
@@ -17,7 +15,6 @@ import models.response.CopyleaksAuthToken;
 public class AiVideoDetectionClient {
 
     private final CopyleaksRequestExecutor executor;
-    private static final Gson gson = new Gson();
 
     /** @param executor the request executor to send requests with. */
     public AiVideoDetectionClient(CopyleaksRequestExecutor executor) {
@@ -33,13 +30,10 @@ public class AiVideoDetectionClient {
     public void submit(CopyleaksAuthToken authToken, String scanId, CopyleaksAiVideoDetectionRequestModel submission)
             throws AuthExpiredException, UnderMaintenanceException, RateLimitException, CommandException,
             ExecutionException, InterruptedException {
-        Objects.requireNonNull(authToken, "token is null");
         Objects.requireNonNull(scanId, "scanId is null");
         Objects.requireNonNull(submission, "submission is null");
-        CopyleaksClientHelper.verifyAuthToken(authToken);
-
-        executor.send("POST",
+        executor.sendJson("POST",
                 Consts.API_SERVER_URI + "/v1/ai-video-detector/" + CopyleaksRequestExecutor.pathSegment(scanId) + "/submit",
-                CopyleaksRequestExecutor.jsonBody(gson, submission), "application/json", authToken);
+                authToken, submission, null);
     }
 }

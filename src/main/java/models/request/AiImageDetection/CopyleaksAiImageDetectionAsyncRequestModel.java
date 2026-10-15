@@ -3,13 +3,11 @@ package models.request.AiImageDetection;
 import models.request.CopyleaksAsyncWebhooksModel;
 
 /** Asynchronous AI Image Detection of an image URL. The result is sent to {@code webhooks.url}. */
-public class CopyleaksAiImageDetectionAsyncRequestModel {
+public class CopyleaksAiImageDetectionAsyncRequestModel extends CopyleaksAiImageDetectionBaseRequestModel {
 
     private String url;
     private String fileName;
     private String model;
-    private String maskType;
-    private CopyleaksObjectDetectionItem[] objectDetection;
     private String[][] headers;
     private CopyleaksAsyncWebhooksModel webhooks;
     private boolean sandbox;
@@ -57,26 +55,6 @@ public class CopyleaksAiImageDetectionAsyncRequestModel {
     /** Replaces the {@code model} constructor argument. */
     public void setModel(String model) {
         this.model = model;
-    }
-
-    /** @return the mask type, or null for the server default. */
-    public String getMaskType() {
-        return maskType;
-    }
-
-    /** "binary" (default) or "heatmap", see {@link models.constants.CopyleaksAiImageMaskTypes}. */
-    public void setMaskType(String maskType) {
-        this.maskType = maskType;
-    }
-
-    /** @return the objects to detect, or null. */
-    public CopyleaksObjectDetectionItem[] getObjectDetection() {
-        return objectDetection;
-    }
-
-    /** Objects to locate and segment, at most 3. Null turns the feature off. */
-    public void setObjectDetection(CopyleaksObjectDetectionItem[] objectDetection) {
-        this.objectDetection = objectDetection;
     }
 
     /** @return the download headers, or null. */

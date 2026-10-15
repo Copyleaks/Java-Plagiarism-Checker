@@ -493,7 +493,7 @@ All calls share one HTTP client. Every request is bounded by a timeout, so a cal
 
 ```java
 Copyleaks.setConnectTimeout(Duration.ofSeconds(10));   // default 30 seconds
-Copyleaks.setRequestTimeout(Duration.ofMinutes(5));    // default 120 seconds, covers the whole request
+Copyleaks.setRequestTimeout(Duration.ofMinutes(5));    // default 120 seconds per attempt; retries can make a call take longer
 Copyleaks.setMaxConcurrentRequests(50);                 // default 20
 Copyleaks.setMaxRetries(3);                             // default 0; retries 429 and 503, and GET on 502, 504 and network errors
 Copyleaks.setHttpClient(myHttpClient);                  // optional: your own java.net.http.HttpClient (proxy, executor)
@@ -501,7 +501,7 @@ Copyleaks.setHttpClient(myHttpClient);                  // optional: your own ja
 A timeout throws `ExecutionException` caused by `java.net.http.HttpTimeoutException`.
 ##
 ### Error handling
-`RateLimitException` (429), `UnderMaintenanceException` (503) and `CommandException` (any other error status) carry the HTTP status and the response body.
+`RateLimitException` (429), `UnderMaintenanceException` (503) and `CommandException` (any other error status) carry the HTTP status and the response body. All three extend `CopyleaksApiException`.
 
 ```java
 try {

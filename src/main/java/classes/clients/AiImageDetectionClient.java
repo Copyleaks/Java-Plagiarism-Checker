@@ -7,7 +7,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
 import com.google.gson.Gson;
 import classes.Consts;
-import helpers.CopyleaksClientHelper;
 import helpers.CopyleaksRequestExecutor;
 import helpers.MultipartBody;
 import models.exceptions.AuthExpiredException;
@@ -49,14 +48,10 @@ public class AiImageDetectionClient {
             CopyleaksAiImageDetectionRequestModel submission)
             throws ParseException, AuthExpiredException, UnderMaintenanceException, RateLimitException, CommandException,
             ExecutionException, InterruptedException {
-        Objects.requireNonNull(authToken, "token is null");
         Objects.requireNonNull(scanId, "scanId is null");
         Objects.requireNonNull(submission, "submission is null");
-        CopyleaksClientHelper.verifyAuthToken(authToken);
-
-        String body = executor.send("POST", checkUrl(scanId),
-                CopyleaksRequestExecutor.jsonBody(gson, submission), "application/json", authToken);
-        return gson.fromJson(body, CopyleaksAiImageDetectionResponseModel.class);
+        return executor.sendJson("POST", checkUrl(scanId), authToken, submission,
+                CopyleaksAiImageDetectionResponseModel.class);
     }
 
     /** Like {@link #submit}, but uploads the image bytes as multipart instead of base64. */
@@ -64,13 +59,11 @@ public class AiImageDetectionClient {
             CopyleaksAiImageDetectionFileRequestModel submission)
             throws AuthExpiredException, UnderMaintenanceException, RateLimitException, CommandException,
             ExecutionException, InterruptedException {
-        Objects.requireNonNull(authToken, "token is null");
         Objects.requireNonNull(scanId, "scanId is null");
         Objects.requireNonNull(submission, "submission is null");
         Objects.requireNonNull(submission.getImage(), "image is null");
         Objects.requireNonNull(submission.getFilename(), "filename is null");
         Objects.requireNonNull(submission.getModel(), "model is null");
-        CopyleaksClientHelper.verifyAuthToken(authToken);
 
         MultipartBody form = new MultipartBody()
                 .addFile("image", submission.getFilename(), MultipartBody.imageContentType(submission.getFilename()),
@@ -84,8 +77,7 @@ public class AiImageDetectionClient {
         if (submission.getObjectDetection() != null) {
             form.addField("objectDetection", gson.toJson(submission.getObjectDetection()));
         }
-        String body = executor.send("POST", checkUrl(scanId), form.build(), form.contentType(), authToken);
-        return gson.fromJson(body, CopyleaksAiImageDetectionResponseModel.class);
+        return executor.sendMultipart(checkUrl(scanId), authToken, form, CopyleaksAiImageDetectionResponseModel.class);
     }
 
     /**
@@ -97,14 +89,11 @@ public class AiImageDetectionClient {
             CopyleaksAiImageDetectionAsyncRequestModel submission)
             throws AuthExpiredException, UnderMaintenanceException, RateLimitException, CommandException,
             ExecutionException, InterruptedException {
-        Objects.requireNonNull(authToken, "token is null");
         Objects.requireNonNull(scanId, "scanId is null");
         Objects.requireNonNull(submission, "submission is null");
-        CopyleaksClientHelper.verifyAuthToken(authToken);
-
-        executor.send("PUT",
+        executor.sendJson("PUT",
                 Consts.API_SERVER_URI + "/v1/ai-image-detector-async/" + CopyleaksRequestExecutor.pathSegment(scanId) + "/submit",
-                CopyleaksRequestExecutor.jsonBody(gson, submission), "application/json", authToken);
+                authToken, submission, null);
     }
 
     private static String checkUrl(String scanId) {

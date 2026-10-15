@@ -5,9 +5,7 @@ import java.text.ParseException;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
-import com.google.gson.Gson;
 import classes.Consts;
-import helpers.CopyleaksClientHelper;
 import helpers.CopyleaksRequestExecutor;
 import models.exceptions.AuthExpiredException;
 import models.exceptions.CommandException;
@@ -22,7 +20,6 @@ import models.submissions.writingassistant.CopyleaksWritingAssistantSubmissionMo
 public class WritingAssistantClient {
 
     private final CopyleaksRequestExecutor executor;
-    private static final Gson gson = new Gson();
 
     /** @param executor the request executor to send requests with. */
     public WritingAssistantClient(CopyleaksRequestExecutor executor) {
@@ -41,15 +38,11 @@ public class WritingAssistantClient {
     /** Grammar and spelling corrections. https://docs.copyleaks.com/reference/actions/writing-assistant/check */
     public WritingAssistantResponse submitText(CopyleaksAuthToken authToken, String scanId, CopyleaksWritingAssistantSubmissionModel submission)
             throws ParseException, AuthExpiredException, UnderMaintenanceException, RateLimitException, CommandException, ExecutionException, InterruptedException {
-        Objects.requireNonNull(authToken, "token is null");
         Objects.requireNonNull(scanId, "scanId is null");
         Objects.requireNonNull(submission, "submission is null");
-        CopyleaksClientHelper.verifyAuthToken(authToken);
-
-        String body = executor.send("POST",
+        return executor.sendJson("POST",
                 Consts.API_SERVER_URI + "/v1/writing-feedback/" + CopyleaksRequestExecutor.pathSegment(scanId) + "/check",
-                CopyleaksRequestExecutor.jsonBody(gson, submission), "application/json", authToken);
-        return gson.fromJson(body, WritingAssistantResponse.class);
+                authToken, submission, WritingAssistantResponse.class);
     }
 
     /**
@@ -58,12 +51,8 @@ public class WritingAssistantClient {
      * @param languageCode ISO 639-1 language of the returned texts. Supported: "en".
      */
     public CorrectionTypesResponse getCorrectionTypes(CopyleaksAuthToken authToken, String languageCode) throws ExecutionException, InterruptedException, UnderMaintenanceException, RateLimitException, CommandException, ParseException, AuthExpiredException {
-        Objects.requireNonNull(authToken, "token is null");
         Objects.requireNonNull(languageCode, "languageCode is null");
-        CopyleaksClientHelper.verifyAuthToken(authToken);
-
-        String body = executor.send("GET", Consts.API_SERVER_URI + "/v1/writing-feedback/correction-types/"
-                + CopyleaksRequestExecutor.pathSegment(languageCode), null, null, authToken);
-        return gson.fromJson(body, CorrectionTypesResponse.class);
+        return executor.sendJson("GET", Consts.API_SERVER_URI + "/v1/writing-feedback/correction-types/"
+                + CopyleaksRequestExecutor.pathSegment(languageCode), authToken, null, CorrectionTypesResponse.class);
     }
 }

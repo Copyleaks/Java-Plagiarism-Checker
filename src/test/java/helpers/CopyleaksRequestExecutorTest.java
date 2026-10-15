@@ -35,6 +35,7 @@ import org.junit.jupiter.api.Test;
 import com.google.gson.Gson;
 
 import models.exceptions.CommandException;
+import models.exceptions.CopyleaksApiException;
 import models.exceptions.RateLimitException;
 import models.exceptions.UnderMaintenanceException;
 import testutil.MockApiServer;
@@ -188,6 +189,26 @@ class CopyleaksRequestExecutorTest {
         assertEquals("{\"error\":\"Rate limit exceeded.\"}", e.getResponseBody());
         assertEquals(Duration.ofSeconds(7), e.getRetryAfter());
         assertTrue(e.getMessage().contains("Retry after 7 seconds"));
+    }
+
+    @Test
+    void apiErrorsShareOneCheckedBaseException() {
+        assertFalse(RuntimeException.class.isAssignableFrom(CopyleaksApiException.class));
+        int[] statuses = { 400, 429, 503 };
+        for (int status : statuses) {
+            server.reply(status, "{\"s\":" + status + "}");
+            CopyleaksApiException e = assertThrows(CopyleaksApiException.class, () -> get("/e"));
+            assertEquals(status, e.getStatusCode());
+            assertEquals("{\"s\":" + status + "}", e.getResponseBody());
+        }
+        CopyleaksApiException rate = new RateLimitException();
+        assertEquals(429, rate.getStatusCode());
+        assertNull(rate.getResponseBody());
+        assertEquals(503, new UnderMaintenanceException().getStatusCode());
+        CommandException noResponse = new CommandException("m");
+        assertEquals("m", noResponse.getMessage());
+        assertEquals(0, noResponse.getStatusCode());
+        assertNull(noResponse.getResponseBody());
     }
 
     @Test

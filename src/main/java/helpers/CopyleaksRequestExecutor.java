@@ -27,6 +27,7 @@ import java.util.concurrent.TimeoutException;
 import com.google.gson.Gson;
 
 import classes.Consts;
+import models.exceptions.AuthExpiredException;
 import models.exceptions.CommandException;
 import models.exceptions.RateLimitException;
 import models.exceptions.UnderMaintenanceException;
@@ -41,7 +42,7 @@ public final class CopyleaksRequestExecutor {
 
     /** Default time allowed to open a connection: 30 seconds. */
     public static final Duration DEFAULT_CONNECT_TIMEOUT = Duration.ofSeconds(30);
-    /** Default time allowed for a whole request, including reading the response: 120 seconds. */
+    /** Default time allowed for each attempt of a request, including reading the response: 120 seconds. */
     public static final Duration DEFAULT_REQUEST_TIMEOUT = Duration.ofSeconds(120);
     /** Default number of requests that may run at the same time: 20. */
     public static final int DEFAULT_MAX_CONCURRENT_REQUESTS = 20;
@@ -49,6 +50,8 @@ public final class CopyleaksRequestExecutor {
     static final Duration MAX_RETRY_DELAY = Duration.ofSeconds(30);
     static final Duration BASE_RETRY_DELAY = Duration.ofMillis(500);
     private static final int MAX_MESSAGE_BODY_CHARS = 4000;
+    private static final String JSON = "application/json";
+    private static final Gson GSON = new Gson();
 
     private volatile HttpClient httpClient;
     private volatile boolean clientProvidedByCaller;
@@ -110,12 +113,12 @@ public final class CopyleaksRequestExecutor {
         }
     }
 
-    /** @return the time allowed for a whole request. */
+    /** @return the time allowed for each attempt of a request. */
     public Duration getRequestTimeout() {
         return requestTimeout;
     }
 
-    /** Time allowed per request, a positive duration. See {@link classes.Copyleaks#setRequestTimeout}. */
+    /** Time allowed per attempt, a positive duration. See {@link classes.Copyleaks#setRequestTimeout}. */
     public void setRequestTimeout(Duration timeout) {
         this.requestTimeout = requirePositive(timeout, "request timeout");
     }
@@ -238,6 +241,66 @@ public final class CopyleaksRequestExecutor {
             throw new UnderMaintenanceException(status, text);
         }
         throw new CommandException(commandMessage(status, text), status, text);
+    }
+
+    /**
+     * Sends a request to an endpoint that needs a login token and parses the response. GET requests have no body;
+     * other requests send {@code model} as JSON, or an empty body when it is null, with Content-Type application/json.
+     * @param authToken    checked before anything is sent.
+     * @param responseType the class to parse the response into; String.class returns the raw text, null ignores it.
+     * @throws AuthExpiredException if the token has expired.
+     */
+    public <T> T sendJson(String method, String url, CopyleaksAuthToken authToken, Object model, Class<T> responseType)
+            throws AuthExpiredException, ExecutionException, InterruptedException, UnderMaintenanceException,
+            RateLimitException, CommandException {
+        requireValidToken(authToken);
+        return exchange(method, url, model, authToken, responseType);
+    }
+
+    /** Like {@link #sendJson}, for public endpoints that need no login token. */
+    public <T> T sendJsonPublic(String method, String url, Object model, Class<T> responseType)
+            throws ExecutionException, InterruptedException, UnderMaintenanceException, RateLimitException,
+            CommandException {
+        return exchange(method, url, model, null, responseType);
+    }
+
+    private <T> T exchange(String method, String url, Object model, CopyleaksAuthToken authToken,
+            Class<T> responseType)
+            throws ExecutionException, InterruptedException, UnderMaintenanceException, RateLimitException,
+            CommandException {
+        if ("GET".equals(method)) {
+            return parse(send(method, url, null, null, authToken), responseType);
+        }
+        HttpRequest.BodyPublisher body = model == null ? HttpRequest.BodyPublishers.noBody() : jsonBody(GSON, model);
+        return parse(send(method, url, body, JSON, authToken), responseType);
+    }
+
+    /**
+     * POSTs a {@code multipart/form-data} body to an endpoint that needs a login token and parses the response.
+     * @param authToken    checked before anything is sent.
+     * @param responseType the class to parse the response into, or null to ignore it.
+     * @throws AuthExpiredException if the token has expired.
+     */
+    public <T> T sendMultipart(String url, CopyleaksAuthToken authToken, MultipartBody form, Class<T> responseType)
+            throws AuthExpiredException, ExecutionException, InterruptedException, UnderMaintenanceException,
+            RateLimitException, CommandException {
+        requireValidToken(authToken);
+        return parse(send("POST", url, form.build(), form.contentType(), authToken), responseType);
+    }
+
+    private static void requireValidToken(CopyleaksAuthToken authToken) throws AuthExpiredException {
+        Objects.requireNonNull(authToken, "token is null");
+        CopyleaksClientHelper.verifyAuthToken(authToken);
+    }
+
+    private static <T> T parse(String body, Class<T> responseType) {
+        if (responseType == null) {
+            return null;
+        }
+        if (responseType == String.class) {
+            return responseType.cast(body);
+        }
+        return GSON.fromJson(body, responseType);
     }
 
     private static String commandMessage(int status, String body) {

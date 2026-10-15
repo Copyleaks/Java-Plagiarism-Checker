@@ -34,11 +34,12 @@ This is a major release. The Maven coordinates (`com.copyleaks.sdk:copyleaks-jav
   - AI Text Detection: `AIDetectionResponse.getTranslationProvider()`, `getTranslation()` and `getExplain()` (with the new `Explain`, `Patterns` and `PatternStatistics` classes), `Chars.getGroupIds()`, `Words.getGroupIds()` and `Match.getHtml()`.
 - **HTTP settings.** `Copyleaks.setConnectTimeout`, `setRequestTimeout`, `setMaxConcurrentRequests`, `setMaxRetries` and `setHttpClient`, with matching getters. Retries are off by default. When turned on, every request is retried on 429 and 503, and GET requests also on 502, 504 and network errors, with exponential backoff, jitter and the `Retry-After` header.
 - **Error details on exceptions.** `CommandException`, `RateLimitException` and `UnderMaintenanceException` have `getStatusCode()` and `getResponseBody()`. `RateLimitException.getRetryAfter()` returns the wait from the `Retry-After` header.
+- `CopyleaksApiException`: the common base class of `CommandException`, `RateLimitException` and `UnderMaintenanceException`, so one `catch` handles every API error status.
 - `SupportedFileTypesResponse.getTextual()`, `TaskModel.getEndpoint()`, `CopyleaksDeleteRequest.getCompletionWebhook()`, `CopyleaksTextModerationRequest.MAX_LABELS` and getters on the submission models.
 
 ### Changed
 
-- **Every request now has a timeout.** The defaults are 30 seconds to connect and 120 seconds for the whole request, including the wait for a free concurrency slot and reading the response. A timeout throws `ExecutionException` caused by `java.net.http.HttpTimeoutException`. Before, a request had no timeout.
+- **Every request now has a timeout.** The defaults are 30 seconds to connect and 120 seconds for each attempt of a request, including the wait for a free concurrency slot and reading the response. A timeout throws `ExecutionException` caused by `java.net.http.HttpTimeoutException`. Before, a request had no timeout.
 - **429 is reported the same way everywhere.** Every method throws `RateLimitException` on 429. Before, submit, the AI Text Detection, AI Image Detection, Grammar Checker and Text Moderation clients threw `CommandException`.
 - The `CommandException` message now contains the HTTP status and the response body.
 - Request enums are sent as the integers the API documents, for example `"action": 2`. When reading JSON, both the integer and the constant name are accepted.

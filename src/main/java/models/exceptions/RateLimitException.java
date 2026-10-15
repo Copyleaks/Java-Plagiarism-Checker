@@ -3,12 +3,10 @@ package models.exceptions;
 import java.time.Duration;
 
 /** The server answered 429 Too Many Requests. Wait before calling again. */
-public class RateLimitException extends Exception {
+public class RateLimitException extends CopyleaksApiException {
 
     private static final long serialVersionUID = 1L;
 
-    private final int statusCode;
-    private final String responseBody;
     private final Duration retryAfter;
 
     /** Creates the exception without response details. */
@@ -23,20 +21,9 @@ public class RateLimitException extends Exception {
      */
     public RateLimitException(int statusCode, String responseBody, Duration retryAfter) {
         super("Too many requests. Please wait before calling again."
-                + (retryAfter != null ? " Retry after " + retryAfter.getSeconds() + " seconds." : ""));
-        this.statusCode = statusCode;
-        this.responseBody = responseBody;
+                + (retryAfter != null ? " Retry after " + retryAfter.getSeconds() + " seconds." : ""),
+                statusCode, responseBody);
         this.retryAfter = retryAfter;
-    }
-
-    /** @return the HTTP status code of the response (429). */
-    public int getStatusCode() {
-        return statusCode;
-    }
-
-    /** @return the response body, or null when not known. */
-    public String getResponseBody() {
-        return responseBody;
     }
 
     /** @return the wait from the {@code Retry-After} header, or null when there was none. */

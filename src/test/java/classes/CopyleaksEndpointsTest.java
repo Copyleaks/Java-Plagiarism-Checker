@@ -337,12 +337,13 @@ class CopyleaksEndpointsTest {
 
     @Test
     void allowedCrossLanguagesAlsoReadsArrays() throws Exception {
-        // The shape shown in the API reference: arrays of codes.
+        // The shape shown in the API reference: arrays of codes. Names are not invented from the codes.
         server.reply(200, "{\"documentLanguages\":[\"en\",\"es\"],\"resultLanguages\":[\"fr\"]}");
         CrossLanguagesResponse r = Copyleaks.getAllowedCrossLanguages();
         assertArrayEquals(new String[] { "en", "es" }, r.getDocumentLanguageCodes());
         assertArrayEquals(new String[] { "fr" }, r.getResultLanguageCodes());
-        assertEquals("fr", r.getResultLanguages().get("fr"));
+        assertNull(r.getDocumentLanguages());
+        assertNull(r.getResultLanguages());
     }
 
     @Test
@@ -626,6 +627,9 @@ class CopyleaksEndpointsTest {
         assertThrows(NullPointerException.class, () -> Copyleaks.submitFile(token, null,
                 new CopyleaksFileSubmissionModel("eA==", "a.txt", sandboxProperties())));
         assertThrows(NullPointerException.class, () -> Copyleaks.login(null, "k"));
+        assertThrows(NullPointerException.class, () -> Copyleaks.getCreditsBalance(null));
+        assertThrows(NullPointerException.class, () -> Copyleaks.imagePlagiarismClient.check(null, "s",
+                new CopyleaksImagePlagiarismRequestModel(new byte[] { 1 }, "a.png")));
         assertTrue(server.requests().isEmpty());
     }
 

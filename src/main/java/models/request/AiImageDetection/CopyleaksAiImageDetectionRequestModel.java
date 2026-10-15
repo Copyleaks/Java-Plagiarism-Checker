@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
  * AI Image Detection request with a base64-encoded image. To skip base64, use
  * {@link CopyleaksAiImageDetectionFileRequestModel}.
  */
-public class CopyleaksAiImageDetectionRequestModel {
+public class CopyleaksAiImageDetectionRequestModel extends CopyleaksAiImageDetectionBaseRequestModel {
 
 	private String base64;
 
@@ -16,10 +16,6 @@ public class CopyleaksAiImageDetectionRequestModel {
 	private String model;
 
 	private boolean sandbox = false;
-
-	private String maskType;
-
-	private CopyleaksObjectDetectionItem[] objectDetection;
 
 	/**
 	 * @param base64   the image, base64-encoded. 512x512 to 6000x4500 px (27 MP), under 32 MB;
@@ -84,25 +80,5 @@ public class CopyleaksAiImageDetectionRequestModel {
 	/** Replaces the {@code sandbox} constructor argument. */
 	public void setSandbox(boolean sandbox) {
 		this.sandbox = sandbox;
-	}
-
-	/** @return the mask type, or null for the server default. */
-	public String getMaskType() {
-		return maskType;
-	}
-
-	/** "binary" (default), "heatmap" or "none", see {@link models.constants.CopyleaksAiImageMaskTypes}. */
-	public void setMaskType(String maskType) {
-		this.maskType = maskType;
-	}
-
-	/** @return the objects to detect, or null. */
-	public CopyleaksObjectDetectionItem[] getObjectDetection() {
-		return objectDetection;
-	}
-
-	/** Objects to locate and segment, at most 3. Null turns the feature off. */
-	public void setObjectDetection(CopyleaksObjectDetectionItem[] objectDetection) {
-		this.objectDetection = objectDetection;
 	}
 }

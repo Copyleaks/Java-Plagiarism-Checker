@@ -1,16 +1,15 @@
 package classes;
 
-import com.google.gson.Gson;
 import classes.clients.AIDetectionClient;
 import classes.clients.AiImageDetectionClient;
 import classes.clients.AiVideoDetectionClient;
 import classes.clients.ImagePlagiarismClient;
 import classes.clients.TextModerationClient;
 import classes.clients.WritingAssistantClient;
-import helpers.CopyleaksClientHelper;
 import helpers.CopyleaksRequestExecutor;
 import models.exceptions.AuthExpiredException;
 import models.exceptions.CommandException;
+import models.exceptions.CopyleaksApiException;
 import models.exceptions.RateLimitException;
 import models.exceptions.UnderMaintenanceException;
 import models.exports.CopyleaksExportModel;
@@ -21,7 +20,6 @@ import models.submissions.CopyleaksFileOcrSubmissionModel;
 import models.submissions.CopyleaksFileSubmissionModel;
 import models.submissions.CopyleaksURLSubmissionModel;
 import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
 import java.text.ParseException;
 import java.time.Duration;
 import java.util.HashMap;
@@ -35,18 +33,14 @@ import static helpers.CopyleaksRequestExecutor.pathSegment;
  * Entry point of the SDK: login, plagiarism scans, exports and account calls. Other products are the static
  * client fields. All calls share one HTTP client and the limits set here. {@code scanId} is an ID you choose.
  * <p>Errors, here and in the clients: 429 throws {@link RateLimitException}, 503 {@link UnderMaintenanceException},
- * other non-2xx {@link CommandException} (each with the status code and body), an expired token
- * {@link AuthExpiredException}, and network errors and timeouts {@link ExecutionException} with the I/O error as
- * cause. {@link ParseException} is never thrown; it stays for source compatibility.
+ * other non-2xx {@link CommandException} (each a {@link CopyleaksApiException} with the status code and body), an
+ * expired token {@link AuthExpiredException}, and network errors and timeouts {@link ExecutionException} with the I/O
+ * error as cause. {@link ParseException} is never thrown; it stays for source compatibility.
  * Retry strategy: https://docs.copyleaks.com/concepts/performance/handling-failures
  */
 public class Copyleaks {
 
     private static final CopyleaksRequestExecutor EXECUTOR = new CopyleaksRequestExecutor();
-
-    private static final Gson gson = new Gson();
-
-    private static final String JSON = "application/json";
 
     /** AI Text Detection client. */
     public final static AIDetectionClient aiDetectionClient = new AIDetectionClient(EXECUTOR);
@@ -86,16 +80,16 @@ public class Copyleaks {
     }
 
     /**
-     * Time allowed per request, including the wait for a concurrency slot and reading the whole response.
-     * Default: 120 seconds. On timeout the call throws {@link ExecutionException} caused by
-     * {@link java.net.http.HttpTimeoutException}.
+     * Time allowed for each attempt, including the wait for a concurrency slot and reading the whole response.
+     * With retries a call can take longer. Default: 120 seconds. On timeout the call throws
+     * {@link ExecutionException} caused by {@link java.net.http.HttpTimeoutException}.
      * @param timeout a positive duration.
      */
     public static void setRequestTimeout(Duration timeout) {
         EXECUTOR.setRequestTimeout(timeout);
     }
 
-    /** @return the time allowed for each request. */
+    /** @return the time allowed for each attempt of a request. */
     public static Duration getRequestTimeout() {
         return EXECUTOR.getRequestTimeout();
     }
@@ -151,10 +145,8 @@ public class Copyleaks {
         Map<String, String> object = new HashMap<>();
         object.put("email", email);
         object.put("key", key);
-
-        String body = EXECUTOR.send("POST", Consts.IDENTITY_SERVER_URI + "/v3/account/login/api",
-                CopyleaksRequestExecutor.jsonBody(gson, object), JSON, null);
-        return gson.fromJson(body, CopyleaksAuthToken.class);
+        return EXECUTOR.sendJsonPublic("POST", Consts.IDENTITY_SERVER_URI + "/v3/account/login/api", object,
+                CopyleaksAuthToken.class);
     }
 
     /** Submits a file for a plagiarism scan. https://docs.copyleaks.com/reference/actions/authenticity/submit-file */
@@ -177,12 +169,9 @@ public class Copyleaks {
 
     private static void put(CopyleaksAuthToken authToken, String path, String scanId, Object submission)
             throws AuthExpiredException, UnderMaintenanceException, RateLimitException, CommandException, ExecutionException, InterruptedException {
-        Objects.requireNonNull(authToken, "token is null");
         Objects.requireNonNull(scanId, "scanId is null");
         Objects.requireNonNull(submission, "submission is null");
-        CopyleaksClientHelper.verifyAuthToken(authToken);
-        EXECUTOR.send("PUT", Consts.API_SERVER_URI + path + pathSegment(scanId),
-                CopyleaksRequestExecutor.jsonBody(gson, submission), JSON, authToken);
+        EXECUTOR.sendJson("PUT", Consts.API_SERVER_URI + path + pathSegment(scanId), authToken, submission, null);
     }
 
     /**
@@ -193,13 +182,10 @@ public class Copyleaks {
     public static void export(CopyleaksAuthToken authToken, String scanId, String exportId, CopyleaksExportModel model)
             throws ParseException, AuthExpiredException, UnderMaintenanceException, RateLimitException, CommandException, ExecutionException, InterruptedException {
         Objects.requireNonNull(exportId, "exportId is null");
-        Objects.requireNonNull(authToken, "token is null");
         Objects.requireNonNull(scanId, "scanId is null");
         Objects.requireNonNull(model, "model is null");
-        CopyleaksClientHelper.verifyAuthToken(authToken);
-
-        EXECUTOR.send("POST", Consts.API_SERVER_URI + "/v3/downloads/" + pathSegment(scanId) + "/export/" + pathSegment(exportId),
-                CopyleaksRequestExecutor.jsonBody(gson, model), JSON, authToken);
+        EXECUTOR.sendJson("POST", Consts.API_SERVER_URI + "/v3/downloads/" + pathSegment(scanId) + "/export/" + pathSegment(exportId),
+                authToken, model, null);
     }
 
     /**
@@ -208,13 +194,9 @@ public class Copyleaks {
      * @return the scans that started and the scans that failed to start.
      */
     public static CopyleaksStartResponse start(CopyleaksAuthToken authToken, CopyleaksStartRequest model) throws ParseException, AuthExpiredException, ExecutionException, InterruptedException, UnderMaintenanceException, RateLimitException, CommandException {
-        Objects.requireNonNull(authToken, "token is null");
         Objects.requireNonNull(model, "model is null");
-        CopyleaksClientHelper.verifyAuthToken(authToken);
-
-        String body = EXECUTOR.send("PATCH", Consts.API_SERVER_URI + "/v3/scans/start",
-                CopyleaksRequestExecutor.jsonBody(gson, model), JSON, authToken);
-        return gson.fromJson(body, CopyleaksStartResponse.class);
+        return EXECUTOR.sendJson("PATCH", Consts.API_SERVER_URI + "/v3/scans/start", authToken, model,
+                CopyleaksStartResponse.class);
     }
 
     /**
@@ -222,31 +204,21 @@ public class Copyleaks {
      * @param payloads the scans to delete, and an optional completion webhook.
      */
     public static void delete(CopyleaksAuthToken authToken, CopyleaksDeleteRequest payloads) throws ParseException, AuthExpiredException, ExecutionException, InterruptedException, UnderMaintenanceException, RateLimitException, CommandException {
-        Objects.requireNonNull(authToken, "token is null");
         Objects.requireNonNull(payloads, "payloads is null");
-        CopyleaksClientHelper.verifyAuthToken(authToken);
-
-        EXECUTOR.send("PATCH", Consts.API_SERVER_URI + "/v3.1/scans/delete",
-                CopyleaksRequestExecutor.jsonBody(gson, payloads), JSON, authToken);
+        EXECUTOR.sendJson("PATCH", Consts.API_SERVER_URI + "/v3.1/scans/delete", authToken, payloads, null);
     }
 
     /** Resends a scan's status webhooks. https://docs.copyleaks.com/reference/actions/authenticity/resend-webhook */
     public static void resendWebhook(CopyleaksAuthToken authToken, String scanId) throws ParseException, AuthExpiredException, UnderMaintenanceException, RateLimitException, CommandException, ExecutionException, InterruptedException {
-        Objects.requireNonNull(authToken, "token is null");
         Objects.requireNonNull(scanId, "scanId is null");
-        CopyleaksClientHelper.verifyAuthToken(authToken);
-
-        EXECUTOR.send("POST", Consts.API_SERVER_URI + "/v3/scans/" + pathSegment(scanId) + "/webhooks/resend",
-                HttpRequest.BodyPublishers.noBody(), JSON, authToken);
+        EXECUTOR.sendJson("POST", Consts.API_SERVER_URI + "/v3/scans/" + pathSegment(scanId) + "/webhooks/resend",
+                authToken, null, null);
     }
 
     /** Credit balance of the account. https://docs.copyleaks.com/reference/actions/admin/check-credits */
     public static CreditsBalanceResponse getCreditsBalance(CopyleaksAuthToken authToken) throws ExecutionException, InterruptedException, UnderMaintenanceException, RateLimitException, CommandException, ParseException, AuthExpiredException {
-        Objects.requireNonNull(authToken, "token is null");
-        CopyleaksClientHelper.verifyAuthToken(authToken);
-
-        String body = EXECUTOR.send("GET", Consts.API_SERVER_URI + "/v3/scans/credits", null, null, authToken);
-        return gson.fromJson(body, CreditsBalanceResponse.class);
+        return EXECUTOR.sendJson("GET", Consts.API_SERVER_URI + "/v3/scans/credits", authToken, null,
+                CreditsBalanceResponse.class);
     }
 
     /**
@@ -256,14 +228,11 @@ public class Copyleaks {
      * @return the usage history as CSV text.
      */
     public static String getUsagesHistoryCsv(CopyleaksAuthToken authToken, String startDate, String endDate) throws ExecutionException, InterruptedException, UnderMaintenanceException, RateLimitException, CommandException, ParseException, AuthExpiredException {
-        Objects.requireNonNull(authToken, "token is null");
         Objects.requireNonNull(startDate, "startDate is null");
         Objects.requireNonNull(endDate, "endDate is null");
-        CopyleaksClientHelper.verifyAuthToken(authToken);
-
-        return EXECUTOR.send("GET", Consts.API_SERVER_URI + "/v3/scans/usages/history?start="
+        return EXECUTOR.sendJson("GET", Consts.API_SERVER_URI + "/v3/scans/usages/history?start="
                 + CopyleaksRequestExecutor.queryValue(startDate) + "&end=" + CopyleaksRequestExecutor.queryValue(endDate),
-                null, null, authToken);
+                authToken, null, String.class);
     }
 
     /**
@@ -273,19 +242,15 @@ public class Copyleaks {
      */
     public static RepositoryInfoResponse getRepositoryInfo(CopyleaksAuthToken authToken, String repositoryId)
             throws AuthExpiredException, ExecutionException, InterruptedException, UnderMaintenanceException, RateLimitException, CommandException {
-        Objects.requireNonNull(authToken, "token is null");
         Objects.requireNonNull(repositoryId, "repositoryId is null");
-        CopyleaksClientHelper.verifyAuthToken(authToken);
-
-        String body = EXECUTOR.send("GET", Consts.API_SERVER_URI + "/v3/repositories/repository/"
-                + pathSegment(repositoryId) + "/info", null, null, authToken);
-        return gson.fromJson(body, RepositoryInfoResponse.class);
+        return EXECUTOR.sendJson("GET", Consts.API_SERVER_URI + "/v3/repositories/repository/"
+                + pathSegment(repositoryId) + "/info", authToken, null, RepositoryInfoResponse.class);
     }
 
     /** Copyleaks API release notes. */
     public static ReleaseNotesResponse getReleaseNotes() throws UnderMaintenanceException, CommandException, RateLimitException, ExecutionException, InterruptedException {
-        String body = EXECUTOR.send("GET", Consts.API_SERVER_URI + "/v3/release-logs.json", null, null, null);
-        return gson.fromJson(body, ReleaseNotesResponse.class);
+        return EXECUTOR.sendJsonPublic("GET", Consts.API_SERVER_URI + "/v3/release-logs.json", null,
+                ReleaseNotesResponse.class);
     }
 
     /**
@@ -293,9 +258,8 @@ public class Copyleaks {
      * https://docs.copyleaks.com/reference/actions/miscellaneous/supported-plagiarism-file-types
      */
     public static SupportedFileTypesResponse getSupportedFileTypes() throws CommandException, RateLimitException, UnderMaintenanceException, ExecutionException, InterruptedException {
-        String body = EXECUTOR.send("GET", Consts.API_SERVER_URI + "/v3/miscellaneous/supported-plagiarism-file-types",
-                null, null, null);
-        return gson.fromJson(body, SupportedFileTypesResponse.class);
+        return EXECUTOR.sendJsonPublic("GET", Consts.API_SERVER_URI + "/v3/miscellaneous/supported-plagiarism-file-types",
+                null, SupportedFileTypesResponse.class);
     }
 
     /**
@@ -303,9 +267,8 @@ public class Copyleaks {
      * https://docs.copyleaks.com/reference/actions/miscellaneous/supported-ai-text-detection-file-types
      */
     public static SupportedAiTextDetectionFileTypesResponse getSupportedAiTextDetectionFileTypes() throws CommandException, RateLimitException, UnderMaintenanceException, ExecutionException, InterruptedException {
-        String body = EXECUTOR.send("GET", Consts.API_SERVER_URI + "/v3/miscellaneous/supported-ai-text-detection-file-types",
-                null, null, null);
-        return gson.fromJson(body, SupportedAiTextDetectionFileTypesResponse.class);
+        return EXECUTOR.sendJsonPublic("GET", Consts.API_SERVER_URI + "/v3/miscellaneous/supported-ai-text-detection-file-types",
+                null, SupportedAiTextDetectionFileTypesResponse.class);
     }
 
     /**
@@ -313,9 +276,8 @@ public class Copyleaks {
      * https://docs.copyleaks.com/reference/actions/miscellaneous/supported-cross-languages
      */
     public static CrossLanguagesResponse getAllowedCrossLanguages() throws CommandException, RateLimitException, UnderMaintenanceException, ExecutionException, InterruptedException {
-        String body = EXECUTOR.send("GET", Consts.API_SERVER_URI + "/v3/miscellaneous/allowed-cross-languages",
-                null, null, null);
-        return gson.fromJson(body, CrossLanguagesResponse.class);
+        return EXECUTOR.sendJsonPublic("GET", Consts.API_SERVER_URI + "/v3/miscellaneous/allowed-cross-languages",
+                null, CrossLanguagesResponse.class);
     }
 
     /**
@@ -323,7 +285,7 @@ public class Copyleaks {
      * https://docs.copyleaks.com/reference/actions/miscellaneous/ocr-supported-languages
      */
     public static String[] getOCRSupportedLanguagesAsync() throws RateLimitException, CommandException, UnderMaintenanceException, ExecutionException, InterruptedException {
-        String body = EXECUTOR.send("GET", Consts.API_SERVER_URI + "/v3/miscellaneous/ocr-languages-list", null, null, null);
-        return gson.fromJson(body, String[].class);
+        return EXECUTOR.sendJsonPublic("GET", Consts.API_SERVER_URI + "/v3/miscellaneous/ocr-languages-list", null,
+                String[].class);
     }
 }

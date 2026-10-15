@@ -1,14 +1,12 @@
 package models.request.AiImageDetection;
 
 /** AI Image Detection request with the image bytes uploaded as {@code multipart/form-data}, without base64. */
-public class CopyleaksAiImageDetectionFileRequestModel {
+public class CopyleaksAiImageDetectionFileRequestModel extends CopyleaksAiImageDetectionBaseRequestModel {
 
     private byte[] image;
     private String filename;
     private String model;
     private boolean sandbox;
-    private String maskType;
-    private CopyleaksObjectDetectionItem[] objectDetection;
 
     /**
      * Sandbox mode off.
@@ -71,25 +69,5 @@ public class CopyleaksAiImageDetectionFileRequestModel {
     /** Replaces the {@code sandbox} constructor argument. */
     public void setSandbox(boolean sandbox) {
         this.sandbox = sandbox;
-    }
-
-    /** @return the mask type, or null for the server default. */
-    public String getMaskType() {
-        return maskType;
-    }
-
-    /** "binary" (default), "heatmap" or "none", see {@link models.constants.CopyleaksAiImageMaskTypes}. */
-    public void setMaskType(String maskType) {
-        this.maskType = maskType;
-    }
-
-    /** @return the objects to detect, or null. */
-    public CopyleaksObjectDetectionItem[] getObjectDetection() {
-        return objectDetection;
-    }
-
-    /** Objects to locate and segment, at most 3. Null turns the feature off. */
-    public void setObjectDetection(CopyleaksObjectDetectionItem[] objectDetection) {
-        this.objectDetection = objectDetection;
     }
 }

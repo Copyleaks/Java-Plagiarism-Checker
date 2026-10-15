@@ -5,9 +5,7 @@ import java.text.ParseException;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
-import com.google.gson.Gson;
 import classes.Consts;
-import helpers.CopyleaksClientHelper;
 import helpers.CopyleaksRequestExecutor;
 import models.exceptions.AuthExpiredException;
 import models.exceptions.CommandException;
@@ -22,7 +20,6 @@ import models.submissions.aidetection.CopyleaksNaturalLanguageSubmissionModel;
 public class AIDetectionClient {
 
     private final CopyleaksRequestExecutor executor;
-    private static final Gson gson = new Gson();
 
     /** @param executor the request executor to send requests with. */
     public AIDetectionClient(CopyleaksRequestExecutor executor) {
@@ -41,24 +38,17 @@ public class AIDetectionClient {
     /** Detects AI-written text. https://docs.copyleaks.com/reference/actions/writer-detector/check */
     public AIDetectionResponse submitNaturalLanguage(CopyleaksAuthToken authToken, String scanId, CopyleaksNaturalLanguageSubmissionModel submission)
             throws ParseException, AuthExpiredException, UnderMaintenanceException, RateLimitException, CommandException, ExecutionException, InterruptedException {
-        Objects.requireNonNull(authToken, "token is null");
         Objects.requireNonNull(scanId, "scanId is null");
         Objects.requireNonNull(submission, "submission is null");
-        CopyleaksClientHelper.verifyAuthToken(authToken);
-
-        String body = executor.send("POST",
+        return executor.sendJson("POST",
                 Consts.API_SERVER_URI + "/v2/writer-detector/" + CopyleaksRequestExecutor.pathSegment(scanId) + "/check",
-                CopyleaksRequestExecutor.jsonBody(gson, submission), "application/json", authToken);
-        return gson.fromJson(body, AIDetectionResponse.class);
+                authToken, submission, AIDetectionResponse.class);
     }
 
     /** AI Text Detection credit balance. https://docs.copyleaks.com/reference/actions/writer-detector/credits */
     public AIDetectionCreditsResponse getCredits(CopyleaksAuthToken authToken)
             throws AuthExpiredException, UnderMaintenanceException, RateLimitException, CommandException, ExecutionException, InterruptedException {
-        Objects.requireNonNull(authToken, "token is null");
-        CopyleaksClientHelper.verifyAuthToken(authToken);
-
-        String body = executor.send("GET", Consts.API_SERVER_URI + "/v2/writer-detector/credits", null, null, authToken);
-        return gson.fromJson(body, AIDetectionCreditsResponse.class);
+        return executor.sendJson("GET", Consts.API_SERVER_URI + "/v2/writer-detector/credits", authToken, null,
+                AIDetectionCreditsResponse.class);
     }
 }

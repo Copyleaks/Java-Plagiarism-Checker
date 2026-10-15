@@ -2,9 +2,7 @@ package classes.clients;
 
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
-import com.google.gson.Gson;
 import classes.Consts;
-import helpers.CopyleaksClientHelper;
 import helpers.CopyleaksRequestExecutor;
 import helpers.MultipartBody;
 import models.exceptions.AuthExpiredException;
@@ -19,7 +17,6 @@ import models.response.ImagePlagiarism.CopyleaksImagePlagiarismResponseModel;
 public class ImagePlagiarismClient {
 
     private final CopyleaksRequestExecutor executor;
-    private static final Gson gson = new Gson();
 
     /** @param executor the request executor to send requests with. */
     public ImagePlagiarismClient(CopyleaksRequestExecutor executor) {
@@ -34,12 +31,10 @@ public class ImagePlagiarismClient {
             CopyleaksImagePlagiarismRequestModel submission)
             throws AuthExpiredException, UnderMaintenanceException, RateLimitException, CommandException,
             ExecutionException, InterruptedException {
-        Objects.requireNonNull(authToken, "token is null");
         Objects.requireNonNull(scanId, "scanId is null");
         Objects.requireNonNull(submission, "submission is null");
         Objects.requireNonNull(submission.getImage(), "image is null");
         Objects.requireNonNull(submission.getFilename(), "filename is null");
-        CopyleaksClientHelper.verifyAuthToken(authToken);
 
         MultipartBody form = new MultipartBody()
                 .addFile("image", submission.getFilename(), MultipartBody.imageContentType(submission.getFilename()),
@@ -49,9 +44,8 @@ public class ImagePlagiarismClient {
         if (submission.getDeveloperPayload() != null) {
             form.addField("developerPayload", submission.getDeveloperPayload());
         }
-        String body = executor.send("POST",
+        return executor.sendMultipart(
                 Consts.API_SERVER_URI + "/v1/image-plagiarism-detector/" + CopyleaksRequestExecutor.pathSegment(scanId) + "/check",
-                form.build(), form.contentType(), authToken);
-        return gson.fromJson(body, CopyleaksImagePlagiarismResponseModel.class);
+                authToken, form, CopyleaksImagePlagiarismResponseModel.class);
     }
 }

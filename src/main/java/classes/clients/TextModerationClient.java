@@ -5,9 +5,7 @@ import java.text.ParseException;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
-import com.google.gson.Gson;
 import classes.Consts;
-import helpers.CopyleaksClientHelper;
 import helpers.CopyleaksRequestExecutor;
 import models.exceptions.AuthExpiredException;
 import models.exceptions.CommandException;
@@ -21,7 +19,6 @@ import models.response.textModeration.CopyleaksTextModerationResponseModel;
 public class TextModerationClient {
 
     private final CopyleaksRequestExecutor executor;
-    private static final Gson gson = new Gson();
 
     /** @param executor the request executor to send requests with. */
     public TextModerationClient(CopyleaksRequestExecutor executor) {
@@ -42,14 +39,10 @@ public class TextModerationClient {
             CopyleaksTextModerationRequest submission)
             throws ParseException, AuthExpiredException, UnderMaintenanceException, RateLimitException, CommandException,
             ExecutionException, InterruptedException {
-        Objects.requireNonNull(authToken, "token is null");
         Objects.requireNonNull(scanId, "scanId is null");
         Objects.requireNonNull(submission, "submission is null");
-        CopyleaksClientHelper.verifyAuthToken(authToken);
-
-        String body = executor.send("POST",
+        return executor.sendJson("POST",
                 Consts.API_SERVER_URI + "/v1/text-moderation/" + CopyleaksRequestExecutor.pathSegment(scanId) + "/check",
-                CopyleaksRequestExecutor.jsonBody(gson, submission), "application/json", authToken);
-        return gson.fromJson(body, CopyleaksTextModerationResponseModel.class);
+                authToken, submission, CopyleaksTextModerationResponseModel.class);
     }
 }

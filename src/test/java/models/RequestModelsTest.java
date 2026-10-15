@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +13,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 
+import models.constants.CopyleaksAiImageMaskTypes;
+import models.request.CopyleaksAsyncWebhooksModel;
+import models.request.AiImageDetection.CopyleaksAiImageDetectionAsyncRequestModel;
+import models.request.AiImageDetection.CopyleaksAiImageDetectionBaseRequestModel;
+import models.request.AiImageDetection.CopyleaksAiImageDetectionFileRequestModel;
+import models.request.AiImageDetection.CopyleaksAiImageDetectionRequestModel;
+import models.request.AiImageDetection.CopyleaksObjectDetectionItem;
 import models.request.TextModeration.CopyleaksTextModerationLabel;
 import models.request.TextModeration.CopyleaksTextModerationRequest;
 import models.submissions.aidetection.CopyleaksAIDetectionSubmissionModel;
@@ -216,6 +224,30 @@ class RequestModelsTest {
                 + "\"aiGeneratedText\":{\"detect\":true,\"explain\":{\"enable\":false},\"sensitivity\":2},"
                 + "\"scanTimeZone\":\"America/New_York\",\"internalAiSourceMatch\":{\"enable\":true},\"references\":{\"validate\":true}}"),
                 toJson(p));
+    }
+
+    @Test
+    void aiImageOptionsComeFromOneBaseClassWithTheSameJsonKeys() {
+        CopyleaksAiImageDetectionBaseRequestModel[] requests = {
+            new CopyleaksAiImageDetectionRequestModel("aW1n", "a.png", "m"),
+            new CopyleaksAiImageDetectionFileRequestModel(new byte[] { 1 }, "a.png", "m"),
+            new CopyleaksAiImageDetectionAsyncRequestModel("https://example.com/a.png", "a.png", "m",
+                    new CopyleaksAsyncWebhooksModel("https://example.com/w")) };
+        for (CopyleaksAiImageDetectionBaseRequestModel r : requests) {
+            assertNull(r.getMaskType());
+            assertNull(r.getObjectDetection());
+            assertFalse(toJson(r).getAsJsonObject().has("maskType"));
+            r.setMaskType(CopyleaksAiImageMaskTypes.BINARY);
+            r.setObjectDetection(new CopyleaksObjectDetectionItem[] { new CopyleaksObjectDetectionItem("face") });
+            if (r instanceof CopyleaksAiImageDetectionFileRequestModel) {
+                continue; // sent as multipart fields, see CopyleaksEndpointsTest
+            }
+            JsonElement body = toJson(r);
+            assertEquals(json("\"binary\""), body.getAsJsonObject().get("maskType"));
+            assertEquals(json("[{\"object\":\"face\"}]"), body.getAsJsonObject().get("objectDetection"));
+        }
+        assertTrue(toJson(requests[0]).getAsJsonObject().has("filename"));
+        assertTrue(toJson(requests[2]).getAsJsonObject().has("fileName"));
     }
 
     @Test
