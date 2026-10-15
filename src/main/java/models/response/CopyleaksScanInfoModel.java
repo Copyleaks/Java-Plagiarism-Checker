@@ -28,6 +28,7 @@ public abstract class CopyleaksScanInfoModel {
         return scanId;
     }
 
+    /** Sets the scan ID. */
     public void setScanId(String scanId) {
         this.scanId = scanId;
     }
@@ -37,6 +38,7 @@ public abstract class CopyleaksScanInfoModel {
         return actualCredits;
     }
 
+    /** Sets the credits used. */
     public void setActualCredits(int actualCredits) {
         this.actualCredits = actualCredits;
     }
@@ -46,6 +48,7 @@ public abstract class CopyleaksScanInfoModel {
         return expectedCredits;
     }
 
+    /** Sets the expected credits. */
     public void setExpectedCredits(int expectedCredits) {
         this.expectedCredits = expectedCredits;
     }
@@ -55,6 +58,7 @@ public abstract class CopyleaksScanInfoModel {
         return creationTime;
     }
 
+    /** Sets the creation time, ISO 8601. */
     public void setCreationTime(String creationTime) {
         this.creationTime = creationTime;
     }

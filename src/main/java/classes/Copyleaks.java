@@ -33,7 +33,7 @@ import static helpers.CopyleaksRequestExecutor.pathSegment;
  * Entry point of the SDK: login, plagiarism scans, exports and account calls. Other products are the static
  * client fields. All calls share one HTTP client and the limits set here. {@code scanId} is an ID you choose.
  * <p>Errors, here and in the clients: 429 throws {@link RateLimitException}, 503 {@link UnderMaintenanceException},
- * other non-2xx {@link CommandException} (each a {@link CopyleaksApiException} with the status code and body), an
+ * other non-2xx {@link CommandException} (all three extend {@link CopyleaksApiException}, with the status code and body), an
  * expired token {@link AuthExpiredException}, and network errors and timeouts {@link ExecutionException} with the I/O
  * error as cause. {@link ParseException} is never thrown; it stays for source compatibility.
  * Retry strategy: https://docs.copyleaks.com/concepts/performance/handling-failures

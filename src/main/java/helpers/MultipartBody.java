@@ -8,7 +8,10 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 
-/** Builds a {@code multipart/form-data} body. File bytes are sent as is, not base64-encoded or copied. */
+/**
+ * Builds a {@code multipart/form-data} body. File bytes are sent as is, not base64-encoded or copied.
+ * <p>Used by the SDK's clients. Not a stable API; it may change in any release.
+ */
 public final class MultipartBody {
 
     private final String boundary = "CopyleaksBoundary" + UUID.randomUUID().toString().replace("-", "");

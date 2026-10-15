@@ -161,7 +161,10 @@ public final class CopyleaksRequestExecutor {
         return d;
     }
 
-    /** Serializes an object to a JSON request body without building an intermediate string. */
+    /**
+     * Serializes an object to a JSON request body without building an intermediate string.
+     * <p>Used by the SDK's clients. Not a stable API; it may change in any release.
+     */
     public static HttpRequest.BodyPublisher jsonBody(Gson gson, Object model) {
         ExposedByteArrayOutputStream out = new ExposedByteArrayOutputStream();
         try (Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8)) {
@@ -208,9 +211,18 @@ public final class CopyleaksRequestExecutor {
     /**
      * Sends a request and returns the body of a 2xx response. Errors are mapped as described on
      * {@link classes.Copyleaks}.
+     * <p>Used by the SDK's clients. Not a stable API; it may change in any release.
+     * @param method      the HTTP method, in upper case.
+     * @param url         the full request URL.
      * @param body        the request body, or null.
      * @param contentType the Content-Type header, or null.
      * @param authToken   the token for the Authorization header, or null for public endpoints.
+     * @return the response body.
+     * @throws ExecutionException a network error or timeout, with the I/O error as cause.
+     * @throws InterruptedException the thread was interrupted.
+     * @throws UnderMaintenanceException HTTP 503.
+     * @throws RateLimitException HTTP 429.
+     * @throws CommandException any other non-2xx status.
      */
     public String send(String method, String url, HttpRequest.BodyPublisher body, String contentType,
             CopyleaksAuthToken authToken)
@@ -246,9 +258,15 @@ public final class CopyleaksRequestExecutor {
     /**
      * Sends a request to an endpoint that needs a login token and parses the response. GET requests have no body;
      * other requests send {@code model} as JSON, or an empty body when it is null, with Content-Type application/json.
+     * <p>Used by the SDK's clients. Not a stable API; it may change in any release.
+     * @param method       the HTTP method, in upper case.
+     * @param url          the full request URL.
      * @param authToken    checked before anything is sent.
+     * @param model        the request body, sent as JSON; ignored for GET.
      * @param responseType the class to parse the response into; String.class returns the raw text, null ignores it.
+     * @return the parsed response, or null when {@code responseType} is null.
      * @throws AuthExpiredException if the token has expired.
+     * @throws ExecutionException a network error or timeout; other exceptions as on {@link #send}.
      */
     public <T> T sendJson(String method, String url, CopyleaksAuthToken authToken, Object model, Class<T> responseType)
             throws AuthExpiredException, ExecutionException, InterruptedException, UnderMaintenanceException,
@@ -257,7 +275,16 @@ public final class CopyleaksRequestExecutor {
         return exchange(method, url, model, authToken, responseType);
     }
 
-    /** Like {@link #sendJson}, for public endpoints that need no login token. */
+    /**
+     * Like {@link #sendJson}, for public endpoints that need no login token.
+     * <p>Used by the SDK's clients. Not a stable API; it may change in any release.
+     * @param method       the HTTP method, in upper case.
+     * @param url          the full request URL.
+     * @param model        the request body, sent as JSON; ignored for GET.
+     * @param responseType as on {@link #sendJson}.
+     * @return the parsed response, or null when {@code responseType} is null.
+     * @throws ExecutionException a network error or timeout; other exceptions as on {@link #send}.
+     */
     public <T> T sendJsonPublic(String method, String url, Object model, Class<T> responseType)
             throws ExecutionException, InterruptedException, UnderMaintenanceException, RateLimitException,
             CommandException {
@@ -277,9 +304,14 @@ public final class CopyleaksRequestExecutor {
 
     /**
      * POSTs a {@code multipart/form-data} body to an endpoint that needs a login token and parses the response.
+     * <p>Used by the SDK's clients. Not a stable API; it may change in any release.
+     * @param url          the full request URL.
      * @param authToken    checked before anything is sent.
+     * @param form         the form fields and file.
      * @param responseType the class to parse the response into, or null to ignore it.
+     * @return the parsed response, or null when {@code responseType} is null.
      * @throws AuthExpiredException if the token has expired.
+     * @throws ExecutionException a network error or timeout; other exceptions as on {@link #send}.
      */
     public <T> T sendMultipart(String url, CopyleaksAuthToken authToken, MultipartBody form, Class<T> responseType)
             throws AuthExpiredException, ExecutionException, InterruptedException, UnderMaintenanceException,
