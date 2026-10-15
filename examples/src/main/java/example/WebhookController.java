@@ -18,19 +18,8 @@ import models.submissions.Webhooks.IndexedWebhookModel;
 import models.submissions.Webhooks.NewResultWebhookModel;
 
 /**
- * Controller to handle webhook callbacks from the external service.
- * 
- * Provides separate endpoints for each webhook event status:
- * - /webhook/completed
- * - /webhook/error
- * - /webhook/indexed
- * - /webhook/creditschecked
- * - /webhook/new-results
- * - /webhook/ai-image (AI Image Detection async results)
- * - /webhook/ai-video (AI Video Detection results)
- * 
- * Each endpoint accepts a POST request with a JSON payload corresponding to the
- * event type.
+ * Receives the Copyleaks webhooks, one POST endpoint per event: /webhook/completed, /error, /indexed,
+ * /creditschecked, /new-results, /ai-image (AI Image Detection async) and /ai-video.
  */
 @RestController
 @RequestMapping("/webhook")
@@ -38,21 +27,13 @@ public class WebhookController {
 
     private static final Gson gson = new Gson();
 
-    /**
-     * Handles the "completed" webhook event.
-     * 
-     * @param payload the JSON payload sent by the webhook, representing a
-     *                CompletedWebhook object
-     * @return a simple acknowledgment message
-     */
     @PostMapping("/completed")
     public String handleCompleted(@RequestBody String payload) {
         CompletedWebhookModel completedData = gson.fromJson(payload, CompletedWebhookModel.class);
         System.out
                 .println("Scan completed with creation time: " + completedData.getScannedDocument().getCreationTime());
 
-        // AI text detection result from the "suspected-ai-text" alert; null when the scan raised no AI alert.
-        // Catch the parse error so the webhook is still acknowledged when the alert data is malformed.
+        // Null when the scan raised no AI alert. Catch the parse error so the webhook is still acknowledged.
         try {
             AIDetectionResponse aiDetectionResult = completedData.getAIDetectionResult();
             if (aiDetectionResult != null && aiDetectionResult.getSummary() != null) {
@@ -64,13 +45,6 @@ public class WebhookController {
         return "Completed webhook received";
     }
 
-    /**
-     * Handles the "error" webhook event.
-     * 
-     * @param payload the JSON payload sent by the webhook, representing an
-     *                ErrorWebhook object
-     * @return a simple acknowledgment message
-     */
     @PostMapping("/error")
     public String handleError(@RequestBody String payload) {
         ErrorWebhookModel errorData = gson.fromJson(payload, ErrorWebhookModel.class);
@@ -78,13 +52,6 @@ public class WebhookController {
         return "Error webhook received";
     }
 
-    /**
-     * Handles the "indexed" webhook event.
-     * 
-     * @param payload the JSON payload sent by the webhook, representing an
-     *                IndexedWebhook object
-     * @return a simple acknowledgment message
-     */
     @PostMapping("/indexed")
     public String handleIndexed(@RequestBody String payload) {
         IndexedWebhookModel indexedData = gson.fromJson(payload, IndexedWebhookModel.class);
@@ -92,13 +59,6 @@ public class WebhookController {
         return "Indexed webhook received";
     }
 
-    /**
-     * Handles the "creditsChecked" webhook event.
-     * 
-     * @param payload the JSON payload sent by the webhook, representing a
-     *                CreditsCheckedWebhook object
-     * @return a simple acknowledgment message
-     */
     @PostMapping("/creditschecked")
     public String handleCreditsChecked(@RequestBody String payload) {
         CreditsCheckedWebhookModel creditsCheckedData = gson.fromJson(payload, CreditsCheckedWebhookModel.class);
@@ -106,13 +66,6 @@ public class WebhookController {
         return "CreditsChecked webhook received";
     }
 
-    /**
-     * Handles the "new-results" webhook event.
-     * 
-     * @param payload the JSON payload sent by the webhook, representing a
-     *                NewResultWebhookModel object
-     * @return a simple acknowledgment message
-     */
     @PostMapping("/new-results")
     public String handleNewResults(@RequestBody String payload) {
         NewResultWebhookModel newResultsData = gson.fromJson(payload, NewResultWebhookModel.class);
@@ -120,12 +73,7 @@ public class WebhookController {
         return "new-results webhook received";
     }
 
-    /**
-     * Handles an AI Image Detection result sent by the asynchronous submit.
-     *
-     * @param payload the JSON payload, with the same shape as the synchronous result
-     * @return a simple acknowledgment message
-     */
+    /** The async result has the same shape as the synchronous one. */
     @PostMapping("/ai-image")
     public String handleAiImage(@RequestBody String payload) {
         CopyleaksAiImageDetectionResponseModel result = gson.fromJson(payload, CopyleaksAiImageDetectionResponseModel.class);
@@ -133,12 +81,6 @@ public class WebhookController {
         return "AI image webhook received";
     }
 
-    /**
-     * Handles an AI Video Detection result.
-     *
-     * @param payload the JSON payload of the AI Video Detection result
-     * @return a simple acknowledgment message
-     */
     @PostMapping("/ai-video")
     public String handleAiVideo(@RequestBody String payload) {
         CopyleaksAiVideoDetectionResponseModel result = gson.fromJson(payload, CopyleaksAiVideoDetectionResponseModel.class);

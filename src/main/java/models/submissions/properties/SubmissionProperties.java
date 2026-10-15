@@ -1,196 +1,75 @@
-/*
- The MIT License(MIT)
- Copyright(c) 2016 Copyleaks LTD (https://copyleaks.com)
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
- The above copyright notice and this permission notice shall be included in all
- copies or substantial portions of the Software.
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
-*/
-
 package models.submissions.properties;
 
 public class SubmissionProperties {
     private SubmissionWebhooks webhooks;
-    /**
-     * By default, Copyleaks will present the report in text format. If set to true, Copyleaks will also include html format.
-     */
+    /** Also return the report in HTML format, in addition to text. */
     private Boolean includeHtml = null;
-    /**
-     * Add custom developer payload that will then be provided on the webhooks.
-     * https://docs.copyleaks.com/reference/data-types/authenticity/webhooks/overview
-     */
+    /** Sent back in the webhooks. */
     private String developerPayload = null;
-    /**
-     * You can test the integration with the Copyleaks API for free using the sandbox mode.
-     * <p>
-     * You will be able to submit content for a scan and get back mock results, simulating the way Copyleaks will work to make sure that you successfully integrated with the API.
-     * <p>
-     * Turn off this feature on production environment.
-     */
+    /** Return mock results without using credits. Turn off in production. */
     private Boolean sandbox = null;
-    /**
-     * You can control the level of plagiarism sensitivity that will be identified according to the speed of the scan.
-     * If you prefer a faster scan with the results that contains the highest amount of plagiarism choose 1,
-     * and if a slower, more comprehensive scan, that will also detect the smallest instances choose 5.
-     */
+    /** 1 (fastest, finds the most plagiarism) to 5 (slowest, also finds the smallest matches). */
     private Integer sensitivityLevel = null;
-    /**
-     * When set to true the submitted document will be checked for cheating. If a cheating will be detected, a scan alert will be added to the completed webhook.
-     */
+    /** Check the document for cheating. If found, an alert is added to the completed webhook. */
     private Boolean cheatDetection = null;
-    /**
-     * Types of content submission actions.
-     * <p>
-     * * Possible values:
-     * * Scan: Start scan immediately.
-     * * Check Credits: Check how many credits will be used for this scan.
-     * * Index Only: Only index the file in the Copyleaks internal database. No credits will be used.
-     */
     private SubmissionActions action = null;
-    /**
-     * Check inner properties for more details.
-     */
     private SubmissionAuthor author = null;
-    /**
-     * Check inner properties for more details.
-     */
     private SubmissionCourse course = null;
-    /**
-     * Check inner properties for more details.
-     */
     private SubmissionAssignment assignment= null;
-    /**
-     * Check inner properties for more details.
-     */
     private SubmissionInstitution institution= null;
-    /**
-     * Check inner properties for more details.
-     */
     private SubmissionFilter filters = null;
-    /**
-     * Check inner properties for more details.
-     */
     private SubmissionScanning scanning = null;
-    /**
-     * Check inner properties for more details.
-     */
     private SubmissionIndexing indexing = null;
-    /**
-     * Check inner properties for more details.
-     */
     private SubmissionExclude exclude = null;
-    /**
-     * Check inner properties for more details.
-     */
     private SubmissionPDF pdf = null;
-    /**
-     * Check inner properties for more details.
-     */
     private SubmissionSensitiveData sensitiveDataProtection = null;
-    /**
-     * Specify the maximum life span of a scan in hours on the Copyleaks servers. When expired, the scan will be deleted and will no longer be accessible. 
-     * */
+    /** Hours the scan is kept on the Copyleaks servers before it is deleted, 1 to 2880. */
     private Integer expiration = null; 
 
-    /**
-     * Choose the algorithm goal. You can set this value depending on your use-case.
-     */
     private SubmissionScanMethodAlgorithm scanMethodAlgorithm;
-    /**
-     * Add custom properties that will be attached to your document in a Copyleaks repository.
-     */
+    /** Key and value pairs attached to the document in a Copyleaks repository, at most 20. */
     private SubmissionCustomMetadata[] customMetadata;
-    /**
-     * Detects whether the text was written by an AI.
-     * 
-     * Upon detection a scan alert of type "suspected-ai-text" will be added to the scan completion webhook.
-     */
+    /** AI text detection. When found, a "suspected-ai-text" alert is added to the completed webhook. */
     private SubmissionAIGeneratedText aiGeneratedText;
-    /**
-     * Enable automated Writing Assistant . This feature includes grammar checking, spell checking and sentence structure corrections.
-     */
+    /** Grammar Checker: grammar, spelling and sentence structure corrections. */
     private SubmissionWritingFeedback writingFeedback;
-    /**
-     * When specified, the PDF report will be generated in the selected language. 
-     * Future updates may also apply this setting to the overview and other components
-     */
+    /** Language of the PDF report. */
     private String displayLanguage;   
-    /**
-     * BETA - Enable Gen-AI Overview feature to extract key insights from the scan data.
-     * For further information, please check the Overview for a detailed breakdown of its structure and usage.
-     */
+    /** Beta. */
     private SubmissionOverview overview;
-    /**
-     * The AI Source Match feature enhances plagiarism detection by identifying online sources that are suspected of containing AI-generated text. 
-     * This allows you to find instances of potential plagiarism and understand if the matched source content itself might have been created by an AI.
-     */
+    /** Find online sources that are suspected to contain AI-generated text. */
     private SubmissionAiSourceMatch aiSourceMatch;
 
     /**
-     * The IANA time zone, for example "America/New_York", used for the scan time in the PDF report.
-     * When not set, the time zone of the user's country is used, or UTC.
+     * Case-sensitive IANA time zone for the scan time in the PDF report, such as "America/New_York".
+     * Default: the user's country time zone, or UTC.
      */
     private String scanTimeZone;
 
-    /**
-     * Find sources in the Copyleaks internal AI database that contain AI-generated text.
-     */
     private SubmissionInternalAiSourceMatch internalAiSourceMatch;
 
-    /**
-     * Detect, parse and validate the references in the submitted text (Citation Checker).
-     */
     private SubmissionReferences references;
 
-    /**
-     * @return the scan time zone, or null.
-     */
     public String getScanTimeZone() {
         return scanTimeZone;
     }
 
-    /**
-     * @param scanTimeZone a case-sensitive IANA time zone name, for example "America/New_York".
-     */
     public void setScanTimeZone(String scanTimeZone) {
         this.scanTimeZone = scanTimeZone;
     }
 
-    /**
-     * @return the Internal AI Source Match settings, or null.
-     */
     public SubmissionInternalAiSourceMatch getInternalAiSourceMatch() {
         return internalAiSourceMatch;
     }
 
-    /**
-     * @param internalAiSourceMatch the Internal AI Source Match settings.
-     */
     public void setInternalAiSourceMatch(SubmissionInternalAiSourceMatch internalAiSourceMatch) {
         this.internalAiSourceMatch = internalAiSourceMatch;
     }
 
-    /**
-     * @return the Citation Checker settings, or null.
-     */
     public SubmissionReferences getReferences() {
         return references;
     }
 
-    /**
-     * @param references the Citation Checker settings.
-     */
     public void setReferences(SubmissionReferences references) {
         this.references = references;
     }
@@ -235,17 +114,10 @@ public class SubmissionProperties {
         this.writingFeedback = writingFeedback;
     }
 
-    /**
-     * @return the custom properties attached to the document, or null.
-     */
     public SubmissionCustomMetadata[] getCustomMetadata() {
         return customMetadata;
     }
 
-    /**
-     * @param customMetadata custom key and value pairs attached to the document in a Copyleaks repository,
-     *                       at most 20 items.
-     */
     public void setCustomMetadata(SubmissionCustomMetadata[] customMetadata) {
         this.customMetadata = customMetadata;
     }
@@ -300,20 +172,13 @@ public class SubmissionProperties {
         this.sandbox = sandbox;
     }
 
-    /**
-     * @return the scan retention in hours, the same as {@link #getExpiration()}.
-     * @deprecated Misspelled. Use {@link #getExpiration()}.
-     */
+    /** @deprecated Misspelled. Use {@link #getExpiration()}. */
     @Deprecated
     public Integer getExperation() {
         return expiration;
     }
 
-    /**
-     * Sets the scan retention in hours, the same as {@link #setExpiration(Integer)}.
-     * @param experation the retention in hours, from 1 to 2880.
-     * @deprecated Misspelled. Use {@link #setExpiration(Integer)}.
-     */
+    /** @deprecated Misspelled. Use {@link #setExpiration(Integer)}. */
     @Deprecated
     public void setExperation(Integer experation) {
         this.expiration = experation;

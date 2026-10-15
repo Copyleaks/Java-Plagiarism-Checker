@@ -1,22 +1,3 @@
-/*
- The MIT License(MIT)
- Copyright(c) 2016 Copyleaks LTD (https://copyleaks.com)
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
- The above copyright notice and this permission notice shall be included in all
- copies or substantial portions of the Software.
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
-*/
 package classes.clients;
 
 import java.net.http.HttpClient;
@@ -39,49 +20,26 @@ import models.request.AiImageDetection.CopyleaksAiImageDetectionRequestModel;
 import models.response.CopyleaksAuthToken;
 import models.response.AiImageDetection.CopyleaksAiImageDetectionResponseModel;
 
-/**
- * Copyleaks AI Image Detection. Use the shared instance {@code Copyleaks.aiImageDetectionClient}.
- */
+/** AI Image Detection; use {@code Copyleaks.aiImageDetectionClient}. Errors: see {@link classes.Copyleaks}. */
 public class AiImageDetectionClient {
 
     private final CopyleaksRequestExecutor executor;
     private static final Gson gson = new Gson();
 
-    /**
-     * @param executor the request executor to send requests with.
-     */
     public AiImageDetectionClient(CopyleaksRequestExecutor executor) {
         this.executor = Objects.requireNonNull(executor, "executor is null");
     }
 
-    /**
-     * @param httpClient the HTTP client to send requests with.
-     * @param semaphore  limits how many requests run at the same time.
-     * @deprecated Use the shared {@code Copyleaks.aiImageDetectionClient}, or
-     *             {@link #AiImageDetectionClient(CopyleaksRequestExecutor)}.
-     */
+    /** @deprecated Use {@code Copyleaks.aiImageDetectionClient}. */
     @Deprecated
     public AiImageDetectionClient(HttpClient httpClient, Semaphore semaphore) {
         this(new CopyleaksRequestExecutor(httpClient, semaphore));
     }
 
     /**
-     * Detects AI-generated content in a base64-encoded image, sent as JSON. The result is returned right away.
-     * For large images prefer {@link #submitFile(CopyleaksAuthToken, String, CopyleaksAiImageDetectionFileRequestModel)},
-     * which uploads the bytes without base64 encoding.
-     * For more info: https://docs.copyleaks.com/reference/actions/ai-image-detector/check
-     *
-     * @param authToken  Copyleaks authentication token
-     * @param scanId     Attach your own scan Id
-     * @param submission The image and the detection options.
-     * @return the detection result.
-     * @throws ParseException Not thrown. Kept for source compatibility.
-     * @throws AuthExpiredException If the token has expired.
-     * @throws UnderMaintenanceException If Copyleaks servers are unavailable for maintenance.
-     * @throws RateLimitException If too many requests were sent.
-     * @throws CommandException If the server rejected the request.
-     * @throws ExecutionException If the HTTP request fails or times out.
-     * @throws InterruptedException If the thread is interrupted while waiting for the response.
+     * Checks a base64-encoded image and returns the result. For large images prefer
+     * {@link #submitFile(CopyleaksAuthToken, String, CopyleaksAiImageDetectionFileRequestModel)}, which skips base64.
+     * https://docs.copyleaks.com/reference/actions/ai-image-detector/check
      */
     public CopyleaksAiImageDetectionResponseModel submit(CopyleaksAuthToken authToken, String scanId,
             CopyleaksAiImageDetectionRequestModel submission)
@@ -97,22 +55,7 @@ public class AiImageDetectionClient {
         return gson.fromJson(body, CopyleaksAiImageDetectionResponseModel.class);
     }
 
-    /**
-     * Detects AI-generated content in an image uploaded as {@code multipart/form-data}. The result is returned
-     * right away. This sends the image bytes without base64 encoding, which is faster for large images.
-     * For more info: https://docs.copyleaks.com/reference/actions/ai-image-detector/check
-     *
-     * @param authToken  Copyleaks authentication token
-     * @param scanId     Attach your own scan Id
-     * @param submission The image bytes and the detection options.
-     * @return the detection result.
-     * @throws AuthExpiredException If the token has expired.
-     * @throws UnderMaintenanceException If Copyleaks servers are unavailable for maintenance.
-     * @throws RateLimitException If too many requests were sent.
-     * @throws CommandException If the server rejected the request.
-     * @throws ExecutionException If the HTTP request fails or times out.
-     * @throws InterruptedException If the thread is interrupted while waiting for the response.
-     */
+    /** Like {@link #submit}, but uploads the image bytes as multipart instead of base64. */
     public CopyleaksAiImageDetectionResponseModel submitFile(CopyleaksAuthToken authToken, String scanId,
             CopyleaksAiImageDetectionFileRequestModel submission)
             throws AuthExpiredException, UnderMaintenanceException, RateLimitException, CommandException,
@@ -142,20 +85,9 @@ public class AiImageDetectionClient {
     }
 
     /**
-     * Submits an image URL for AI Image Detection. The call returns once the image is accepted, and the result
-     * is sent to {@code webhooks.url} later. The webhook body has the same shape as the synchronous result,
-     * so it can be parsed into {@link CopyleaksAiImageDetectionResponseModel}.
-     * For more info: https://docs.copyleaks.com/reference/actions/ai-image-detector/submit
-     *
-     * @param authToken  Copyleaks authentication token
-     * @param scanId     Attach your own scan Id
-     * @param submission The image URL, the detection options and the webhook.
-     * @throws AuthExpiredException If the token has expired.
-     * @throws UnderMaintenanceException If Copyleaks servers are unavailable for maintenance.
-     * @throws RateLimitException If too many requests were sent.
-     * @throws CommandException If the server rejected the request.
-     * @throws ExecutionException If the HTTP request fails or times out.
-     * @throws InterruptedException If the thread is interrupted while waiting for the response.
+     * Submits an image URL. The result goes to {@code webhooks.url} later; parse it into
+     * {@link CopyleaksAiImageDetectionResponseModel}.
+     * https://docs.copyleaks.com/reference/actions/ai-image-detector/submit
      */
     public void submitAsync(CopyleaksAuthToken authToken, String scanId,
             CopyleaksAiImageDetectionAsyncRequestModel submission)

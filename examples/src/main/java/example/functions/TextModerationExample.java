@@ -10,20 +10,11 @@ import models.response.CopyleaksAuthToken;
 import models.response.textModeration.CopyleaksTextModerationResponseModel;
 import com.google.gson.Gson;
 
-/**
- * Example for submitting text to Copyleaks Text Moderation API.
- */
+/** Submits a text to Text Moderation and prints the result. */
 public class TextModerationExample {
 
-    /**
-     * Submits a sample text for moderation and prints the response.
-     * @param token Copyleaks authentication token
-     * @param scanId Unique scan identifier
-     * @param gson Gson instance for JSON output
-     */
     public static void run(CopyleaksAuthToken token, String scanId, Gson gson) {
 
-        // Define the moderation labels to check for
         CopyleaksTextModerationLabel[] labelsArray = new CopyleaksTextModerationLabel[] {
             new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.ADULT_V1),
             new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.TOXIC_V1),
@@ -37,19 +28,16 @@ public class TextModerationExample {
             new CopyleaksTextModerationLabel(CopyleaksTextModerationConstants.CYBERSECURITY_V1)
         };
 
-        // Create the moderation request
         CopyleaksTextModerationRequest request = new CopyleaksTextModerationRequest(
             "This is some text to moderate.",
-            true, // Enable sandbox mode for testing
+            true, // sandbox: mock results without using credits
             CopyleaksTextModerationLanguages.ENGLISH,
             labelsArray
         );
 
         try {
-            // Submit the text for moderation
             CopyleaksTextModerationResponseModel textModerationResponse = Copyleaks.textModerationClient.submitText(token, scanId, request);
 
-            // Output the results
             System.out.println("\nText scanned for Text Moderation.");
             System.out.println("Text Moderation Response: " + gson.toJson(textModerationResponse));
         } catch (Exception e) {

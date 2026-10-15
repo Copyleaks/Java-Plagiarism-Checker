@@ -6,9 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
-/**
- * Parses a multipart/form-data body for assertions.
- */
+/** Parses a multipart/form-data body for assertions. */
 public final class Multipart {
 
     /** One part of the body. */
@@ -37,9 +35,7 @@ public final class Multipart {
     private Multipart() {
     }
 
-    /**
-     * @return the parts by field name, in body order.
-     */
+    /** @return the parts by field name, in body order. */
     public static Map<String, Part> parse(String contentType, byte[] body) {
         String marker = "boundary=";
         int at = contentType.indexOf(marker);

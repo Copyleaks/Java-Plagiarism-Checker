@@ -60,8 +60,6 @@ class CopyleaksRequestExecutorTest {
         return executor.send("GET", server.url() + path, null, null, null);
     }
 
-    // ---- timeouts and the concurrency limit --------------------------------------------------
-
     @Test
     void defaults() {
         assertEquals(Duration.ofSeconds(30), executor.getConnectTimeout());
@@ -158,8 +156,6 @@ class CopyleaksRequestExecutorTest {
         assertThrows(IllegalArgumentException.class, () -> executor.setMaxRetries(11));
     }
 
-    // ---- error mapping ---------------------------------------------------------------------------
-
     @Test
     void non2xxThrowsCommandExceptionWithStatusAndBody() {
         String body = "{\"error\":{\"type\":\"invalid_request_error\",\"id\":\"missing_parameter\",\"code\":1,\"message\":\"Bad request.\"}}";
@@ -210,8 +206,6 @@ class CopyleaksRequestExecutorTest {
                 () -> executor.send("GET", url + "/gone", null, null, null));
         assertInstanceOf(java.io.IOException.class, e.getCause());
     }
-
-    // ---- retries -----------------------------------------------------------------------------------
 
     @Test
     void noRetriesByDefault() {
@@ -281,8 +275,6 @@ class CopyleaksRequestExecutorTest {
     private static HttpHeaders headers(String name, String value) {
         return HttpHeaders.of(Map.of(name, List.of(value)), (a, b) -> true);
     }
-
-    // ---- request building --------------------------------------------------------------------------
 
     @Test
     void sendsUserAgentAuthorizationAndContentType() throws Exception {

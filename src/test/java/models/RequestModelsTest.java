@@ -41,9 +41,7 @@ import models.submissions.properties.SubmissionWebhooks;
 import models.submissions.properties.SubmissionWritingFeedback;
 import models.submissions.writingassistant.ScoreWeights;
 
-/**
- * Checks that request models serialize to the JSON the API documents.
- */
+/** Checks that request models serialize to the JSON the API documents. */
 class RequestModelsTest {
 
     private static final Gson GSON = new Gson();
@@ -60,7 +58,7 @@ class RequestModelsTest {
         return new SubmissionProperties(new SubmissionWebhooks("https://example.com/{STATUS}"));
     }
 
-    // ---- enums are sent as the documented integers ------------------------------------------------
+    // Enums are sent as the documented integers.
 
     @Test
     void submissionActionsAreIntegers() {
@@ -123,8 +121,6 @@ class RequestModelsTest {
         assertThrows(JsonParseException.class, () -> GSON.fromJson("9", SubmissionActions.class));
     }
 
-    // ---- customMetadata -----------------------------------------------------------------------------
-
     @Test
     void customMetadataIsAnArrayOfKeyValuePairs() {
         SubmissionProperties p = props();
@@ -133,8 +129,6 @@ class RequestModelsTest {
         assertEquals(json("[{\"key\":\"Test1\",\"value\":\"Value1\"},{\"key\":\"Test2\",\"value\":\"Value2\"}]"),
                 toJson(p).getAsJsonObject().get("customMetadata"));
     }
-
-    // ---- Grammar Checker weights -----------------------------------------------------------------------
 
     @Test
     void scoreWeightsDefaultToOne() {
@@ -158,8 +152,6 @@ class RequestModelsTest {
         assertEquals(json("{\"enable\":true,\"score\":{\"grammarScoreWeight\":0.0,\"mechanicsScoreWeight\":1.0,\"sentenceStructureScoreWeight\":1.0,\"wordChoiceScoreWeight\":1.0}}"),
                 toJson(wf));
     }
-
-    // ---- scan properties -------------------------------------------------------------------------------
 
     @Test
     void misspelledExperationSetterWritesExpiration() {
@@ -226,8 +218,6 @@ class RequestModelsTest {
                 toJson(p));
     }
 
-    // ---- AI Text Detection -----------------------------------------------------------------------------
-
     @Test
     void aiTextSensitivityIsValidated() {
         CopyleaksAIDetectionSubmissionModel m = new CopyleaksAIDetectionSubmissionModel("t");
@@ -237,8 +227,6 @@ class RequestModelsTest {
         m.setSensitivity(null);
         assertNull(m.getSensitivity());
     }
-
-    // ---- Text Moderation -------------------------------------------------------------------------------
 
     @Test
     void textModerationAcceptsUpTo16Labels() {
@@ -257,8 +245,6 @@ class RequestModelsTest {
         }
         return l;
     }
-
-    // ---- dependencies ---------------------------------------------------------------------------------
 
     @Test
     void noSpringOrJacksonOnTheClasspath() {

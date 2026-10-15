@@ -23,9 +23,7 @@ import com.google.gson.JsonParser;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 
-/**
- * A local HTTP server that records every request and answers with queued replies.
- */
+/** A local HTTP server that records every request and answers with queued replies. */
 public final class MockApiServer implements AutoCloseable {
 
     /** One recorded request. */

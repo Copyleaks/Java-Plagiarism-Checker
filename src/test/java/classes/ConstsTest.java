@@ -10,9 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-/**
- * Keeps the User-Agent in step with the version in pom.xml.
- */
+/** Keeps the User-Agent in step with the version in pom.xml. */
 class ConstsTest {
 
     @Test

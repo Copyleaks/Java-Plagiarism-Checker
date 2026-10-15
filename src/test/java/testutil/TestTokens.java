@@ -5,9 +5,7 @@ import java.time.temporal.ChronoUnit;
 
 import models.response.CopyleaksAuthToken;
 
-/**
- * Login tokens for offline tests.
- */
+/** Login tokens for offline tests. */
 public final class TestTokens {
 
     public static final String ACCESS_TOKEN = "test-access-token";

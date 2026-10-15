@@ -1,22 +1,3 @@
-/*
- The MIT License(MIT)
- Copyright(c) 2016 Copyleaks LTD (https://copyleaks.com)
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
- The above copyright notice and this permission notice shall be included in all
- copies or substantial portions of the Software.
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
-*/
 package models.submissions.Webhooks;
 
 import models.constants.CopyleaksAlertCodes;
@@ -33,6 +14,7 @@ public class CompletedWebhookModel extends StatusWebhookModel {
     private ResultsModel results;
     private NotificationsModel notifications;
     private ScannedDocumentModel scannedDocument;
+    /** Citation Checker summary; null unless {@code references.validate} was enabled. */
     private ReferencesValidationModel referencesValidation;
 
     public ResultsModel getResults() {
@@ -47,25 +29,13 @@ public class CompletedWebhookModel extends StatusWebhookModel {
         return scannedDocument;
     }
 
-    /**
-     * @return the Citation Checker summary, or null when {@code references.validate} was not enabled.
-     */
     public ReferencesValidationModel getReferencesValidation() {
         return referencesValidation;
     }
 
     /**
-     * Finds the AI text detection alert of this scan.
-     * <p>
-     * Returns null when the completed webhook contains no suspected-ai-text alert.
-     * <p>
-     * This is a computed helper, not a wire field. When re-serializing the models with a
-     * bean-based serializer such as Jackson, exclude it (for example with a mix-in that
-     * marks it {@code @JsonIgnore}). The SDK itself uses Gson, which reads fields only
-     * and is unaffected.
-     *
-     * @return the first alert whose code is {@link CopyleaksAlertCodes#SUSPECTED_AI_TEXT},
-     *         or null when there is none or the webhook has no notifications or alerts.
+     * The first {@link CopyleaksAlertCodes#SUSPECTED_AI_TEXT} alert, or null. A computed helper, not a wire field:
+     * exclude it when re-serializing with a bean-based serializer such as Jackson (Gson is unaffected).
      */
     public AlertsModel getAIDetectionAlert() {
         if (notifications == null || notifications.getAlerts() == null) {
@@ -80,18 +50,8 @@ public class CompletedWebhookModel extends StatusWebhookModel {
     }
 
     /**
-     * Decodes the AI text detection result from the AI alert of this scan.
-     * <p>
-     * Returns null when the completed webhook contains no suspected-ai-text alert,
-     * or the alert carried no data, or its data is JSON that is not an object.
-     * <p>
-     * This is a computed helper, not a wire field. When re-serializing the models with a
-     * bean-based serializer such as Jackson, exclude it (for example with a mix-in that
-     * marks it {@code @JsonIgnore}). The SDK itself uses Gson, which reads fields only
-     * and is unaffected.
-     *
-     * @return the result decoded by {@link AlertsModel#getAIDetectionResult()} for the alert
-     *         returned by {@link #getAIDetectionAlert()}, or null.
+     * The AI Text Detection result decoded from {@link #getAIDetectionAlert()}, or null. A computed helper, like
+     * {@link #getAIDetectionAlert()}.
      * @throws com.google.gson.JsonSyntaxException if the alert's {@code additionalData} is not valid JSON.
      */
     public AIDetectionResponse getAIDetectionResult() {

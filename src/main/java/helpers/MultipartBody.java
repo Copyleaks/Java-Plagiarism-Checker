@@ -1,23 +1,3 @@
-/*
- The MIT License(MIT)
- Copyright(c) 2016 Copyleaks LTD (https://copyleaks.com)
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
- The above copyright notice and this permission notice shall be included in all
- copies or substantial portions of the Software.
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
-*/
-
 package helpers;
 
 import java.net.http.HttpRequest;
@@ -28,21 +8,13 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 
-/**
- * Builds a {@code multipart/form-data} request body. File contents are sent as they are, without
- * base64 encoding and without being copied into one large buffer.
- */
+/** Builds a {@code multipart/form-data} body. File bytes are sent as is, not base64-encoded or copied. */
 public final class MultipartBody {
 
     private final String boundary = "CopyleaksBoundary" + UUID.randomUUID().toString().replace("-", "");
     private final List<byte[]> chunks = new ArrayList<>();
 
-    /**
-     * Adds a text field.
-     * @param name  the field name.
-     * @param value the field value.
-     * @return this builder.
-     */
+    /** @return this builder. */
     public MultipartBody addField(String name, String value) {
         Objects.requireNonNull(value, name + " is null");
         chunks.add(utf8("--" + boundary + "\r\nContent-Disposition: form-data; name=\"" + escape(name)
@@ -50,14 +22,7 @@ public final class MultipartBody {
         return this;
     }
 
-    /**
-     * Adds a file field.
-     * @param name        the field name.
-     * @param filename    the file name sent in the part header.
-     * @param contentType the part content type.
-     * @param content     the file bytes.
-     * @return this builder.
-     */
+    /** @return this builder. */
     public MultipartBody addFile(String name, String filename, String contentType, byte[] content) {
         Objects.requireNonNull(content, name + " is null");
         chunks.add(utf8("--" + boundary + "\r\nContent-Disposition: form-data; name=\"" + escape(name)
@@ -67,17 +32,12 @@ public final class MultipartBody {
         return this;
     }
 
-    /**
-     * @return the Content-Type header value, with the boundary.
-     */
+    /** @return the Content-Type header value, with the boundary. */
     public String contentType() {
         return "multipart/form-data; boundary=" + boundary;
     }
 
-    /**
-     * @return a body publisher for the parts added so far. Its length is known, so the request
-     *         is sent with a Content-Length header instead of in chunks.
-     */
+    /** @return a body publisher with a known length, so the request is sent with Content-Length, not chunked. */
     public HttpRequest.BodyPublisher build() {
         List<byte[]> all = new ArrayList<>(chunks);
         all.add(utf8("--" + boundary + "--\r\n"));
@@ -88,11 +48,7 @@ public final class MultipartBody {
         return HttpRequest.BodyPublishers.fromPublisher(HttpRequest.BodyPublishers.ofByteArrays(all), length);
     }
 
-    /**
-     * Guesses an image content type from a file name extension.
-     * @param filename the file name.
-     * @return the content type, or {@code application/octet-stream} when the extension is unknown.
-     */
+    /** @return the image content type for the file extension, or {@code application/octet-stream}. */
     public static String imageContentType(String filename) {
         String name = filename == null ? "" : filename.toLowerCase(Locale.ROOT);
         int dot = name.lastIndexOf('.');

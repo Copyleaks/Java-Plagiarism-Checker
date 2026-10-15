@@ -71,9 +71,7 @@ import testutil.MockApiServer.Recorded;
 import testutil.Multipart;
 import testutil.TestTokens;
 
-/**
- * Checks the exact method, path, headers and body of every SDK call against a local server.
- */
+/** Checks the exact method, path, headers and body of every SDK call against a local server. */
 class CopyleaksEndpointsTest {
 
     private static final String UA = "java-sdk/6.0.0";
@@ -139,8 +137,6 @@ class CopyleaksEndpointsTest {
         return p;
     }
 
-    // ---- account -------------------------------------------------------------------------------
-
     @Test
     void login() throws Exception {
         server.reply(200, "{\"access_token\":\"abc\",\".issued\":\"2026-10-14T10:00:00Z\",\".expires\":\"2026-10-16T10:00:00Z\"}");
@@ -150,8 +146,6 @@ class CopyleaksEndpointsTest {
         assertEquals("abc", t.getAccessToken());
         assertEquals("2026-10-16T10:00:00Z", t.getExpires());
     }
-
-    // ---- authenticity scans ----------------------------------------------------------------------
 
     @Test
     void submitFile() throws Exception {
@@ -268,8 +262,6 @@ class CopyleaksEndpointsTest {
         assertEquals(0, r.body.length);
     }
 
-    // ---- account information ---------------------------------------------------------------------
-
     @Test
     void creditsBalance() throws Exception {
         server.reply(200, "{\"Amount\":42}");
@@ -303,8 +295,6 @@ class CopyleaksEndpointsTest {
         assertEquals(2, r.getMaskingPolicy());
         assertEquals("2024-09-09T10:43:52", r.getCreationTime());
     }
-
-    // ---- miscellaneous -----------------------------------------------------------------------------
 
     @Test
     void releaseNotes() throws Exception {
@@ -362,8 +352,6 @@ class CopyleaksEndpointsTest {
         assertRequest("GET", "/v3/miscellaneous/ocr-languages-list", false, null);
     }
 
-    // ---- AI Text Detection ---------------------------------------------------------------------------
-
     @Test
     void aiTextDetectionWithExplainAndSensitivity() throws Exception {
         server.reply(200, "{\"modelVersion\":\"v8\",\"summary\":{\"human\":0.1,\"ai\":0.9}}");
@@ -390,8 +378,6 @@ class CopyleaksEndpointsTest {
         assertRequest("GET", "/v2/writer-detector/credits", true, null);
         assertEquals(382, r.getCredits());
     }
-
-    // ---- Grammar Checker and Text Moderation -----------------------------------------------------------
 
     @Test
     void writingAssistantSendsDefaultWeightsOfOne() throws Exception {
@@ -420,8 +406,6 @@ class CopyleaksEndpointsTest {
         assertJsonRequest("POST", "/v1/text-moderation/tm1/check",
                 "{\"text\":\"hello\",\"sandbox\":true,\"language\":\"en\",\"labels\":[{\"id\":\"toxic-v1\"}]}");
     }
-
-    // ---- AI Image Detection ------------------------------------------------------------------------------
 
     private static final String AI_IMAGE_RESPONSE = "{\"model\":\"ai-image-1-ultra\","
             + "\"result\":{\"starts\":[0,10],\"lengths\":[5,5],\"labels\":[1,4]},"
@@ -515,8 +499,6 @@ class CopyleaksEndpointsTest {
                         + "\"webhooks\":{\"url\":\"https://example.com/w\"},\"sandbox\":false}");
     }
 
-    // ---- AI Video Detection ------------------------------------------------------------------------------
-
     @Test
     void aiVideoSubmit() throws Exception {
         server.reply(201, "{}");
@@ -533,8 +515,6 @@ class CopyleaksEndpointsTest {
                         + "\"filename\":\"v.mp4\",\"model\":\"ai-video-1-pro\",\"webhooks\":{\"url\":\"https://example.com/webhook/{STATUS}\"},"
                         + "\"sandbox\":true,\"developerPayload\":\"order-id-12345\"}");
     }
-
-    // ---- Image Plagiarism Detection -------------------------------------------------------------------------
 
     @Test
     void imagePlagiarismCheck() throws Exception {
@@ -586,7 +566,7 @@ class CopyleaksEndpointsTest {
         assertEquals("image/webp", parts.get("image").contentType());
     }
 
-    // ---- 429 is mapped the same way everywhere ---------------------------------------------------------------
+    // 429 is mapped the same way everywhere.
 
     interface Call {
         void run() throws Exception;
@@ -648,8 +628,6 @@ class CopyleaksEndpointsTest {
         assertThrows(NullPointerException.class, () -> Copyleaks.login(null, "k"));
         assertTrue(server.requests().isEmpty());
     }
-
-    // ---- configuration --------------------------------------------------------------------------------------
 
     @Test
     void httpSettingsAreConfigurable() {

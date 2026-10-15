@@ -1,58 +1,30 @@
-/*
- The MIT License(MIT)
- Copyright(c) 2016 Copyleaks LTD (https://copyleaks.com)
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
- The above copyright notice and this permission notice shall be included in all
- copies or substantial portions of the Software.
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
-*/
 package models.submissions.Webhooks.HelperModels.ExportModels;
 
-/**
- * One upload task of an export.
- */
+/** One upload task of an export. */
 public class TaskModel {
 
-    /*The endpoint address of the export task. */
     private String endpoint;
 
-    /*This flag gives an indication whether the scan was completed without internal errors on the Copyleaks side. */
+    /** False when the task hit an internal error on the Copyleaks side. */
     private boolean isHealthy;
 
-    /*The status code reported by the customer servers. If the tasks.isHealthy is equal to false - this field will be null. */
+    /** The status code your server returned; 0 when the task was not healthy. */
     private int httpStatusCode;
 
-    /** @return the endpoint address of the export task. */
     public String getEndpoint() {
         return endpoint;
     }
 
-    /**
-     * @return the endpoint address of the export task.
-     * @deprecated Misspelled. Use {@link #getEndpoint()}.
-     */
+    /** @deprecated Misspelled. Use {@link #getEndpoint()}. */
     @Deprecated
     public String getEndpont() {
         return endpoint;
     }
 
-    /** @return true when the task completed without internal errors on the Copyleaks side. */
     public boolean isIsHealthy() {
         return isHealthy;
     }
 
-    /** @return the status code returned by your server, or 0 when the task was not healthy. */
     public int getHttpStatusCode() {
         return httpStatusCode;
     }

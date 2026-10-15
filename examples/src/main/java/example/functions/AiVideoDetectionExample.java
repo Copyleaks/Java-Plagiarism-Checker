@@ -7,16 +7,9 @@ import models.request.CopyleaksAsyncWebhooksModel;
 import models.request.AiVideoDetection.CopyleaksAiVideoDetectionRequestModel;
 import models.response.CopyleaksAuthToken;
 
-/**
- * Example for AI Video Detection. The result is sent to the webhook, see WebhookController.handleAiVideo.
- */
+/** Submits a video URL. The result is sent to the webhook, see {@code WebhookController.handleAiVideo}. */
 public class AiVideoDetectionExample {
 
-    /**
-     * Submits a video URL for AI Video Detection.
-     * @param token Copyleaks authentication token
-     * @param scanId Unique scan identifier
-     */
     public static void run(CopyleaksAuthToken token, String scanId) {
         CopyleaksAiVideoDetectionRequestModel request = new CopyleaksAiVideoDetectionRequestModel(
                 "https://example.com/my-video.mp4",

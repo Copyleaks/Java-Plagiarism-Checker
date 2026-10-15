@@ -1,23 +1,3 @@
-/*
- The MIT License(MIT)
- Copyright(c) 2016 Copyleaks LTD (https://copyleaks.com)
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
- The above copyright notice and this permission notice shall be included in all
- copies or substantial portions of the Software.
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
-*/
-
 package helpers;
 
 import java.io.ByteArrayOutputStream;
@@ -53,24 +33,14 @@ import models.exceptions.UnderMaintenanceException;
 import models.response.CopyleaksAuthToken;
 
 /**
- * Sends the SDK's HTTP requests. One instance is shared by {@link classes.Copyleaks} and all its clients.
- * <p>
- * Applications configure it through the static setters on {@link classes.Copyleaks}
- * ({@code setConnectTimeout}, {@code setRequestTimeout}, {@code setMaxConcurrentRequests},
- * {@code setMaxRetries} and {@code setHttpClient}). Creating your own instance is only needed when
- * you build the clients yourself.
- * <p>
- * Every request is bounded by the request timeout. That covers the wait for a free concurrency slot,
- * sending the request and reading the whole response, so a call that hangs cannot block the caller
- * or hold a concurrency slot forever.
+ * Sends the SDK's HTTP requests. {@link classes.Copyleaks} and its clients share one instance, configured
+ * through the static setters on {@link classes.Copyleaks}, which document each setting. Create your own
+ * instance only when you build the clients yourself.
  */
 public final class CopyleaksRequestExecutor {
 
-    /** Default time allowed to open a connection: 30 seconds. */
     public static final Duration DEFAULT_CONNECT_TIMEOUT = Duration.ofSeconds(30);
-    /** Default time allowed for a whole request, including reading the response: 120 seconds. */
     public static final Duration DEFAULT_REQUEST_TIMEOUT = Duration.ofSeconds(120);
-    /** Default number of requests that may run at the same time: 20. */
     public static final int DEFAULT_MAX_CONCURRENT_REQUESTS = 20;
 
     static final Duration MAX_RETRY_DELAY = Duration.ofSeconds(30);
@@ -85,9 +55,7 @@ public final class CopyleaksRequestExecutor {
     private volatile int maxConcurrentRequests;
     private volatile int maxRetries = 0;
 
-    /**
-     * Creates an executor with its own {@link HttpClient} and the default timeouts and concurrency limit.
-     */
+    /** Creates an executor with its own {@link HttpClient} and the default settings. */
     public CopyleaksRequestExecutor() {
         this.httpClient = buildClient(connectTimeout);
         this.clientProvidedByCaller = false;
@@ -95,12 +63,7 @@ public final class CopyleaksRequestExecutor {
         this.permits = new Semaphore(DEFAULT_MAX_CONCURRENT_REQUESTS, true);
     }
 
-    /**
-     * Creates an executor that uses the given client and concurrency semaphore.
-     * The default request timeout applies.
-     * @param httpClient the HTTP client to send requests with.
-     * @param semaphore  limits how many requests run at the same time.
-     */
+    /** @param semaphore limits how many requests run at the same time. */
     public CopyleaksRequestExecutor(HttpClient httpClient, Semaphore semaphore) {
         this.httpClient = Objects.requireNonNull(httpClient, "httpClient is null");
         this.clientProvidedByCaller = true;
@@ -112,20 +75,11 @@ public final class CopyleaksRequestExecutor {
         return HttpClient.newBuilder().connectTimeout(connectTimeout).build();
     }
 
-    // ---- configuration ---------------------------------------------------------------------------
-
-    /**
-     * @return the HTTP client used to send requests.
-     */
     public HttpClient getHttpClient() {
         return httpClient;
     }
 
-    /**
-     * Uses the given HTTP client for all following requests. Its own connect timeout, proxy and executor apply.
-     * Pass null to go back to a client created by the SDK.
-     * @param client the client to use, or null.
-     */
+    /** @param client the client to use, or null for the SDK's own. See {@link classes.Copyleaks#setHttpClient}. */
     public synchronized void setHttpClient(HttpClient client) {
         if (client == null) {
             this.httpClient = buildClient(connectTimeout);
@@ -136,18 +90,11 @@ public final class CopyleaksRequestExecutor {
         }
     }
 
-    /**
-     * @return the time allowed to open a connection.
-     */
     public Duration getConnectTimeout() {
         return connectTimeout;
     }
 
-    /**
-     * Sets the time allowed to open a connection. It applies to the client the SDK creates.
-     * A client passed to {@link #setHttpClient(HttpClient)} keeps its own setting.
-     * @param timeout a positive duration.
-     */
+    /** @param timeout a positive duration. See {@link classes.Copyleaks#setConnectTimeout}. */
     public synchronized void setConnectTimeout(Duration timeout) {
         this.connectTimeout = requirePositive(timeout, "connect timeout");
         if (!clientProvidedByCaller) {
@@ -155,34 +102,20 @@ public final class CopyleaksRequestExecutor {
         }
     }
 
-    /**
-     * @return the time allowed for a whole request.
-     */
     public Duration getRequestTimeout() {
         return requestTimeout;
     }
 
-    /**
-     * Sets the time allowed for a whole request: waiting for a free concurrency slot, sending the request
-     * and reading the whole response. When it runs out, the call throws an {@link ExecutionException}
-     * caused by an {@link HttpTimeoutException}.
-     * @param timeout a positive duration.
-     */
+    /** @param timeout a positive duration. See {@link classes.Copyleaks#setRequestTimeout}. */
     public void setRequestTimeout(Duration timeout) {
         this.requestTimeout = requirePositive(timeout, "request timeout");
     }
 
-    /**
-     * @return how many requests may run at the same time.
-     */
     public int getMaxConcurrentRequests() {
         return maxConcurrentRequests;
     }
 
-    /**
-     * Sets how many requests may run at the same time. Requests already running are not affected.
-     * @param max a number of requests, at least 1.
-     */
+    /** @param max at least 1. Requests already running are not affected. */
     public synchronized void setMaxConcurrentRequests(int max) {
         if (max < 1) {
             throw new IllegalArgumentException("max concurrent requests must be at least 1");
@@ -191,21 +124,13 @@ public final class CopyleaksRequestExecutor {
         this.permits = new Semaphore(max, true);
     }
 
-    /**
-     * @return how many times a failed request is retried.
-     */
     public int getMaxRetries() {
         return maxRetries;
     }
 
     /**
-     * Sets how many times a failed request is retried. The default is 0 (no retries).
-     * <p>
-     * Every request is retried on 429 and 503, which mean that the server did not process it.
-     * GET requests are also retried on 502, 504 and network errors.
-     * The wait between attempts grows exponentially with random jitter, and a {@code Retry-After}
-     * header is honored up to 30 seconds.
-     * @param retries a number of retries, from 0 to 10.
+     * 429 and 503 are retried for every method because the server did not process the request.
+     * @param retries from 0 to 10. See {@link classes.Copyleaks#setMaxRetries}.
      */
     public void setMaxRetries(int retries) {
         if (retries < 0 || retries > 10) {
@@ -222,14 +147,7 @@ public final class CopyleaksRequestExecutor {
         return d;
     }
 
-    // ---- request building ------------------------------------------------------------------------
-
-    /**
-     * Serializes an object to a JSON request body without building an intermediate string.
-     * @param gson  the Gson instance to serialize with.
-     * @param model the object to serialize.
-     * @return a body publisher for the JSON bytes.
-     */
+    /** Serializes an object to a JSON request body without building an intermediate string. */
     public static HttpRequest.BodyPublisher jsonBody(Gson gson, Object model) {
         ExposedByteArrayOutputStream out = new ExposedByteArrayOutputStream();
         try (Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8)) {
@@ -250,11 +168,7 @@ public final class CopyleaksRequestExecutor {
         }
     }
 
-    /**
-     * Percent-encodes a value for use as one URL path segment.
-     * @param value the raw value, for example a scan ID.
-     * @return the encoded segment.
-     */
+    /** Percent-encodes a value, for example a scan ID, as one URL path segment. */
     public static String pathSegment(String value) {
         Objects.requireNonNull(value, "path value is null");
         StringBuilder sb = new StringBuilder(value.length() + 8);
@@ -272,29 +186,17 @@ public final class CopyleaksRequestExecutor {
         return sb.toString();
     }
 
-    /**
-     * Encodes a value for use in a URL query string.
-     * @param value the raw value.
-     * @return the encoded value.
-     */
+    /** Encodes a value for a URL query string. */
     public static String queryValue(String value) {
         return URLEncoder.encode(Objects.requireNonNull(value, "query value is null"), StandardCharsets.UTF_8);
     }
 
     /**
-     * Sends a request and returns the response body of a 2xx response.
-     * @param method      the HTTP method.
-     * @param url         the full request URL.
-     * @param body        the request body, or null for none.
-     * @param contentType the Content-Type header, or null for none.
-     * @param authToken   the login token for the Authorization header, or null for public endpoints.
-     * @return the response body text.
-     * @throws ExecutionException        if the request could not be sent or timed out. The cause is the I/O error,
-     *                                   for example an {@link HttpTimeoutException}.
-     * @throws InterruptedException      if the calling thread is interrupted.
-     * @throws UnderMaintenanceException if the server answered 503.
-     * @throws RateLimitException        if the server answered 429.
-     * @throws CommandException          if the server answered with any other non-2xx status.
+     * Sends a request and returns the body of a 2xx response. Errors are mapped as described on
+     * {@link classes.Copyleaks}.
+     * @param body        the request body, or null.
+     * @param contentType the Content-Type header, or null.
+     * @param authToken   the token for the Authorization header, or null for public endpoints.
      */
     public String send(String method, String url, HttpRequest.BodyPublisher body, String contentType,
             CopyleaksAuthToken authToken)
@@ -403,11 +305,7 @@ public final class CopyleaksRequestExecutor {
         }
     }
 
-    /**
-     * Reads a {@code Retry-After} header given in seconds or as an HTTP date.
-     * @param headers the response headers.
-     * @return the delay, or null when the header is missing or invalid.
-     */
+    /** Reads {@code Retry-After} in seconds or as an HTTP date; null when missing or invalid. */
     static Duration retryAfter(HttpHeaders headers) {
         Optional<String> value = headers.firstValue("Retry-After");
         if (!value.isPresent()) {

@@ -22,9 +22,7 @@ import models.submissions.Webhooks.HelperModels.ErrorModels.ErrorModel;
 import models.submissions.Webhooks.HelperModels.ResultsModels.InternalAIDataModel;
 import models.submissions.Webhooks.HelperModels.ResultsModels.RepositoryMetadataModel;
 
-/**
- * Checks that responses and webhooks keep every documented field.
- */
+/** Checks that responses and webhooks keep every documented field. */
 class ResponseModelsTest {
 
     private static final Gson GSON = new Gson();

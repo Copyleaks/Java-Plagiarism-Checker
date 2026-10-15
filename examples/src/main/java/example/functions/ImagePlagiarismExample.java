@@ -12,16 +12,9 @@ import models.response.CopyleaksAuthToken;
 import models.response.ImagePlagiarism.CopyleaksImagePlagiarismInternetMatchModel;
 import models.response.ImagePlagiarism.CopyleaksImagePlagiarismResponseModel;
 
-/**
- * Example for Image Plagiarism Detection.
- */
+/** Uploads an image and prints where copies of it were found on the web. */
 public class ImagePlagiarismExample {
 
-    /**
-     * Uploads an image and prints where copies of it were found on the web.
-     * @param token Copyleaks authentication token
-     * @param scanId Unique scan identifier
-     */
     public static void run(CopyleaksAuthToken token, String scanId) {
         byte[] imageBytes;
         try {

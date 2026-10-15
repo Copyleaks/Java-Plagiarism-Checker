@@ -1,79 +1,41 @@
-/*
- The MIT License(MIT)
- Copyright(c) 2016 Copyleaks LTD (https://copyleaks.com)
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
- The above copyright notice and this permission notice shall be included in all
- copies or substantial portions of the Software.
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
-*/
-
 package models.submissions;
 
 import models.submissions.properties.SubmissionProperties;
 
 public class CopyleaksURLSubmissionModel extends CopyleaksSubmissionModel {
-    /**
-     * The url to be scanned
-     */
     private String url;
 
-    /**
-     * The HTTP method used to fetch the URL: GET, POST or PUT. Null means GET.
-     */
+    /** HTTP method used to fetch the URL: GET (default), POST or PUT. */
     private String verb;
 
-    /**
-     * Headers sent when fetching the URL, as {@code [["name", "value"], ...]}.
-     * When set, no default Copyleaks headers are sent.
-     */
+    /** Headers for fetching the URL, as {@code [["name", "value"], ...]}. When set, no default headers are sent. */
     private String[][] headers;
 
-    /**
-     * @param url The url to be scanned
-     * @param properties Check inner properties for more details.
-     */
     public CopyleaksURLSubmissionModel(String url, SubmissionProperties properties) {
         super(properties);
         this.url = url;
     }
 
-    /** @return the URL to scan. */
     public String getUrl() {
         return url;
     }
 
-    /** @param url the URL to scan. */
     public void setUrl(String url) {
         this.url = url;
     }
 
-    /** @return the HTTP method used to fetch the URL, or null for GET. */
     public String getVerb() {
         return verb;
     }
 
-    /** @param verb the HTTP method used to fetch the URL: GET, POST or PUT. */
     public void setVerb(String verb) {
         this.verb = verb;
     }
 
-    /** @return the headers sent when fetching the URL, or null. */
     public String[][] getHeaders() {
         return headers;
     }
 
-    /** @param headers headers sent when fetching the URL, as {@code [["name", "value"], ...]}. */
     public void setHeaders(String[][] headers) {
         this.headers = headers;
     }
