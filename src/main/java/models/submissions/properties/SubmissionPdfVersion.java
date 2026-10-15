@@ -21,6 +21,8 @@
 package models.submissions.properties;
 
 
+/** @deprecated PDF report versions 1 and 2 are deprecated; use {@link SubmissionPDF#setReportVersion(String)} with "v3" instead. */
+@Deprecated
 public enum SubmissionPdfVersion {
 
     V1(1),
