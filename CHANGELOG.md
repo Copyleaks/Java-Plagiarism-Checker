@@ -4,7 +4,7 @@ All notable changes to the Copyleaks Java SDK are listed here.
 
 ## 6.0.0
 
-This is a major release. The Maven coordinates (`com.copyleaks.sdk:copyleaks-java-sdk`) and the Java package names are the same as in 5.1.0, and Java 11 or later is still required. A few changes can break existing code or change results. They are listed under [Upgrade notes](#upgrade-notes).
+This is a major release. The Maven coordinates are now `com.copyleaks:copyleaks`, replacing `com.copyleaks.sdk:copyleaks-java-sdk` (last version 5.1.0). The Java package names are the same as in 5.1.0, and Java 11 or later is still required. A few changes can break existing code or change results. They are listed under [Upgrade notes](#upgrade-notes).
 
 ### Added
 
@@ -69,6 +69,7 @@ This is a major release. The Maven coordinates (`com.copyleaks.sdk:copyleaks-jav
 
 ### Upgrade notes
 
+- **New Maven coordinates.** Replace `com.copyleaks.sdk:copyleaks-java-sdk` with `com.copyleaks:copyleaks` in your `pom.xml` or `build.gradle`. Imports and class names do not change.
 - **Spring Boot is no longer a dependency.** 5.x pulled `spring-boot-starter-web` (with Spring, Tomcat, Jackson and Logback) into every application. The SDK now depends only on Gson. If your application used those libraries without declaring them, add them to your own build.
 - **The `example` package is no longer in the jar.** The examples moved to the separate `examples` project in the repository, which is not published.
 - **Methods that now declare `RateLimitException`:** `Copyleaks.submitFile`, `submitFileOcr` and `submitUrl`, `AIDetectionClient.submitNaturalLanguage`, `AiImageDetectionClient.submit`, `WritingAssistantClient.submitText` and `TextModerationClient.submitText`. Code that catches specific exceptions must also catch `RateLimitException`, or `Exception`.

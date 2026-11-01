@@ -23,17 +23,19 @@ Once you have your account and API key:
 
 **Install the SDK**: 
 
-Add the dependency from [Maven Central Repository](https://search.maven.org/artifact/com.copyleaks.sdk/copyleaks-java-sdk):
+Add the dependency from [Maven Central Repository](https://search.maven.org/artifact/com.copyleaks/copyleaks):
 
 ```xml
 <dependency>
-    <groupId>com.copyleaks.sdk</groupId>
-    <artifactId>copyleaks-java-sdk</artifactId>
+    <groupId>com.copyleaks</groupId>
+    <artifactId>copyleaks</artifactId>
     <version>6.0.0</version>
 </dependency>
 ```
 
-Gradle: `implementation 'com.copyleaks.sdk:copyleaks-java-sdk:6.0.0'`
+Gradle: `implementation 'com.copyleaks:copyleaks:6.0.0'`
+
+This SDK was previously published as `com.copyleaks.sdk:copyleaks-java-sdk` (5.1.0 and earlier). The Java package names are unchanged, so only the dependency changes.
 
 The SDK depends only on Gson. Upgrading from 5.x? Read the upgrade notes in [CHANGELOG.md](CHANGELOG.md).
 
