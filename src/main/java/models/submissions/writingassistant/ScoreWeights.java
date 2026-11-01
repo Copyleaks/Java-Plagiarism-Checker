@@ -1,74 +1,68 @@
-/*
- The MIT License(MIT)
- Copyright(c) 2016 Copyleaks LTD (https://copyleaks.com)
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
- The above copyright notice and this permission notice shall be included in all
- copies or substantial portions of the Software.
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
-*/
-
 package models.submissions.writingassistant;
 
+/** Weight of each correction category in the writing score, 0.0 to 1.0. Each defaults to 1.0, as in the API. */
 public class ScoreWeights {
-    /**
-     * Grammar correction category weight in the overall score. 0.0 >= weight <=1.0
-     */
-    private double grammarScoreWeight;
 
-    /**
-     * Mechanics correction category weight in the overall score. 0.0 >= weight <=1.0
-     */
-    private double mechanicsScoreWeight;
+    /** Default weight of each category. */
+    public static final double DEFAULT_WEIGHT = 1.0;
 
-    /**
-     * Sentence structure correction category weight in the overall score. 0.0 >= weight <=1.0
-     */
-    private double sentenceStructureScoreWeight;
+    private double grammarScoreWeight = DEFAULT_WEIGHT;
 
-    /**
-     * Word choice correction category weight in the overall score. 0.0 >= weight <=1.0
-     */
-    private double wordChoiceScoreWeight;
+    private double mechanicsScoreWeight = DEFAULT_WEIGHT;
 
+    private double sentenceStructureScoreWeight = DEFAULT_WEIGHT;
+
+    private double wordChoiceScoreWeight = DEFAULT_WEIGHT;
+
+    /** Creates weights that are all {@value #DEFAULT_WEIGHT}. */
+    public ScoreWeights() {
+    }
+
+    /** Creates weights for grammar, mechanics, sentence structure and word choice. */
+    public ScoreWeights(double grammarScoreWeight, double mechanicsScoreWeight,
+            double sentenceStructureScoreWeight, double wordChoiceScoreWeight) {
+        this.grammarScoreWeight = grammarScoreWeight;
+        this.mechanicsScoreWeight = mechanicsScoreWeight;
+        this.sentenceStructureScoreWeight = sentenceStructureScoreWeight;
+        this.wordChoiceScoreWeight = wordChoiceScoreWeight;
+    }
+
+    /** @return the grammar weight. */
     public double getGrammarScoreWeight() {
         return grammarScoreWeight;
     }
 
+    /** Weight of the grammar category. */
     public void setGrammarScoreWeight(double grammarScoreWeight) {
         this.grammarScoreWeight = grammarScoreWeight;
     }
 
+    /** @return the mechanics weight. */
     public double getMechanicsScoreWeight() {
         return mechanicsScoreWeight;
     }
 
+    /** Weight of the mechanics category. */
     public void setMechanicsScoreWeight(double mechanicsScoreWeight) {
         this.mechanicsScoreWeight = mechanicsScoreWeight;
     }
 
+    /** @return the sentence structure weight. */
     public double getSentenceStructureScoreWeight() {
         return sentenceStructureScoreWeight;
     }
 
+    /** Weight of the sentence structure category. */
     public void setSentenceStructureScoreWeight(double sentenceStructureScoreWeight) {
         this.sentenceStructureScoreWeight = sentenceStructureScoreWeight;
     }
 
+    /** @return the word choice weight. */
     public double getWordChoiceScoreWeight() {
         return wordChoiceScoreWeight;
     }
 
+    /** Weight of the word choice category. */
     public void setWordChoiceScoreWeight(double wordChoiceScoreWeight) {
         this.wordChoiceScoreWeight = wordChoiceScoreWeight;
     }
