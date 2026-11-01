@@ -7,8 +7,8 @@
         Build the SDK first (mvn install in the repository root), or use the released version from Maven Central, then:
             mvn -f examples/pom.xml compile exec:java -Dexec.mainClass=example.Example
     -->
-    <groupId>com.copyleaks.sdk</groupId>
-    <artifactId>copyleaks-java-sdk-examples</artifactId>
+    <groupId>com.copyleaks</groupId>
+    <artifactId>copyleaks-examples</artifactId>
     <version>6.0.0</version>
     <packaging>jar</packaging>
     <name>Copyleaks Java SDK examples</name>
@@ -23,8 +23,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.copyleaks.sdk</groupId>
-            <artifactId>copyleaks-java-sdk</artifactId>
+            <groupId>com.copyleaks</groupId>
+            <artifactId>copyleaks</artifactId>
             <version>${copyleaks.sdk.version}</version>
         </dependency>
         <dependency>

@@ -2,8 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.copyleaks.sdk</groupId>
-    <artifactId>copyleaks-java-sdk</artifactId>
+    <groupId>com.copyleaks</groupId>
+    <artifactId>copyleaks</artifactId>
     <version>6.0.0</version>
     <dependencies>
         <dependency>
@@ -176,7 +176,7 @@
         <connection>scm:git:git://https://github.com/Copyleaks/Java-Plagiarism-Checker.git</connection>
         <developerConnection>scm:git:ssh://https://github.com/Copyleaks/Java-Plagiarism-Checker.git</developerConnection>
         <url>https://github.com/Copyleaks/Java-Plagiarism-Checker</url>
-      <tag>copyleaks-java-sdk-3.1.0</tag>
+      <tag>v6.0.0</tag>
   </scm>
 
     <properties>
