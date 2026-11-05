@@ -291,6 +291,24 @@ public final class CopyleaksRequestExecutor {
         return exchange(method, url, model, null, responseType);
     }
 
+    /**
+     * Like {@link #sendJsonPublic(String, String, Object, Class)}, for public endpoints that also accept a login token.
+     * <p>Used by the SDK's clients. Not a stable API; it may change in any release.
+     * @param method       the HTTP method, in upper case.
+     * @param url          the full request URL.
+     * @param authToken    sent as the Authorization header when not null; its expiry is not checked.
+     * @param model        the request body, sent as JSON; ignored for GET.
+     * @param responseType as on {@link #sendJson}.
+     * @return the parsed response, or null when {@code responseType} is null.
+     * @throws ExecutionException a network error or timeout; other exceptions as on {@link #send}.
+     */
+    public <T> T sendJsonOptionalToken(String method, String url, CopyleaksAuthToken authToken, Object model,
+            Class<T> responseType)
+            throws ExecutionException, InterruptedException, UnderMaintenanceException, RateLimitException,
+            CommandException {
+        return exchange(method, url, model, authToken, responseType);
+    }
+
     private <T> T exchange(String method, String url, Object model, CopyleaksAuthToken authToken,
             Class<T> responseType)
             throws ExecutionException, InterruptedException, UnderMaintenanceException, RateLimitException,
