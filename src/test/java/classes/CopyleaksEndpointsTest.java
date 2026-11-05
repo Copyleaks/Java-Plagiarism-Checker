@@ -57,6 +57,7 @@ import models.response.AiImageDetection.CopyleaksAiImageDetectionResponseModel;
 import models.response.ImagePlagiarism.CopyleaksImagePlagiarismInternetMatchModel;
 import models.response.ImagePlagiarism.CopyleaksImagePlagiarismResponseModel;
 import models.response.aidetection.AIDetectionCreditsResponse;
+import models.response.writingassitant.CorrectionTypesResponse;
 import models.submissions.CopyleaksFileOcrSubmissionModel;
 import models.submissions.CopyleaksFileSubmissionModel;
 import models.submissions.CopyleaksURLSubmissionModel;
@@ -399,6 +400,37 @@ class CopyleaksEndpointsTest {
     }
 
     @Test
+    void correctionTypesNeedNoToken() throws Exception {
+        server.reply(200, "{\"correctionTypes\":[{\"id\":1,\"title\":\"General\",\"category\":2}]}");
+        CorrectionTypesResponse r = Copyleaks.writingAssistantClient.getCorrectionTypes("en");
+        assertRequest("GET", "/v1/writing-feedback/correction-types/en", false, null);
+        assertEquals("General", r.getCorrectionTypes().get(0).getTitle());
+    }
+
+    @Test
+    void correctionTypesWithNullTokenSendNoAuthorization() throws Exception {
+        server.reply(200, "{\"correctionTypes\":[]}");
+        Copyleaks.writingAssistantClient.getCorrectionTypes(null, "en");
+        assertRequest("GET", "/v1/writing-feedback/correction-types/en", false, null);
+    }
+
+    @Test
+    void correctionTypesDoNotCheckTokenExpiry() throws Exception {
+        server.reply(200, "{\"correctionTypes\":[]}");
+        Copyleaks.writingAssistantClient.getCorrectionTypes(TestTokens.expired(), "en");
+        assertRequest("GET", "/v1/writing-feedback/correction-types/en", true, null);
+    }
+
+    @Test
+    void correctionTypesNeedALanguageCode() {
+        assertThrows(NullPointerException.class, () -> Copyleaks.writingAssistantClient.getCorrectionTypes(null));
+        assertThrows(NullPointerException.class, () -> Copyleaks.writingAssistantClient.getCorrectionTypes(token, null));
+        assertThrows(IllegalArgumentException.class, () -> Copyleaks.writingAssistantClient.getCorrectionTypes(""));
+        assertThrows(IllegalArgumentException.class, () -> Copyleaks.writingAssistantClient.getCorrectionTypes(token, ""));
+        assertTrue(server.requests().isEmpty());
+    }
+
+    @Test
     void textModeration() throws Exception {
         server.reply(200, "{\"moderations\":{}}");
         CopyleaksTextModerationRequest req = new CopyleaksTextModerationRequest("hello", true, "en",
@@ -602,6 +634,7 @@ class CopyleaksEndpointsTest {
         calls.put("imagePlagiarism", () -> Copyleaks.imagePlagiarismClient.check(token, "s", new CopyleaksImagePlagiarismRequestModel(new byte[] { 1 }, "a.png")));
         calls.put("writing", () -> Copyleaks.writingAssistantClient.submitText(token, "s", new CopyleaksWritingAssistantSubmissionModel("t")));
         calls.put("correctionTypes", () -> Copyleaks.writingAssistantClient.getCorrectionTypes(token, "en"));
+        calls.put("correctionTypesNoToken", () -> Copyleaks.writingAssistantClient.getCorrectionTypes("en"));
         calls.put("moderation", () -> Copyleaks.textModerationClient.submitText(token, "s", new CopyleaksTextModerationRequest("t", true, null,
                 new CopyleaksTextModerationLabel[] { new CopyleaksTextModerationLabel("toxic-v1") })));
         server.always(429, "{\"error\":\"Rate limit exceeded.\"}");

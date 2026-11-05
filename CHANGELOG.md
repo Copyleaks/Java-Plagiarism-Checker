@@ -2,6 +2,17 @@
 
 All notable changes to the Copyleaks Java SDK are listed here.
 
+## Unreleased
+
+### Added
+
+- `WritingAssistantClient.getCorrectionTypes(languageCode)` gets the Grammar Checker correction types without a login token. The endpoint is public.
+
+### Changed
+
+- `WritingAssistantClient.getCorrectionTypes(token, languageCode)` no longer needs a valid token. The token can be null, and an expired token no longer throws `AuthExpiredException`. A token that is not null is still sent as the `Authorization` header.
+- `getCorrectionTypes` throws `IllegalArgumentException` when the language code is empty, before any request is sent.
+
 ## 6.0.0
 
 This is a major release. The Maven coordinates are now `com.copyleaks:copyleaks`, replacing `com.copyleaks.sdk:copyleaks-java-sdk` (last version 5.1.0). The Java package names are the same as in 5.1.0, and Java 11 or later is still required. A few changes can break existing code or change results. They are listed under [Upgrade notes](#upgrade-notes).

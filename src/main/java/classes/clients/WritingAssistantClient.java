@@ -46,13 +46,38 @@ public class WritingAssistantClient {
     }
 
     /**
-     * Grammar Checker correction types.
+     * Grammar Checker correction types. No login needed.
      * https://docs.copyleaks.com/reference/actions/writing-assistant/correction-types
      * @param languageCode ISO 639-1 language of the returned texts. Supported: "en".
+     * @return the correction types.
+     * @throws NullPointerException if {@code languageCode} is null.
+     * @throws IllegalArgumentException if {@code languageCode} is empty.
+     */
+    public CorrectionTypesResponse getCorrectionTypes(String languageCode) throws ExecutionException, InterruptedException, UnderMaintenanceException, RateLimitException, CommandException {
+        return fetchCorrectionTypes(null, languageCode);
+    }
+
+    /**
+     * Grammar Checker correction types. The endpoint is public, so {@link #getCorrectionTypes(String)} is enough.
+     * https://docs.copyleaks.com/reference/actions/writing-assistant/correction-types
+     * @param authToken    optional. When not null, it is sent as the Authorization header and its expiry is not checked.
+     * @param languageCode ISO 639-1 language of the returned texts. Supported: "en".
+     * @return the correction types.
+     * @throws AuthExpiredException never; declared so that code written for 6.0.0 still compiles.
+     * @throws ParseException never; kept for 6.0.0 source compatibility.
+     * @throws NullPointerException if {@code languageCode} is null.
+     * @throws IllegalArgumentException if {@code languageCode} is empty.
      */
     public CorrectionTypesResponse getCorrectionTypes(CopyleaksAuthToken authToken, String languageCode) throws ExecutionException, InterruptedException, UnderMaintenanceException, RateLimitException, CommandException, ParseException, AuthExpiredException {
+        return fetchCorrectionTypes(authToken, languageCode);
+    }
+
+    private CorrectionTypesResponse fetchCorrectionTypes(CopyleaksAuthToken authToken, String languageCode) throws ExecutionException, InterruptedException, UnderMaintenanceException, RateLimitException, CommandException {
         Objects.requireNonNull(languageCode, "languageCode is null");
-        return executor.sendJson("GET", Consts.API_SERVER_URI + "/v1/writing-feedback/correction-types/"
+        if (languageCode.isEmpty()) {
+            throw new IllegalArgumentException("languageCode is empty");
+        }
+        return executor.sendJsonOptionalToken("GET", Consts.API_SERVER_URI + "/v1/writing-feedback/correction-types/"
                 + CopyleaksRequestExecutor.pathSegment(languageCode), authToken, null, CorrectionTypesResponse.class);
     }
 }
