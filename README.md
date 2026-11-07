@@ -504,7 +504,7 @@ Copyleaks.setHttpClient(myHttpClient);                  // optional: your own ja
 A timeout throws `ExecutionException` caused by `java.net.http.HttpTimeoutException`.
 ##
 ### Error handling
-`RateLimitException` (429), `UnderMaintenanceException` (503) and `CommandException` (any other error status) carry the HTTP status and the response body. All three extend `CopyleaksApiException`.
+`RateLimitException` (429), `UnderMaintenanceException` (503) and `CommandException` (any other error status) carry the HTTP status and the response body. All three extend `CopyleaksApiException`, which also has the fields of the response's `error` object: `getErrorType()` (see `CopyleaksErrorTypes`), `getErrorId()`, `getErrorCode()`, `getErrorMessage()`, `getErrorUrl()` and `getErrorDetails()`.
 
 ```java
 try {
@@ -513,6 +513,11 @@ try {
     Duration wait = e.getRetryAfter();  // from the Retry-After header, or null
 } catch (CommandException e) {
     System.out.println(e.getStatusCode() + ": " + e.getResponseBody());
+    if (CopyleaksErrorTypes.INVALID_REQUEST_ERROR.equals(e.getErrorType())) {
+        for (CopyleaksErrorDetail detail : e.getErrorDetails()) {
+            System.out.println(detail.getParam() + ": " + detail.getMessage());
+        }
+    }
 }
 ```
 ##
