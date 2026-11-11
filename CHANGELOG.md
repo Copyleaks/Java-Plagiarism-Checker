@@ -2,6 +2,13 @@
 
 All notable changes to the Copyleaks Java SDK are listed here.
 
+## Unreleased
+
+### Added
+
+- **Parsed error fields on exceptions.** `CopyleaksApiException` (and so `CommandException`, `RateLimitException` and `UnderMaintenanceException`) has `getErrorType()`, `getErrorId()`, `getErrorCode()` (an `Integer`), `getErrorMessage()`, `getErrorUrl()` and `getErrorDetails()`, read from the `error` object of the response body. `getErrorDetails()` returns an unmodifiable list of `CopyleaksErrorDetail` (`getParam()`, `getMessage()`), empty, never null, when the response has none. A field that is missing or has the wrong JSON type is null.
+- `CopyleaksErrorTypes` has the documented values of `getErrorType()`: `INVALID_REQUEST_ERROR`, `AUTHENTICATION_ERROR`, `PAYMENT_ERROR` and `API_ERROR`.
+
 ## 6.0.0
 
 This is a major release. The Maven coordinates are now `com.copyleaks:copyleaks`, replacing `com.copyleaks.sdk:copyleaks-java-sdk` (last version 5.1.0). The Java package names are the same as in 5.1.0, and Java 11 or later is still required. A few changes can break existing code or change results. They are listed under [Upgrade notes](#upgrade-notes).

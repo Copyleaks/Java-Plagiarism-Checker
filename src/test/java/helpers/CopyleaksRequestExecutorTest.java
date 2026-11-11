@@ -164,6 +164,10 @@ class CopyleaksRequestExecutorTest {
         CommandException e = assertThrows(CommandException.class, () -> get("/bad"));
         assertEquals(400, e.getStatusCode());
         assertEquals(body, e.getResponseBody());
+        assertEquals("invalid_request_error", e.getErrorType());
+        assertEquals("missing_parameter", e.getErrorId());
+        assertEquals(Integer.valueOf(1), e.getErrorCode());
+        assertEquals("Bad request.", e.getErrorMessage());
         assertTrue(e.getMessage().startsWith("command failed with status Code: 400"));
         assertTrue(e.getMessage().contains("missing_parameter"), e.getMessage());
         assertFalse(e.getMessage().contains("CompletableFuture"));
