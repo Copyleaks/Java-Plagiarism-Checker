@@ -74,7 +74,7 @@ import testutil.TestTokens;
 /** Checks the exact method, path, headers and body of every SDK call against a local server. */
 class CopyleaksEndpointsTest {
 
-    private static final String UA = "java-sdk/6.0.0";
+    private static final String UA = "java-sdk/6.1.0";
     private static final String BEARER = "Bearer " + TestTokens.ACCESS_TOKEN;
     private static final String WEBHOOK = "https://example.com/webhook/{STATUS}";
 
