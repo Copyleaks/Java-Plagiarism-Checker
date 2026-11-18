@@ -4,7 +4,7 @@
 
     <groupId>com.copyleaks</groupId>
     <artifactId>copyleaks</artifactId>
-    <version>6.0.0</version>
+    <version>6.1.0</version>
     <dependencies>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -176,7 +176,7 @@
         <connection>scm:git:git://https://github.com/Copyleaks/Java-Plagiarism-Checker.git</connection>
         <developerConnection>scm:git:ssh://https://github.com/Copyleaks/Java-Plagiarism-Checker.git</developerConnection>
         <url>https://github.com/Copyleaks/Java-Plagiarism-Checker</url>
-      <tag>v6.0.0</tag>
+      <tag>v6.1.0</tag>
   </scm>
 
     <properties>

@@ -2,7 +2,7 @@
 
 All notable changes to the Copyleaks Java SDK are listed here.
 
-## Unreleased
+## 6.1.0
 
 ### Added
 

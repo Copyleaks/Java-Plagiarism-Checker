@@ -7,5 +7,5 @@ public final class Consts {
     /** The login server address. */
     public static volatile String IDENTITY_SERVER_URI = "https://id.copyleaks.com";
     /** The User-Agent header sent with every request. */
-    public static final String USER_AGENT = "java-sdk/6.0.0";
+    public static final String USER_AGENT = "java-sdk/6.1.0";
 }

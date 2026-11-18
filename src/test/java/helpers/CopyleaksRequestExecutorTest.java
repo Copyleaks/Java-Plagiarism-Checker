@@ -308,7 +308,7 @@ class CopyleaksRequestExecutorTest {
                 TestTokens.valid());
         MockApiServer.Recorded r = server.only();
         assertEquals("PUT", r.method);
-        assertEquals("java-sdk/6.0.0", r.header("User-Agent"));
+        assertEquals("java-sdk/6.1.0", r.header("User-Agent"));
         assertEquals("Bearer " + TestTokens.ACCESS_TOKEN, r.header("Authorization"));
         assertEquals("application/json", r.header("Content-Type"));
     }
